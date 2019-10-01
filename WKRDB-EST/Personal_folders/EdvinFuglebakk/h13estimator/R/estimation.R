@@ -179,7 +179,7 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #' @param SA data.table SA table
 #' @param SS data.table SS table
 #' @param SL data.table SL table
-#' @param species
+#' @param species character aphia code for species to estimate for
 #' @param proportionAtAge data.table proportions in each age group calculated from lower hiearchy registrations (format described in e.g. \code{\link[h13estimator]{calculateBVProportions}})
 #' @param meanWeights data.table mean weight of fish calculated from lower hiearchy registrations. (format described in e.g. \code{\link[h13estimator]{calculateBVmeans}})
 #'  Can be NULL if none of the samples are sampled by weight (SAunitType=Kg)
@@ -187,6 +187,8 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #' @return data.table
 #' @export
 estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL, stratified=T){
+
+  warning("True zeros not handled yet")
 
   if (any(!is.na(SA$SAparentid))){
     stop("Estimation from Subsamples not implemented")
@@ -256,9 +258,7 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
 
 
 estimateSAcaaCov <- function(){
-
+ # make based on replicate sampling
 }
-
-# make example for replicate sampling
 
 # introduce bootstrap for single sample
