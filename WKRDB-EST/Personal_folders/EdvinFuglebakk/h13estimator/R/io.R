@@ -308,7 +308,7 @@ parseRDBESexchange <- function(filename, verbose=F){
 
   for (l in lines){
 
-    linevec <- tstrsplit(paste(l,",",sep=""), ",") #add trailing comma as strsplit discards trailing empty values
+    linevec <- data.table::tstrsplit(paste(l,",",sep=""), ",") #add trailing comma as strsplit discards trailing empty values
 
     if (linevec[[1]]=="DE"){
       lastid$DE <- lastid$DE+1

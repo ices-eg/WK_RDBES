@@ -247,6 +247,7 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
   numAgeSample$numberAtAge <- numAgeSample$proportion * numAgeSample$nfish
 
   sastrata <- SA[,c("SAid", "SAstratum")]
+  names(sastrata) <- c("SAid", "stratum")
 
   numAgeSample <- merge(numAgeSample, sastrata, all.x=T)
 
