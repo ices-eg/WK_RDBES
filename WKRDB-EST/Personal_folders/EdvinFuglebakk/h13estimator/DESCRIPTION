@@ -1,0 +1,10 @@
+Package: h13estimator
+Type: Package
+Title: Prototype for estimating catch at ahe from RDBES hiearchy 13 samples
+Version: 0.1.0
+Author: Edvin Fuglebakk
+Maintainer: Edvin Fuglebakk <Edvin.Fuglebakk@hi.no>
+Description: Prepeared as part of WKRD-EST 2019
+License: LGPL
+Encoding: UTF-8
+LazyData: true
