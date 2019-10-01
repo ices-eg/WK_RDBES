@@ -39,3 +39,4 @@ expect_gt(nrow(data$BV[data$BV$BVtype=="Age",]), 0)
 expect_gt(nrow(data$BV[data$BV$BVtype=="Length",]), 0)
 ages <- data$BV[data$BV$BVtype=="Age",]
 expect_true(any(!is.na(ages$BVvalue)))
+expect_true(all(data$FO$FOselectMeth=="SRSWR"))
