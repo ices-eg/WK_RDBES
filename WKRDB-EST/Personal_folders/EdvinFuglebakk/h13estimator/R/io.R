@@ -283,7 +283,7 @@ parseBV <- function(linevec, datalist, BVid, SAid=NA, FMid=NA, verbose=F){
 #' @param verbose logical determining whether progress information should be printed while parsing
 #' @return list of data.tables corresponding to the different tables parsed. Tables are identified with their Record Type, and columns are identified with their R Name
 #' @export
-parse_RDBES_exchange <- function(filename, verbose=F){
+parseRDBESexchange <- function(filename, verbose=F){
 
   #populate this with one data frame for each table
   datalist <- list()
@@ -301,6 +301,8 @@ parse_RDBES_exchange <- function(filename, verbose=F){
 
   f <- file(filename, open="rU")
   lines <- readLines(f)
+  close(f)
+
   for (l in lines){
 
     linevec <- tstrsplit(paste(l,",",sep=""), ",") #add trailing comma as strsplit discards trailing empty values
@@ -309,27 +311,27 @@ parse_RDBES_exchange <- function(filename, verbose=F){
       lastid$DE <- lastid$DE+1
       datalist <- parseDE(linevec, datalist, lastid$DE, verbose=verbose)
     }
-    if (linevec[[1]]=="SD"){
+    else if (linevec[[1]]=="SD"){
       lastid$SD <- lastid$SD+1
       datalist <- parseSD(linevec, datalist, lastid$SD, lastid$DE, verbose=verbose)
     }
-    if (linevec[[1]]=="FO"){
+    else if (linevec[[1]]=="FO"){
       lastid$FO <- lastid$FO+1
       datalist <- parseFO(linevec, datalist, lastid$FO, SDid = lastid$SD, verbose=verbose)
     }
-    if (linevec[[1]]=="SL"){
+    else if (linevec[[1]]=="SL"){
       lastid$SL <- lastid$SL+1
       datalist <- parseSL(linevec, datalist, lastid$SL, FOid = lastid$FO)
     }
-    if (linevec[[1]]=="SS"){
+    else if (linevec[[1]]=="SS"){
       lastid$SS <- lastid$SS+1
       datalist <- parseSS(linevec, datalist, lastid$SS, lastid$SL, FOid=lastid$FO)
     }
-    if (linevec[[1]]=="SA"){
+    else if (linevec[[1]]=="SA"){
       lastid$SA <- lastid$SA+1
       datalist <- parseSA(linevec, datalist, lastid$SA, lastid$SS, verbose=verbose)
     }
-    if (linevec[[1]]=="BV"){
+    else if (linevec[[1]]=="BV"){
       lastid$BV <- lastid$BV+1
       datalist <- parseBV(linevec, datalist, lastid$BV, SAid=lastid$SA)
     }
@@ -337,6 +339,6 @@ parse_RDBES_exchange <- function(filename, verbose=F){
       stop(paste("Record type", linevec[[1]], "not supported"))
     }
   }
-  close(f)
+
   return(datalist)
 }
