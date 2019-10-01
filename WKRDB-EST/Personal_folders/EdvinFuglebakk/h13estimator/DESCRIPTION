@@ -8,3 +8,7 @@ Description: Prepeared as part of WKRD-EST 2019. Based on the RDBES datamodel v1
 License: LGPL
 Encoding: UTF-8
 LazyData: true
+Dependes: 
+    data.table
+Suggests: 
+    testthat

@@ -280,9 +280,10 @@ parseBV <- function(linevec, datalist, BVid, SAid=NA, FMid=NA, verbose=F){
 
 #' Reads RDBES exhange format
 #' @param filename filename for csv file with RDBES exhcange format v1.17
+#' @param verbose logical determining whether progress information should be printed while parsing
 #' @return list of data.tables corresponding to the different tables parsed. Tables are identified with their Record Type, and columns are identified with their R Name
 #' @export
-parse_RDBES_exchange <- function(filename){
+parse_RDBES_exchange <- function(filename, verbose=F){
 
   #populate this with one data frame for each table
   datalist <- list()
@@ -306,27 +307,27 @@ parse_RDBES_exchange <- function(filename){
 
     if (linevec[[1]]=="DE"){
       lastid$DE <- lastid$DE+1
-      datalist <- parseDE(linevec, datalist, lastid$DE, verbose=T)
+      datalist <- parseDE(linevec, datalist, lastid$DE, verbose=verbose)
     }
     if (linevec[[1]]=="SD"){
       lastid$SD <- lastid$SD+1
-      datalist <- parseSD(linevec, datalist, lastid$SD, lastid$DE, verbose=T)
+      datalist <- parseSD(linevec, datalist, lastid$SD, lastid$DE, verbose=verbose)
     }
     if (linevec[[1]]=="FO"){
       lastid$FO <- lastid$FO+1
-      datalist <- parseFO(linevec, datalist, lastid$FO, SDid = lastid$SD, verbose=T)
+      datalist <- parseFO(linevec, datalist, lastid$FO, SDid = lastid$SD, verbose=verbose)
     }
     if (linevec[[1]]=="SL"){
       lastid$SL <- lastid$SL+1
-      datalist <- parseSL(linevec, datalist, lastid$SL, FOid = lastid$FO, verbose=T)
+      datalist <- parseSL(linevec, datalist, lastid$SL, FOid = lastid$FO)
     }
     if (linevec[[1]]=="SS"){
       lastid$SS <- lastid$SS+1
-      datalist <- parseSS(linevec, datalist, lastid$SS, lastid$SL, FOid=lastid$FO, verbose=T)
+      datalist <- parseSS(linevec, datalist, lastid$SS, lastid$SL, FOid=lastid$FO)
     }
     if (linevec[[1]]=="SA"){
       lastid$SA <- lastid$SA+1
-      datalist <- parseSA(linevec, datalist, lastid$SA, lastid$SS, verbose=T)
+      datalist <- parseSA(linevec, datalist, lastid$SA, lastid$SS, verbose=verbose)
     }
     if (linevec[[1]]=="BV"){
       lastid$BV <- lastid$BV+1
