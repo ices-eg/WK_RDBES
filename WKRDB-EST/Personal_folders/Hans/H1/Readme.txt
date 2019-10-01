@@ -1,1 +1,0 @@
-See: H:\My Documents\Work\Meetings\WKRDB-EST\R\MI_RDBES_ExchangeFiles\HG_get_some_data.R
