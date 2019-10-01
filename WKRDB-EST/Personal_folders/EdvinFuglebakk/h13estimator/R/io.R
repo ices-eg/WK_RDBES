@@ -92,26 +92,27 @@ parseFO <- function(linevec, datalist, FOid, FTid=NA, SDid=NA, verbose=F){
                    FOarea=as.character(linevec[[21]]),
                    FOstatRect=as.character(linevec[[22]]),
                    FOsubRect=as.character(linevec[[23]]),
-                   FOdep=as.integer(linevec[[24]]),
-                   FOwaterDep=as.integer(linevec[[25]]),
-                   FOnatCat=as.character(linevec[[26]]),
-                   FOmetier5=as.character(linevec[[27]]),
-                   FOmetier6=as.character(linevec[[28]]),
-                   FOgear=as.character(linevec[[29]]),
-                   FOmeshSize=as.character(linevec[[30]]),
-                   FOselDev=as.character(linevec[[31]]),
-                   FOselDevMeshSize=as.character(linevec[[32]]),
-                   FOtarget=as.character(linevec[[33]]),
-                   FOobsCo=as.character(linevec[[34]]),
-                   FOtotal=as.integer(linevec[[35]]),
-                   FOsampled=as.integer(linevec[[36]]),
-                   FOprob=as.numeric(linevec[[37]]),
-                   FOselectMeth=as.character(linevec[[38]]),
-                   FOselectMethCluster=as.character(linevec[[39]]),
-                   FOtotalClusters=as.integer(linevec[[40]]),
-                   FOsampledClusters=as.integer(linevec[[41]]),
-                   FOprobCluster=as.integer(linevec[[42]]),
-                   FOnoSampReason=as.character(linevec[[43]])
+                   FOfu=as.character(linevec[[24]]),
+                   FOdep=as.integer(linevec[[25]]),
+                   FOwaterDep=as.integer(linevec[[26]]),
+                   FOnatCat=as.character(linevec[[27]]),
+                   FOmetier5=as.character(linevec[[28]]),
+                   FOmetier6=as.character(linevec[[29]]),
+                   FOgear=as.character(linevec[[30]]),
+                   FOmeshSize=as.character(linevec[[31]]),
+                   FOselDev=as.character(linevec[[33]]),
+                   FOselDevMeshSize=as.character(linevec[[34]]),
+                   FOtarget=as.character(linevec[[34]]),
+                   FOobsCo=as.character(linevec[[35]]),
+                   FOtotal=as.integer(linevec[[36]]),
+                   FOsampled=as.integer(linevec[[37]]),
+                   FOprob=as.numeric(linevec[[38]]),
+                   FOselectMeth=as.character(linevec[[39]]),
+                   FOselectMethCluster=as.character(linevec[[40]]),
+                   FOtotalClusters=as.integer(linevec[[41]]),
+                   FOsampledClusters=as.integer(linevec[[42]]),
+                   FOprobCluster=as.integer(linevec[[43]]),
+                   FOnoSampReason=as.character(linevec[[44]])
                    )
   datalist$FO <- rbind(datalist$FO, dt)
   return(datalist)
@@ -279,6 +280,8 @@ parseBV <- function(linevec, datalist, BVid, SAid=NA, FMid=NA, verbose=F){
 }
 
 #' Reads RDBES exhange format
+#' @description
+#'  Parser is only implemented for the tables needed for hiearachy 13
 #' @param filename filename for csv file with RDBES exhcange format v1.17
 #' @param verbose logical determining whether progress information should be printed while parsing
 #' @return list of data.tables corresponding to the different tables parsed. Tables are identified with their Record Type, and columns are identified with their R Name
