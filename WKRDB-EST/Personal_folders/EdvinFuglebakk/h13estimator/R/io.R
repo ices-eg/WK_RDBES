@@ -334,7 +334,7 @@ parse_RDBES_exchange <- function(filename, verbose=F){
       datalist <- parseBV(linevec, datalist, lastid$BV, SAid=lastid$SA)
     }
     else{
-      #stop(paste("Record type", linevec[[1]], "not supported"))
+      stop(paste("Record type", linevec[[1]], "not supported"))
     }
   }
   close(f)
