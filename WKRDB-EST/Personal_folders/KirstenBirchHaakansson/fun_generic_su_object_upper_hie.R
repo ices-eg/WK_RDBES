@@ -26,8 +26,8 @@ generic_su_object_upper_hie <- function(input_list = H1_upper, hierachy = 1) {
   # createing a list with expected tables for each hierachy
   expected_tables <- list(
     H1 = data.frame(
-      table_names = c("DE", "SD", "VS", "FT"),
-      su_level = c("NA", "NA", "su1", "su2")
+      table_names = c("DE", "SD", "VS", "FT", "FO"),
+      su_level = c("NA", "NA", "su1", "su2", "su3")
     ),
     H2 = data.frame(
       table_names = c("DE", "SD", "FT", "FO"),
@@ -91,7 +91,7 @@ generic_su_object_upper_hie <- function(input_list = H1_upper, hierachy = 1) {
     
   names(su) <- sub(unique(expected_tables_here$table_names[[i]]), "", names(su))
   
-  su$su <- expected_tables_here$su_level[[i]]
+  su$su <- as.character(expected_tables_here$su_level[[i]])
   su$hierachy <- hierachy
   h <- i - 1
   su$idAbove <- eval(parse(text = paste0('su$', expected_tables_here$table_names[[h]], "id")))
