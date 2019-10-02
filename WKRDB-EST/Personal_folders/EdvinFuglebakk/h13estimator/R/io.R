@@ -2,8 +2,9 @@ library(data.table)
 
 #' parse DE line, add result to datalist
 #' @param linevec list of elements on line
-#' @param datalist
+#' @param datalist list of data frames representing the RDBES data model
 #' @param DEid id this line
+#' @param verbose logical whether to print progress info
 #' @noRd
 #' @keywords internal
 parseDE <- function(linevec, datalist, DEid, verbose=F){
@@ -28,9 +29,10 @@ parseDE <- function(linevec, datalist, DEid, verbose=F){
 
 #' parse SD line, add result to datalist
 #' @param linevec list of elements on line
-#' @param datalist
+#' @param datalist list of data frames representing the RDBES data model
 #' @param SDid id this line
 #' @param DEid id of parent DE table
+#' @param verbose logical whether to print progress info
 #' @noRd
 #' @keywords internal
 parseSD <- function(linevec, datalist, SDid, DEid, verbose=F){
@@ -53,10 +55,11 @@ parseSD <- function(linevec, datalist, SDid, DEid, verbose=F){
 
 #' parse FO line, add result to datalist
 #' @param linevec list of elements on line
-#' @param datalist
+#' @param datalist list of data frames representing the RDBES data model
 #' @param FOid id this line
 #' @param FTid id of any parent FT table
 #' @param SDid id of any parent SD table
+#' @param verbose logical whether to print progress info
 #' @noRd
 #' @keywords internal
 parseFO <- function(linevec, datalist, FOid, FTid=NA, SDid=NA, verbose=F){
@@ -120,13 +123,14 @@ parseFO <- function(linevec, datalist, FOid, FTid=NA, SDid=NA, verbose=F){
 
 #' parse SL line, add result to datalist
 #' @param linevec list of elements on line
-#' @param datalist
+#' @param datalist list of data frames representing the RDBES data model
 #' @param SLid id this line
 #' @param FOid id of any parent FO table
 #' @param LEid id of any parent LE table
 #' @param FTid id of any parent FT table
 #' @param OSid id of any parent OS table
 #' @param TEid id of any parent TE table
+#' @param verbose logical whether to print progress info
 #' @noRd
 #' @keywords internal
 parseSL <- function(linevec, datalist, SLid, FOid=NA, LEid=NA, FTid=NA, OSid=NA, TEid=NA, verbose=F){
@@ -154,11 +158,12 @@ parseSL <- function(linevec, datalist, SLid, FOid=NA, LEid=NA, FTid=NA, OSid=NA,
 
 #' parse SS line, add result to datalist
 #' @param linevec list of elements on line
-#' @param datalist
+#' @param datalist list of data frames representing the RDBES data model
 #' @param SSid id this line
 #' @param SLid id for parent species selection table
 #' @param LEid id for any parent LE table
 #' @param FOid id for any parent FO table
+#' @param verbose logical whether to print progress info
 #' @noRd
 #' @keywords internal
 parseSS <- function(linevec, datalist, SSid, SLid, LEid=NA, FOid=NA, verbose=F){
@@ -196,10 +201,11 @@ parseSS <- function(linevec, datalist, SSid, SLid, LEid=NA, FOid=NA, verbose=F){
 
 #' parse SA line, add result to datalist
 #' @param linevec list of elements on line
-#' @param datalist
+#' @param datalist list of data frames representing the RDBES data model
 #' @param SAid id this line
 #' @param SSid id for parent SS table
 #' @param SAparentid id for any parent sample (this line is a subsample)
+#' @param verbose logical whether to print progress info
 #' @noRd
 #' @keywords internal
 parseSA <- function(linevec, datalist, SAid, SSid, SAparentid=NA, verbose=F){
@@ -244,10 +250,11 @@ parseSA <- function(linevec, datalist, SAid, SSid, SAparentid=NA, verbose=F){
 
 #' parse BV line, add result to datalist
 #' @param linevec list of elements on line
-#' @param datalist
+#' @param datalist list of data frames representing the RDBES data model
 #' @param BVid id for this row
 #' @param SAid id for any parent SA row
 #' @param FMid id for any parent Fm row
+#' @param verbose logical whether to print progress info
 #' @noRd
 #' @keywords internal
 parseBV <- function(linevec, datalist, BVid, SAid=NA, FMid=NA, verbose=F){
@@ -284,6 +291,7 @@ parseBV <- function(linevec, datalist, BVid, SAid=NA, FMid=NA, verbose=F){
 #'  Parser is only implemented for the tables needed for hiearachy 13
 #' @param filename filename for csv file with RDBES exhcange format v1.17
 #' @param verbose logical determining whether progress information should be printed while parsing
+#' @param verbose logical whether to print progress info
 #' @return list of data.tables corresponding to the different tables parsed. Tables are identified with their Record Type, and columns are identified with their R Name
 #' @export
 parseRDBESexchange <- function(filename, verbose=F){
