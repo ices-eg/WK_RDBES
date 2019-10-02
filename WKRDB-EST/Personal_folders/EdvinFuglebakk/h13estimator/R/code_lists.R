@@ -24,6 +24,7 @@ codelist$RS_SelectionMethod$SRSWOR<- "SRSWOR"
 codelist$RS_SelectionMethod$CENSUS<- "CENSUS"
 codelist$RS_SelectionMethod$systematic<- "SYSS"
 codelist$RS_SelectionMethod$UPSWOR <-"UPSWOR"
+codelist$RS_SelectionMethod$UPSWR <- "UPSWR"
 codelist$RS_LowerHierarchy<-list()
 codelist$RS_LowerHierarchy$BVonly<-"C"
 codelist$RS_UpperHierarchy<-list()
