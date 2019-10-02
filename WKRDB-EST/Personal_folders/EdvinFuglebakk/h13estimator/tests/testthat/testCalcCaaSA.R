@@ -1,6 +1,6 @@
 data <- parseRDBESexchange("../../inst/testresources/herringlottery_trimmed_H13.csv")
-context("run simple example")
+context("estimateSAcaa: run simple example")
 est <- calculateBVmeans(data$BV, type = "Weight", stratified = F)
 prop <- calculateBVProportions(data$BV, "Age", stratified = F)
-caa <- estimateSAcaa(data$SA, data$SS, data$SL, "126417", prop, est, stratified=F)
+caa <- estimateSAcaa(assumeSelectionMethod(data$SA,"SYSS", "SRSWR"), data$SS, data$SL, "126417", prop, est, stratified=F)
 expect_equal(nrow(caa), 6)

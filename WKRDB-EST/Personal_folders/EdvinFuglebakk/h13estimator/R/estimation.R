@@ -33,6 +33,27 @@ annotateCountStrata <- function(BVtotal){
   return(annotateOne(BVtotal, "BVtotal differ within strata"))
 }
 
+#' Recode data table selection methods
+#' @description
+#' Recodes data table to reflect assumptions about selection methods.
+#' For instance SRSWR can be justified for SRSWOR when the sampled fraction is small.
+#' @param datatable datatable of the RDBES data model, eg. SA or BV.
+#' @param actual The selection method that assumptions are to be applied for
+#' @param assumed The selection methods that is assumped
+#' @export
+assumeSelectionMethod <- function(datatable, actual, assumed){
+
+  if ("SArecType" %in% names(datatable)){
+    datatable[datatable$SAselectMeth == actual, "SAselectMeth"] <- assumed
+  } else if ("BVrecType" %in% names(datatable)){
+    datatable[datatable$BVselectMeth == actual, "BVselectMeth"] <- assumed
+  }
+  else{
+    stop("Table not supported")
+  }
+
+  return(datatable)
+}
 
 #' Calculate mean for BV table
 #' @description
@@ -176,6 +197,12 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #'  If calculation is done by strata, encode all stratification in the SA table.
 #'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "sample"
 #'
+#'  If lower hiearchy estimations (proportionAtAge and meanWeights) were obtained from samples with unsupported selection methods, estimation will not proceed.
+#'  Supported selection methods are: SRSWR, SRSWOR, and CENSUS
+#'
+#'  If samples (SA entries) where selected by unsupported selection methods, estimation will not procedd.
+#'  Supported selection methods are: SRSWR, SRSWOR, and CENSUS
+#'
 #' @param SA data.table SA table
 #' @param SS data.table SS table
 #' @param SL data.table SL table
@@ -188,7 +215,33 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #' @export
 estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL, stratified=T){
 
-  warning("True zeros not handled yet")
+
+  #
+  # checks on lower hiearchy estimates
+  #
+  supportedBVselectMeth <- c(codelist$RS_SelectionMethod$SRSWR, codelist$RS_SelectionMethod$SRSWOR, codelist$RS_SelectionMethod$CENSUS)
+
+  if (!all(meanWeights$BVselectMeth %in% supportedBVselectMeth)){
+    stop("Some mean weghts where obtained by unsupported selection methods")
+  }
+
+  if (!all(proportionAtAge$BVselectMeth %in% supportedBVselectMeth)){
+    stop("Some age proportions where obtained by unsupported selection methods")
+  }
+
+  #
+  # checks on species list configuration
+  #
+
+  if (any(SS$SSclustering != codelist$RS_Clustering$unclustered) | any(SS$SSstratification != codelist$RS_Stratfification$unstratified) | any(SS$SSselectMeth != codelist$RS_SelectionMethod$CENSUS)){
+    stop("Estimation with sampling of species list not implemented")
+  }
+
+  #
+  # checks on SA table configuration
+  #
+
+  supportedSAselectMeth <- c(codelist$RS_SelectionMethod$SRSWR, codelist$RS_SelectionMethod$SRSWOR, codelist$RS_SelectionMethod$CENSUS)
 
   if (any(!is.na(SA$SAparentid))){
     stop("Estimation from Subsamples not implemented")
@@ -206,6 +259,11 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
     stop("Running stratified calculation, but not all records are stratified")
   }
 
+  if (!all(SA$SAselectMeth %in% supportedSAselectMeth)){
+    stop("Some samples are selected by unsupported selection methods")
+  }
+
+
   #
   # Estimate total number of fish in sampling unit SA was taken from (e.g. Fishing Operation)
   #
@@ -219,9 +277,13 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
 
   # handle sampling by weight
   if (any(SA$SAunitType==codelist$RS_UnitType$kg)){
+    if (is.null(meanWeights)){
+      stop(paste("Need meanWeights to estimate total number of fish in samples sampled by weight (SAunitType=", codelist$RS_UnitType$kg, ")", sep=""))
+    }
     if (any(meanWeights$unit!=codelist$RS_UnitOfValue$g)){
       stop("Units of mean weights must match that of total weight (SAtotalWtLive)")
     }
+
     meanWeights$wmean <- meanWeights$mean * meanWeights$proportionStrata
     meanWeightsSample <- aggregate(list(mean=meanWeights$wmean), by=list(SAid=meanWeights$SAid), FUN=sum)
     meanWeightsSample$nfish <- floor((1/meanWeightsSample$mean) * SA$SAtotalWtLive)
