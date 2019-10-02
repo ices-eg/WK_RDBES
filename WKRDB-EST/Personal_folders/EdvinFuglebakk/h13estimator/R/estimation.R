@@ -33,6 +33,26 @@ annotateCountStrata <- function(BVtotal){
   return(annotateOne(BVtotal, "BVtotal differ within strata"))
 }
 
+#' Calcuates the proportion of fishing operations in each strata
+#' @noRd
+#' @keywords internal
+getPropStrataFO <- function(FO){
+  # deal with single strata separately, so that we can tolerate that FOtotal is not set for uneq prob sampling
+  propStrata <- data.table(FOid=integer(), stratum=character(), proportionStrata=numeric())
+  if (length(unique(FO$FOstratum))==1){
+    singlestratum <- unique(FO[,c("FOid", "FOstratum")])
+    singlestratum <- data.table(FOid=singlestratum$FOid, stratum=singlestratum$FOstratum, proportionStrata=rep(1, nrow(singlestratum)))
+    propStrata <- rbind(propStrata, singlestratum)
+  }
+  else{
+    countstrata <- aggregate(list(countStrata=FO$FOtotal), by=list(stratum=FO$FOstratum, FOid=FO$FOid), FUN=annotateCountStrata)
+    stratatotal <- aggregate(list(stratatotal=countstrata$countStrata), by=list(FOid=countstrata$FOid), FUN=sum)
+    propstrata <- merge(countstrata, stratatotal, all.x=T)
+    propstrata$proportionStrata <- propstrata$countStrata / propstrata$stratatotal
+  }
+
+  return(propStrata)
+}
 
 #
 #
@@ -65,21 +85,26 @@ assumeSelectionMethod <- function(datatable, actual, assumed){
   return(datatable)
 }
 
-#' Assign zero variance to fishing operations
-#' @description Assigns a variance of zero to each fishing operation.
+#' Assign constant variance for catch at age in numbers to fishing operations
+#' @description Assigns a constant variance  to each fishing operation.
 #' The purpose of the function is to make assumption explicit when design does not allow for design based estimation of variance of some statistic.
-#' @details
-#'  If output is grouped in strata, encode all stratification in the BV table.
-#'  If output is not grouped in strata, it will be treated as single stratum calculation for a stratum called "sample"
-#' @param FO data.table FO table
-#' @param statname character() used for naming in output
-#' @param stratified logical() determines whether output should be grouped in strata
-#' @return data.table with columns
-#'  \item{FOid}{identifies the fishing operation}
-#'  \item{stratum}{{any stratum the variance should be assumed for}}
-#'  \item{<statname>Var}{Represents the variance of statistic (assumed zero)}
-assumeFOZeroVar <- function(FO, statname, stratified=T){
+#' For instance a constant of zero can be assigned to assume that variance at a certain level is negliable and therefore not estimated.
+#' @param caaFO data.table format described in \code{\link[h13estimator]{estimateFOCatchAtAge}}.
+#' @param constant numeric() the constant variance to assign to fishing operations
+#' @param ages character() the ages to give covariances for
+#' @return list() a list of variance-covariance matrices, identified by FOid
+assumeFOconstantVar <- function(caaFO, constant, ages=as.character(seq(0,max(as.integer(caaFO$age))))){
 
+  constant_matrix <- diag(rep(constant, length(ages)))
+  colnames(constant_matrix) <- ages
+  rownames(constant_matrix) <- ages
+
+  variances <- list()
+  for (f in caaFO$FOid){
+    variances[[f]] <- constant_matrix
+  }
+
+  return(variances)
 }
 
 
@@ -485,19 +510,8 @@ estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
   # Calculate proportions in each strata
   #
 
-  # deal with single strata separately, so that we can tolerate that FOtotal is not set for uneq prob sampling
-  propStrata <- data.table(FOid=integer(), stratum=character(), proportionStrata=numeric())
-  if (length(unique(FO$FOstratum))==1){
-    singlestratum <- unique(FO[,c("FOid", "FOstratum")])
-    singlestratum <- data.table(FOid=singlestratum$FOid, stratum=singlestratum$FOstratum, proportionStrata=rep(1, nrow(singlestratum)))
-    propStrata <- rbind(propStrata, singlestratum)
-  }
-  else{
-    countstrata <- aggregate(list(countStrata=FO$FOtotal), by=list(stratum=FO$DOstratum, SAid=FO$SAid), FUN=annotateCountStrata)
-    stratatotal <- aggregate(list(stratatotal=countstrata$countStrata), by=list(FOid=countstrata$FOid), FUN=sum)
-    propstrata <- merge(countstrata, stratatotal, all.x=T)
-    propstrata$proportionStrata <- propstrata$countStrata / propstrata$stratatotal
-  }
+  propStrata <- propStrata <- getPropStrataFO(FO)
+
 
   numAgeFO <- merge(numAgeFO, propStrata[,c("FOid", "stratum", "proportionStrata")], all.x=T)
 
@@ -583,9 +597,19 @@ estimateTotalHH <- function(FO, caaFO, ages=as.character(seq(0,max(as.integer(ca
 
 #' Hansen-Hurwitz estimator for variance of catch at age in numbers
 #' @description Estimates variance of catch at age in numbers from a selection of fishing operations (FO table) that was sampled with unequal probability
+#' @param FO data.table FO table
+#' @param caaHH data.table with estimates of total catch at age, format described in \code{\link[h13estimator]{estimateTotalHH}}
 #' @param caaFO data.table with estimates of catch at age for each fishing operation, format described in \code{\link[h13estimator]{estimateFOCatchAtAge}}
-#' @param varFO data.table with estimates of variance of catch at age for each fishing operation, format described in \code{\link[h13estimator]{assumeFOZeroVar}}
-estimateTotalHHVar <- function(caaFO, varFO){}
+#' @param varFO data.table with estimates of variance of catch at age for each fishing operation, format described in \code{\link[h13estimator]{assumeFOconstantVar}}
+estimateTotalHHVar <- function(FO, caaHH, caaFO, varFO){
+
+  warning("Implement checks on caaFO and varFO consistency")
+  warning("Handle stratification")
+
+  caaFO <- merge(caaFO, FO[,c("FOid", "FOprob")])
+  stop("Fix")
+
+}
 
 #' Estimate total catch at age for the herring lottery
 #' @description Example workflow for estimating from the herring lottery pilot (2018)
@@ -597,7 +621,7 @@ estimateTotalHHVar <- function(caaFO, varFO){}
 #' @noRd
 #' @keywords internal
 herringlottery_workflow <- function(){
-  require(data.table)
+
   data <- herringlottery
   proportionsAtAgeBV <- calculateBVProportions(data$BV, "Age", stratified = F)
   meanWeightsBV <- calculateBVmeans(data$BV, "Weight", stratified = F)
@@ -609,12 +633,13 @@ herringlottery_workflow <- function(){
   haulTotals <- estimateFOCatchAtAge(data$FO, data$SS, data$SA, sampleTotals, stratified=F)
 
   grandTotals <- estimateTotalHH(data$FO, haulTotals)
-  # grand totals
 
-  # between SA variance
+
+  # within FO variance
   # options:
   # - impute resampled
   # - assume zero
+  FOvarZero <- assumeFOconstantVar(haulTotals, 0)
   # - model assisted
 
   #FO variance
