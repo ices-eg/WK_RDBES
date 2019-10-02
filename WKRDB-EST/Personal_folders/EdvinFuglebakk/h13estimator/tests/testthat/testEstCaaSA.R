@@ -14,3 +14,6 @@ caa_w_zeroes <- estimateSAcaa(assumeSelectionMethod(datamock$SA,"SYSS", "SRSWR")
 expect_gt(sum(caa_w_zeroes$numberAtAge==0),0)
 comp <- merge(caa, caa_w_zeroes, by=c("SAid", "age", "stratum"), suffixes = c("pre","post"))
 expect_true(all(comp$numberAtAgepost==comp$numberAtAgepost))
+
+context("estimateSAcaa: check proportionStrata present")
+expect_true(!any(is.na(caa$proportionStrata)))

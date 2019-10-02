@@ -108,9 +108,9 @@ calculateBVmeans <- function(BV, type, contVar="BVvalue", stratified = T){
   means <- aggregate(list(mean=bvtyped[[contVar]]), by=list(stratum=bvtyped$BVstratum, SAid=bvtyped$SAid), FUN=mean)
   selmet <- aggregate(list(BVselectMeth=bvtyped$BVselectMeth), by=list(stratum=bvtyped$BVstratum, SAid=bvtyped$SAid), FUN=annotateSelMet)
   countstrata <- aggregate(list(countStrata=bvtyped$BVtotal), by=list(stratum=bvtyped$BVstratum, SAid=bvtyped$SAid), FUN=annotateCountStrata)
-  countsample <- aggregate(list(countSample=countstrata$countStrata), by=list(SAid=countstrata$SAid), FUN=sum)
-  propstrata <- merge(countstrata, countsample, all.x=T)
-  propstrata$proportionStrata <- propstrata$countStrata / propstrata$countSample
+  stratatotal <- aggregate(list(stratatotal=countstrata$countStrata), by=list(SAid=countstrata$SAid), FUN=sum)
+  propstrata <- merge(countstrata, stratatotal, all.x=T)
+  propstrata$proportionStrata <- propstrata$countStrata / propstrata$stratatotal
 
   units <- aggregate(list(unit=bvtyped$BVunitVal), by=list(stratum=bvtyped$BVstratum, SAid=bvtyped$SAid), FUN=annotateUnit)
   means <- merge(means, selmet, all.x=T)
@@ -172,9 +172,9 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
   totals <- aggregate(list(total=bvtyped[[catVar]]), by=list(stratum=bvtyped$BVstratum, SAid=bvtyped$SAid), FUN=length)
   selmet <- aggregate(list(BVselectMeth=bvtyped$BVselectMeth), by=list(stratum=bvtyped$BVstratum, SAid=bvtyped$SAid), FUN=annotateSelMet)
   countstrata <- aggregate(list(countStrata=bvtyped$BVtotal), by=list(stratum=bvtyped$BVstratum, SAid=bvtyped$SAid), FUN=annotateCountStrata)
-  countsample <- aggregate(list(countSample=countstrata$countStrata), by=list(SAid=countstrata$SAid), FUN=sum)
-  propstrata <- merge(countstrata, countsample, all.x=T)
-  propstrata$proportionStrata <- propstrata$countStrata / propstrata$countSample
+  stratatotal <- aggregate(list(stratatotal=countstrata$countStrata), by=list(SAid=countstrata$SAid), FUN=sum)
+  propstrata <- merge(countstrata, stratatotal, all.x=T)
+  propstrata$proportionStrata <- propstrata$countStrata / propstrata$stratatotal
 
   proportions <- merge(counts, totals, all.x=T)
   proportions <- merge(proportions, selmet, all.x=T)
@@ -196,7 +196,8 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #'
 #'  If calculation is done by strata, encode all stratification in the SA table.
 #'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "sample".
-#'  For samples of zero catch, one strata and age group is provided with number at age reported as 0.
+#'  species is interpreted as a sampling frame paramter, any stratification will be conditioned on sampling for species.
+#'  For samples of zero catch, the strata and one age group is provided with number at age reported as 0.
 #'
 #'  If lower hiearchy estimations (proportionAtAge and meanWeights) were obtained from samples with unsupported selection methods, estimation will not proceed.
 #'  Supported selection methods are: SRSWR, SRSWOR, and CENSUS
@@ -212,10 +213,21 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #' @param meanWeights data.table mean weight of fish calculated from lower hiearchy registrations. (format described in e.g. \code{\link[h13estimator]{calculateBVmeans}})
 #'  Can be NULL if none of the samples are sampled by weight (SAunitType=Kg)
 #' @param stratified logical determines whether calculation should be done by strata.
-#' @return data.table
+#' @return data.table with columns:
+#'
+#'    SAid: the sample the catch at age was estimated from
+#'
+#'    age: the age the catch at age was estimated for
+#'
+#'    numbeAtAge: the estimated number of fish cought at this age
+#'
+#'    stratum: any stratum the catch at age was estimated for
+#'
+#'    selectionMethod: the selectionmethod used for selecting samples. If the selectionMethod is not given or is mixed, this should be NA.
+#'
+#'
 #' @export
 estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL, stratified=T){
-
 
   #
   # checks on lower hiearchy estimates
@@ -271,6 +283,9 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
     stop("Some samples are selected by unsupported selection methods")
   }
 
+  #
+  # Estimation
+  #
 
   SAtarget <- SA[SA$SAsppCode==species,]
 
@@ -336,9 +351,8 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
   #
   zeroes <- SA[!(SA$SAid %in% SAtarget$SAid),] #function halts with error if missing samples (see above)
   if (nrow(zeroes) > 0){
-    somestratum <- numAgeSample$stratum[1]
     someage <- numAgeSample$age[1]
-    zeroes$stratum <- somestratum
+    zeroes$stratum <- zeroes$SAstratum
     zeroes$age <- someage
     zeroes$numberAtAge <- 0
     zeroes <- zeroes[, keepcols, with=F]
@@ -346,22 +360,122 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
     numAgeSample <- rbind(numAgeSample, zeroes)
   }
 
+  #
+  # Estimate proportions in each strata
+  #
+  propStrata <- data.frame(SAid=integer(), stratum=character(), proportionStrata=numeric())
+  if (length(unique(SAtarget$SAstratum))==1){
+    singlestratum <- unique(numAgeSample[,c("SAid", "stratum")])
+    singlestratum$proportionStrata <- 1
+    propStrata <- rbind(propStrata, singlestratum)
+  } else{
+    stop("Estimation for stratified sampling not implemented for SA")
+
+    # Do as for nfish, calculate strata proportions conditioned on SA$SAunitType
+  }
+
+  numAgeSample <- merge(numAgeSample, propStrata)
+
+
+  #
+  # add strata proportions
+  #
+
+  numAgeSample <- merge(numAgeSample, propStrata[,c("SAid", "stratum", "proportionStrata")])
+
+  #
+  # add selection methods
+  #
+  selmet <- aggregate(list(SAselectMeth=SA$SAselectMeth), by=list(stratum=SA$SAstratum, SAid=SA$SAid), FUN=annotateSelMet)
+  numAgeSample <- merge(numAgeSample, selmet)
+
   return(numAgeSample)
 }
 
+#' Estimates catch at age in number for a fishing operation (FO table)
+#' @description Estimates catch at age in number for a fishing operation (FO table) that was sampled directly without intermediate sampling levels
+#' @details
+#'  If calculation is done by strata, encode all stratification in the FO table.
+#'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "fishingoperations".
+#' @param FO data.table FO table
+#' @param SS data.table SS table
+#' @param SA data.table SA table
+#' @param caaSA data.table with estimates for number at age in samples, format described in \code{\link[h13estimator]{estimateSAcaa}}
+#' @param stratified logical determines whether calculation should be done by strata.
+#' @return data.frame
+#' @export
+estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
 
-estimateSAcaaCov <- function(){
- # make based on replicate sampling
+  supportedBVselectMeth <- c(codelist$RS_SelectionMethod$SRSWR, codelist$RS_SelectionMethod$SRSWOR, codelist$RS_SelectionMethod$CENSUS)
+
+  if (!all(caaSA$SAselectMeth %in% supportedBVselectMeth)){
+    stop("Some sample estimates where obtained by unsupported selection methods")
+  }
+
+
+  if (!stratified){
+    FO$FOstratum <- "fishingoperations"
+  }
+  if (stratified & any(FO$FOstratification==codelist$RS_Stratfification$unstratified)){
+    stop("Running stratified calculation, but not all records are stratified")
+  }
+
+  samplesWest <- SA[SA$SAid %in% caaSA$SAid,]
+  samplesWest <- merge(samplesWest, SS[,c("SSid", "FOid")])
+
+  if (!all(FO$FOid %in% samplesWest$FOid)){
+    stop("Not all fishing operations have estimate. Deal with missing.")
+  }
+
+
+  #
+  # Estimate
+  #
+
+  caaSA <- merge(caaSA, samplesWest[,c("SAid", "FOid")], all.x=T)
+  meanCaa <- aggregate(list(meanNumberAtAge=caaSA$numberAtAge), by=list(FOid=caaSA$FOid, stratum=caaSA$stratum), FUN=mean) #mean within strata
+  meanCaa <- merge(meanCaa, caaSA[,c("FOid", "stratum", "proportionStrata")], all.x=T)
+  meanCaa$wmean <- meanCaa$meanNumberAtAge * meanCaa$proportionStrata
+  numAgeFO <- aggregate(list(numberAtAge=meanCaa$wmean), by=list(FOid=meanCaa$FOid), FUN=sum) #strata weighted sum across strata
+
+  #
+  # Calculate proportions in each strata
+  #
+
+  # deal with single strata separately, so that we can tolerate that FOtotal is not set for uneq prob sampling
+  propStrata <- data.frame(SAid=integer(), stratum=character(), proportionStrata=numeric())
+  if (length(unique(FO$FOstratum))==1){
+    singlestratum <- unique(FO[,c("FOid", "FOstratum")])
+    names(singlestratum) <- c("FOid", "stratum")
+    singlestratum$proportionStrata <- 1
+    propStrata <- rbind(propStrata, as.data.frame(singlestratum))
+  }
+  else{
+    countstrata <- aggregate(list(countStrata=FO$FOtotal), by=list(stratum=FO$DOstratum, SAid=FO$SAid), FUN=annotateCountStrata)
+    stratatotal <- aggregate(list(stratatotal=countstrata$countStrata), by=list(FOid=countstrata$FOid), FUN=sum)
+    propstrata <- merge(countstrata, stratatotal, all.x=T)
+    propstrata$proportionStrata <- propstrata$countStrata / propstrata$stratatotal
+  }
+
+  numAgeFO <- merge(numAgeFO, propStrata[,c("FOid", "stratum", "proportionStrata")], all.x=T)
+
+  #
+  # add selection methods
+  #
+
+  selmet <- aggregate(list(FOselectMeth=FO$FOselectMeth), by=list(stratum=FO$FOstratum, FOid=FO$FOid), FUN=annotateSelMet)
+  numAgeFO <- merge(numAgeFO, selmet)
+
+
+  return(numAgeFO)
 }
-
-# introduce bootstrap for single sample
 
 
 #' Estimate total catch at age for the herring lottery
 #' @description Example workflow for estimating from the herring lottery pilot (2018)
 #' @details Assumptions made:
 #'
-#'  - Assumes systematic sampling of small fraction of catch as simple random with replacement
+#'  - Assumes systematic sampling of typically small fraction of catch as simple random with replacement
 #'
 #' @noRd
 #' @keywords internal
@@ -373,5 +487,21 @@ herringlottery_workflow <- function(){
   data$SA <- assumeSelectionMethod(data$SA, "SYSS", "SRSWR")
   sampleTotals <- estimateSAcaa(data$SA, data$SS, data$SL, "126417", proportionsAtAgeBV, meanWeightsBV, stratified = F)
 
-  return(sampleTotals)
+  haulTotals <- estimateFOCatchAtAge(data$FO, data$SS, data$SA, sampleTotals, stratified=F)
+  #FO totals
+
+  # grand totals
+
+  # between SA variance
+  # options:
+  # - impute resampled
+  # - assume zero
+  # - model assisted
+
+  #FO variance
+
+  #grand total variance
+
+
+  return(haulTotals)
 }
