@@ -33,13 +33,21 @@ annotateCountStrata <- function(BVtotal){
   return(annotateOne(BVtotal, "BVtotal differ within strata"))
 }
 
+
+#
+#
+# Functions for coding assumptions.
+# These allow separation of assumptions from more rigorous implementations
+#
+#
+
 #' Recode data table selection methods
 #' @description
 #' Recodes data table to reflect assumptions about selection methods.
 #' For instance SRSWR can be justified for SRSWOR when the sampled fraction is small.
-#' @param datatable datatable of the RDBES data model, eg. SA or BV.
-#' @param actual The selection method that assumptions are to be applied for
-#' @param assumed The selection methods that is assumped
+#' @param datatable data.table table in the RDBES data model, eg. SA or BV.
+#' @param actual character() The selection method that assumptions are to be applied for
+#' @param assumed character() The selection methods that is assumped
 #' @export
 assumeSelectionMethod <- function(datatable, actual, assumed){
 
@@ -57,30 +65,52 @@ assumeSelectionMethod <- function(datatable, actual, assumed){
   return(datatable)
 }
 
+#' Assign zero variance to fishing operations
+#' @description Assigns a variance of zero to each fishing operation.
+#' The purpose of the function is to make assumption explicit when design does not allow for design based estimation of variance of some statistic.
+#' @details
+#'  If output is grouped in strata, encode all stratification in the BV table.
+#'  If output is not grouped in strata, it will be treated as single stratum calculation for a stratum called "sample"
+#' @param FO data.table FO table
+#' @param statname character() used for naming in output
+#' @param stratified logical() determines whether output should be grouped in strata
+#' @return data.table with columns
+#'  \item{FOid}{identifies the fishing operation}
+#'  \item{stratum}{{any stratum the variance should be assumed for}}
+#'  \item{<statname>Var}{Represents the variance of statistic (assumed zero)}
+assumeFOZeroVar <- function(FO, statname, stratified=T){
+
+}
+
+
+
+#
+#
+# Lower hiearchy calculations
+#
+#
+
+
+
 #' Calculate mean for BV table
 #' @description
 #'  Calculate mean value over sampled fish for some continous variable
 #' @details
-#'  If calculation is done by strata, encode all stratification in the BV table.
-#'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "sample"
+#'  If output is grouped in strata, encode all stratification in the BV table.
+#'  If output is not grouped in strata, it will be treated as single stratum calculation for a stratum called "measurements"
 #'
-#' @param BV a BV table
-#' @param BVtype identifies the BVtype records to include in calculation
-#' @param contVar name of continous variable in BV
-#' @param stratified logical determines wheter calculation should be done by strata.
+#' @param BV data.tabke BV table
+#' @param BVtype charcter() identifies the BVtype records to include in calculation
+#' @param contVar charcter() name of continous variable in BV
+#' @param stratified logical() determines wheter output should be grouped in straa.
 #' @return data.table with means, columns:
 #'
-#'    stratum: stratification in the lower hiearchy
-#'
-#'    SAid: the sample the lower hiearchy registrations were recorded for
-#'
-#'    mean: the mean value calculated (mean weight of fish, mean length, etc.)
-#'
-#'    unit: the unit for the mean value (mean weight of fish, mean length, etc.)
-#'
-#'    proportionStrata: the proportion of the sampled fish in each strata from any stratification done during measurment (lower hiearchies)
-#'
-#'    selectionMethod: the selectionmethod used for selecting fish to measure the contVar If the selectionMethod is not gived or is mixed, this should be NA.
+#'    \item{stratum}{stratification in the lower hiearchy}
+#'    \item{SAid}{the sample the lower hiearchy registrations were recorded for}
+#'    \item{mean}{the mean value calculated (mean weight of fish, mean length, etc.)}
+#'    \item{unit}{the unit for the mean value (mean weight of fish, mean length, etc.)}
+#'    \item{proportionStrata}{the proportion of the sampled fish in each strata from any stratification done during measurment (lower hiearchies)}
+#'    \item{selectionMethod}{the selectionmethod used for selecting fish to measure the contVar If the selectionMethod is not gived or is mixed, this should be NA.}
 #'
 #' @export
 calculateBVmeans <- function(BV, type, contVar="BVvalue", stratified = T){
@@ -96,7 +126,7 @@ calculateBVmeans <- function(BV, type, contVar="BVvalue", stratified = T){
   bvtyped[[contVar]] <- as.numeric(bvtyped[[contVar]])
 
   if (!stratified){
-    bvtyped$BVstratum <- "sample"
+    bvtyped$BVstratum <- "measurements"
   }
 
   if (stratified & any(bvtyped$BVstratification==codelist$RS_Stratfification$unstratified)){
@@ -128,26 +158,21 @@ calculateBVmeans <- function(BV, type, contVar="BVvalue", stratified = T){
 #'  Calculates proportions of fish in a sample, by some categorical variable.
 #'  Proportion is an observation of the sample, so variance is not defined.
 #' @details
-#'  If calculation is done by strata, encode all stratification in the BV table.
-#'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "sample"
+#'  If output is grouped in strata, encode all stratification in the BV table.
+#'  If output is not grouped in strata, it will be treated as single stratum calculation for a stratum called "measurements"
 #'
 #' @param BV a BV table
-#' @param BVtype identifies the BVtype records to include in calculation
-#' @param catVar name of categorical variable in BV.
-#' @param stratified logical determines wheter calculation should be done by strata.
+#' @param BVtype character() identifies the BVtype records to include in calculation
+#' @param catVar character() name of categorical variable in BV.
+#' @param stratified logical() determines wheter output should be grouped in strata.
 #' @return data.table with columns:
 #'
-#'    stratum: stratification in the lower hiearchy
-#'
-#'    SAid: the sample the lower hiearchy registrations were recorded for
-#'
-#'    group: the levels/values for the categorical variable proprotions are obtained (catVar) for (e.g. different ages, different length groups)
-#'
-#'    proportion: the proportion calculated (proportion of fish in age a, or length group l, etc.)
-#'
-#'    proportionStrata: the proportion of the sampled fish in each strata from any stratification done during measurment (lower hiearchies)
-#'
-#'    selectionMethod: the selectionmethod used for selecting fish to measure the catVar. If the selectionMethod is not gived or is mixed, this should be NA.
+#'    \item{stratum}{stratification in the lower hiearchy}
+#'    \item{SAid}{the sample the lower hiearchy registrations were recorded for}
+#'    \item{group}{the levels/values for the categorical variable proprotions are obtained (catVar) for (e.g. different ages, different length groups)}
+#'    \item{proportion}{the proportion calculated (proportion of fish in age a, or length group l, etc.)}
+#'    \item{proportionStrata}{the proportion of the sampled fish in each strata from any stratification done during measurment (lower hiearchies)}
+#'    \item{selectionMethod}{the selectionmethod used for selecting fish to measure the catVar. If the selectionMethod is not gived or is mixed, this should be NA.}
 #'
 #' @export
 calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
@@ -159,7 +184,7 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
   }
 
   if (!stratified){
-    bvtyped$BVstratum <- "sample"
+    bvtyped$BVstratum <- "measurements"
   }
 
   if (stratified & any(bvtyped$BVstratification==codelist$RS_Stratfification$unstratified)){
@@ -188,16 +213,16 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 
 #' Estimate catch at age in numbers for SA table
 #' @description
+#'  Estimate catch at age in numbers for the sampling unit that the ultimate sample was taken from
 #'  Estimation follows estimator for Herring lottery proposed by Vølstad and Christman,
-#'  but attempted generalised so that age sampling can be done by other stratification variables than length
+#'  but attempted generalised so that age sampling can be done by other stratification variables than length.
+#'
+#' @details
 #'  Vølstad and Christman suggests estimating the total number of fish in haul via mean weight from a regression of weight on length,
 #'  here mean weight is estimated as a weighted sum of strata means (e.g. lengthgroup means).
 #'
-#'  Estimate catch at age in numbers for the sampling unit that the ultimate sample was taken from
-#' @details
-#'
-#'  If calculation is done by strata, encode all stratification in the SA table.
-#'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "sample".
+#'  If output is grouped in strata, encode all stratification in the BV table.
+#'  If output is not grouped in strata, it will be treated as single stratum calculation for a stratum called "sample"
 #'  species is interpreted as a sampling frame paramter, any stratification will be conditioned on sampling for species.
 #'  For samples of zero catch, the strata and one age group is provided with number at age reported as 0.
 #'
@@ -210,23 +235,18 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #' @param SA data.table SA table
 #' @param SS data.table SS table
 #' @param SL data.table SL table
-#' @param species character aphia code for species to estimate for
+#' @param species character() aphia code for species to estimate for
 #' @param proportionAtAge data.table proportions in each age group calculated from lower hiearchy registrations (format described in e.g. \code{\link[h13estimator]{calculateBVProportions}})
 #' @param meanWeights data.table mean weight of fish calculated from lower hiearchy registrations. (format described in e.g. \code{\link[h13estimator]{calculateBVmeans}})
 #'  Can be NULL if none of the samples are sampled by weight (SAunitType=Kg)
-#' @param stratified logical determines whether calculation should be done by strata.
+#' @param stratified logical() determines whether output should be grouped in strata.
 #' @return data.table with columns:
 #'
-#'    SAid: the sample the catch at age was estimated from
-#'
-#'    age: the age the catch at age was estimated for
-#'
-#'    numbeAtAge: the estimated number of fish cought at this age
-#'
-#'    stratum: any stratum the catch at age was estimated for
-#'
-#'    selectionMethod: the selectionmethod used for selecting samples. If the selectionMethod is not given or is mixed, this should be NA.
-#'
+#'    \item{SAid}{the sample the catch at age was estimated from}
+#'    \item{age}{the age the catch at age was estimated for}
+#'    \item{numbeAtAge}{the estimated number of fish cought at this age}
+#'    \item{stratum}{any stratum the catch at age was estimated for}
+#'    \item{selectionMethod}{the selectionmethod used for selecting samples. If the selectionMethod is not given or is mixed, this should be NA.}
 #'
 #' @export
 estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL, stratified=T){
@@ -300,7 +320,7 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
     stop(paste("Not all samping unit types supported (SAunitType). Currently suppports:", supportedUnitTypes))
   }
 
-  nfish <- data.frame(SAid=integer(), nfish=integer())
+  nfish <- data.table(SAid=integer(), nfish=integer())
 
   # handle sampling by weight
   if (any(SAtarget$SAunitType==codelist$RS_UnitType$kg)){
@@ -343,10 +363,10 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
   sastrata <- SAtarget[,c("SAid", "SAstratum")]
   names(sastrata) <- c("SAid", "stratum")
 
-  numAgeSample <- as.data.frame(merge(numAgeSample, sastrata, all.x=T))
+  numAgeSample <- as.data.table(merge(numAgeSample, sastrata, all.x=T))
 
   keepcols <- c("SAid", "age", "numberAtAge", "stratum")
-  numAgeSample <- numAgeSample[, keepcols]
+  numAgeSample <- numAgeSample[, keepcols, with=F]
 
   #
   # add zeroes
@@ -365,7 +385,7 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
   #
   # Estimate proportions in each strata
   #
-  propStrata <- data.frame(SAid=integer(), stratum=character(), proportionStrata=numeric())
+  propStrata <- data.table(SAid=integer(), stratum=character(), proportionStrata=numeric())
   if (length(unique(SAtarget$SAstratum))==1){
     singlestratum <- unique(numAgeSample[,c("SAid", "stratum")])
     singlestratum$proportionStrata <- 1
@@ -375,8 +395,6 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
 
     # Do as for nfish, calculate strata proportions conditioned on SA$SAunitType
   }
-
-  numAgeSample <- merge(numAgeSample, propStrata)
 
 
   #
@@ -394,35 +412,46 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
   return(numAgeSample)
 }
 
+
+
+
+#
+#
+# Sampling hiearchy point estimators
+#
+#
+
+
+
+
+
 #' Estimates catch at age in number for a fishing operation (FO table)
 #' @description Estimates catch at age in number for a fishing operation (FO table) that was sampled directly without intermediate sampling levels
 #' @details
-#'  If calculation is done by strata, encode all stratification in the FO table.
-#'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "fishingoperations".
+#'  If output is grouped in strata, encode all stratification in the BV table.
+#'  If output is not grouped in strata, it will be treated as single stratum calculation for a stratum called "fishingoperations"
+#'
+#'  If samples (caaSA) where selected by unsupported selection methods, estimation will not procedd.
+#'  Supported selection methods are: SRSWR, SRSWOR, and CENSUS
 #' @param FO data.table FO table
 #' @param SS data.table SS table
 #' @param SA data.table SA table
 #' @param caaSA data.table with estimates for number at age in samples, format described in \code{\link[h13estimator]{estimateSAcaa}}
-#' @param stratified logical determines whether calculation should be done by strata.
-#' @return data.frame with columns
+#' @param stratified logical() determines whether output should be grouped in strata.
+#' @return data.table with columns
 #'
-#'  FOid: identifies the fishing operation estimate was made for
-#'
-#'  stratum: any stratum the catch at age was estimated for
-#'
-#'  age: the age the catch in numbers was estimated for
-#'
-#'  numberAtAge: the estimated number of fish at the given age in the given stratum
-#'
-#'  FOselectMeth: the selectionmethod used for selecting fishingoperations. If the selectionMethod is not given or is mixed, this should be NA.
-#'
+#'  \item{FOid}{identifies the fishing operation estimate was made for}
+#'  \item{stratum}{any stratum the catch at age was estimated for}
+#'  \item{age}{the age the catch in numbers was estimated for}
+#'  \item{numberAtAge}{the estimated number of fish at the given age in the given stratum}
+#'  \item{FOselectMeth}{the selectionmethod used for selecting fishingoperations. If the selectionMethod is not given or is mixed, this should be NA.}
 #'
 #' @export
 estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
 
-  supportedBVselectMeth <- c(codelist$RS_SelectionMethod$SRSWR, codelist$RS_SelectionMethod$SRSWOR, codelist$RS_SelectionMethod$CENSUS)
+  supportedSAselectMeth <- c(codelist$RS_SelectionMethod$SRSWR, codelist$RS_SelectionMethod$SRSWOR, codelist$RS_SelectionMethod$CENSUS)
 
-  if (!all(caaSA$SAselectMeth %in% supportedBVselectMeth)){
+  if (!all(caaSA$SAselectMeth %in% supportedSAselectMeth)){
     stop("Some sample estimates where obtained by unsupported selection methods")
   }
 
@@ -446,7 +475,7 @@ estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
   # Estimate
   #
 
-  caaSA <- merge(caaSA, samplesWest[,c("SAid", "FOid")], all.x=T)
+  caaSA <- merge(caaSA, samplesWest[,c("SAid", "FOid")], by="SAid", all.x=T)
   meanCaa <- aggregate(list(meanNumberAtAge=caaSA$numberAtAge), by=list(FOid=caaSA$FOid, stratum=caaSA$stratum, age=caaSA$age), FUN=mean) #mean within strata
   meanCaa <- merge(meanCaa, caaSA[,c("FOid", "stratum", "proportionStrata")], all.x=T)
   meanCaa$wmean <- meanCaa$meanNumberAtAge * meanCaa$proportionStrata
@@ -457,12 +486,11 @@ estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
   #
 
   # deal with single strata separately, so that we can tolerate that FOtotal is not set for uneq prob sampling
-  propStrata <- data.frame(SAid=integer(), stratum=character(), proportionStrata=numeric())
+  propStrata <- data.table(FOid=integer(), stratum=character(), proportionStrata=numeric())
   if (length(unique(FO$FOstratum))==1){
     singlestratum <- unique(FO[,c("FOid", "FOstratum")])
-    names(singlestratum) <- c("FOid", "stratum")
-    singlestratum$proportionStrata <- 1
-    propStrata <- rbind(propStrata, as.data.frame(singlestratum))
+    singlestratum <- data.table(FOid=singlestratum$FOid, stratum=singlestratum$FOstratum, proportionStrata=rep(1, nrow(singlestratum)))
+    propStrata <- rbind(propStrata, singlestratum)
   }
   else{
     countstrata <- aggregate(list(countStrata=FO$FOtotal), by=list(stratum=FO$DOstratum, SAid=FO$SAid), FUN=annotateCountStrata)
@@ -486,8 +514,17 @@ estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
 
 #' Hansen-Hurwitz estimator for catch at age in numbers
 #' @description Estimates catch at age in numbers from a selection of fishing operations (FO table) that was sampled with unequal probability
-#' @param caaFO data.frame with estimates of catch at age for each fishing operation, format described in \code{\link[h13estimator]{estimateFOCatchAtAge}}
-#' @param ages vecotr of ages to estimate for
+#' @details
+#'  If fishingoperations (caaFO) were selected by unsupported selection methods, estimation will not procedd.
+#'  Supported selection methods are: UPSWR
+#' @param FO data.table FO table
+#' @param caaFO data.table with estimates of catch at age for each fishing operation, format described in \code{\link[h13estimator]{estimateFOCatchAtAge}}
+#' @param ages character() vector of ages to estimate for
+#' @return data.table with columns
+#'
+#'  \item{age}{age for which catch at age was estimated}
+#'  \item{numberAtAge}{The estimated number of fish at age.}
+#'
 estimateTotalHH <- function(FO, caaFO, ages=as.character(seq(0,max(as.integer(caaFO$age))))){
 
   supportedFOselectMeth <- c(codelist$RS_SelectionMethod$UPSWR)
@@ -532,6 +569,23 @@ estimateTotalHH <- function(FO, caaFO, ages=as.character(seq(0,max(as.integer(ca
   return(result_total)
 
 }
+
+
+#
+#
+# Sampling hiearchy variance estimators
+#
+#
+
+
+
+
+
+#' Hansen-Hurwitz estimator for variance of catch at age in numbers
+#' @description Estimates variance of catch at age in numbers from a selection of fishing operations (FO table) that was sampled with unequal probability
+#' @param caaFO data.table with estimates of catch at age for each fishing operation, format described in \code{\link[h13estimator]{estimateFOCatchAtAge}}
+#' @param varFO data.table with estimates of variance of catch at age for each fishing operation, format described in \code{\link[h13estimator]{assumeFOZeroVar}}
+estimateTotalHHVar <- function(caaFO, varFO){}
 
 #' Estimate total catch at age for the herring lottery
 #' @description Example workflow for estimating from the herring lottery pilot (2018)
