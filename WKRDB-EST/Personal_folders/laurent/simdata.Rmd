@@ -416,6 +416,8 @@ SD<-data.frame(SDid=1,
 	       SDinst="Fishery Agency")
 
 
-simH1<-list(DE,SD,VS,FT,FO,SS,SA,FM)
+simH1<-list(DE=data.frame(DE),SD=data.frame(SD),VS=data.frame(VS),
+	    FT=data.frame(FT),FO=data.frame(FO),SS=data.frame(SS),
+	    SA=data.frame(SA),FM=data.frame(FM))
 saveRDS(simH1,file="./data/simH1.rds")
 ```
