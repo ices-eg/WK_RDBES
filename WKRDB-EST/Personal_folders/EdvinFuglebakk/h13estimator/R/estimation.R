@@ -195,7 +195,8 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #' @details
 #'
 #'  If calculation is done by strata, encode all stratification in the SA table.
-#'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "sample"
+#'  If calculations are not by strata, it will be treated as single stratum calculation for a stratum called "sample".
+#'  For samples of zero catch, one strata and age group is provided with number at age reported as 0.
 #'
 #'  If lower hiearchy estimations (proportionAtAge and meanWeights) were obtained from samples with unsupported selection methods, estimation will not proceed.
 #'  Supported selection methods are: SRSWR, SRSWOR, and CENSUS
@@ -237,6 +238,13 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
     stop("Estimation with sampling of species list not implemented")
   }
 
+  sass <- merge(SA[,c("SAid", "SSid")], SS[,c("SSid", "SLid")])
+  sasssl <- merge(sass, SL[,c("SLid", "SLsppCode")], by="SLid")
+  sasssl_species <- sasssl[sasssl$SLsppCode==species,]
+  if (!all(SA$SAid %in% sasssl_species$SAid)){
+    stop("Species was not targeted for sampling in all samples. Deal with missing samples.")
+  }
+
   #
   # checks on SA table configuration
   #
@@ -264,38 +272,41 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
   }
 
 
+  SAtarget <- SA[SA$SAsppCode==species,]
+
   #
   # Estimate total number of fish in sampling unit SA was taken from (e.g. Fishing Operation)
   #
 
   supportedUnitTypes <- c(codelist$RS_UnitType$kg, codelist$RS_UnitType$number)
-  if (!all(SA$SAunitType %in% supportedUnitTypes)){
+  if (!all(SAtarget$SAunitType %in% supportedUnitTypes)){
     stop(paste("Not all samping unit types supported (SAunitType). Currently suppports:", supportedUnitTypes))
   }
 
   nfish <- data.frame(SAid=integer(), nfish=integer())
 
   # handle sampling by weight
-  if (any(SA$SAunitType==codelist$RS_UnitType$kg)){
+  if (any(SAtarget$SAunitType==codelist$RS_UnitType$kg)){
     if (is.null(meanWeights)){
       stop(paste("Need meanWeights to estimate total number of fish in samples sampled by weight (SAunitType=", codelist$RS_UnitType$kg, ")", sep=""))
     }
+    meanWeights <- meanWeights[meanWeights$SAid %in% SAtarget$SAid,]
     if (any(meanWeights$unit!=codelist$RS_UnitOfValue$g)){
       stop("Units of mean weights must match that of total weight (SAtotalWtLive)")
     }
 
     meanWeights$wmean <- meanWeights$mean * meanWeights$proportionStrata
     meanWeightsSample <- aggregate(list(mean=meanWeights$wmean), by=list(SAid=meanWeights$SAid), FUN=sum)
-    meanWeightsSample$nfish <- floor((1/meanWeightsSample$mean) * SA$SAtotalWtLive)
+    meanWeightsSample$nfish <- floor((1/meanWeightsSample$mean) * SAtarget$SAtotalWtLive)
 
-    nfish <- rbind(nfish, meanWeightsSample[meanWeightsSample$SAid %in% SA[SA$SAunitType==codelist$RS_UnitType$kg,][["SAid"]],c("SAid", "nfish")])
+    nfish <- rbind(nfish, meanWeightsSample[meanWeightsSample$SAid %in% SAtarget[SAtarget$SAunitType==codelist$RS_UnitType$kg,][["SAid"]],c("SAid", "nfish")])
   }
 
   # handle sampling by number
-  if (any(SA$SAunitType==codelist$RS_UnitType$number)){
-    nfish <- rbind(nfish, SA[SA$SAunitType==codelist$RS_UnitType$number, c("SAid", "SAtotal")])
+  if (any(SAtarget$SAunitType==codelist$RS_UnitType$number)){
+    nfish <- rbind(nfish, SAtarget[SAtarget$SAunitType==codelist$RS_UnitType$number, c("SAid", "SAtotal")])
   }
-  if (nrow(nfish) != nrow(SA)){
+  if (nrow(nfish) != nrow(SAtarget)){
     stop("Could not estimate number of fish for all SAid")
   }
 
@@ -304,18 +315,38 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
   # Estimate proportion at age across strata
   #
 
+  proportionAtAge <- proportionAtAge[proportionAtAge$SAid %in% SAtarget$SAid,]
+
   proportionAtAge$wprop <- proportionAtAge$proportion * proportionAtAge$proportionStrata
   propAgeSample <- aggregate(list(proportion=proportionAtAge$wprop), by=list(SAid=proportionAtAge$SAid, age=proportionAtAge$group), FUN=sum)
 
   numAgeSample <- merge(propAgeSample, nfish, all.x=T)
   numAgeSample$numberAtAge <- numAgeSample$proportion * numAgeSample$nfish
 
-  sastrata <- SA[,c("SAid", "SAstratum")]
+  sastrata <- SAtarget[,c("SAid", "SAstratum")]
   names(sastrata) <- c("SAid", "stratum")
 
-  numAgeSample <- merge(numAgeSample, sastrata, all.x=T)
+  numAgeSample <- as.data.frame(merge(numAgeSample, sastrata, all.x=T))
 
-  return(numAgeSample[,c("SAid", "age", "numberAtAge", "stratum")])
+  keepcols <- c("SAid", "age", "numberAtAge", "stratum")
+  numAgeSample <- numAgeSample[, keepcols]
+
+  #
+  # add zeroes
+  #
+  zeroes <- SA[!(SA$SAid %in% SAtarget$SAid),] #function halts with error if missing samples (see above)
+  if (nrow(zeroes) > 0){
+    somestratum <- numAgeSample$stratum[1]
+    someage <- numAgeSample$age[1]
+    zeroes$stratum <- somestratum
+    zeroes$age <- someage
+    zeroes$numberAtAge <- 0
+    zeroes <- zeroes[, keepcols, with=F]
+
+    numAgeSample <- rbind(numAgeSample, zeroes)
+  }
+
+  return(numAgeSample)
 }
 
 
@@ -324,3 +355,23 @@ estimateSAcaaCov <- function(){
 }
 
 # introduce bootstrap for single sample
+
+
+#' Estimate total catch at age for the herring lottery
+#' @description Example workflow for estimating from the herring lottery pilot (2018)
+#' @details Assumptions made:
+#'
+#'  - Assumes systematic sampling of small fraction of catch as simple random with replacement
+#'
+#' @noRd
+#' @keywords internal
+herringlottery_workflow <- function(){
+  data <- herringlottery
+  proportionsAtAgeBV <- calculateBVProportions(data$BV, "Age", stratified = F)
+  meanWeightsBV <- calculateBVmeans(data$BV, "Weight", stratified = F)
+
+  data$SA <- assumeSelectionMethod(data$SA, "SYSS", "SRSWR")
+  sampleTotals <- estimateSAcaa(data$SA, data$SS, data$SL, "126417", proportionsAtAgeBV, meanWeightsBV, stratified = F)
+
+  return(sampleTotals)
+}
