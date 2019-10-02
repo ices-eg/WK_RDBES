@@ -40,3 +40,6 @@ expect_gt(nrow(data$BV[data$BV$BVtype=="Length",]), 0)
 ages <- data$BV[data$BV$BVtype=="Age",]
 expect_true(any(!is.na(ages$BVvalue)))
 expect_true(all(data$FO$FOselectMeth=="SRSWR"))
+
+context("parseRDBESexchange: SS SL relation")
+expect_true(all(data$SS$SSid == data$SL$SLid ))

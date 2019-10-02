@@ -331,11 +331,11 @@ parseRDBESexchange <- function(filename, verbose=F){
       datalist <- parseFO(linevec, datalist, lastid$FO, SDid = lastid$SD, verbose=verbose)
     }
     else if (linevec[[1]]=="SL"){
-      lastid$SL <- lastid$SL+1
       datalist <- parseSL(linevec, datalist, lastid$SL, FOid = lastid$FO)
     }
     else if (linevec[[1]]=="SS"){
       lastid$SS <- lastid$SS+1
+      lastid$SL <- lastid$SL+1 # SL comes after SS in exhange format
       datalist <- parseSS(linevec, datalist, lastid$SS, lastid$SL, FOid=lastid$FO)
     }
     else if (linevec[[1]]=="SA"){
