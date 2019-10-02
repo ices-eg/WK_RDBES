@@ -47,6 +47,8 @@ assumeSelectionMethod <- function(datatable, actual, assumed){
     datatable[datatable$SAselectMeth == actual, "SAselectMeth"] <- assumed
   } else if ("BVrecType" %in% names(datatable)){
     datatable[datatable$BVselectMeth == actual, "BVselectMeth"] <- assumed
+  } else if ("FOrecType" %in% names(datatable)){
+    datatable[datatable$FOselectMeth == actual, "FOselectMeth"] <- assumed
   }
   else{
     stop("Table not supported")
@@ -402,7 +404,19 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
 #' @param SA data.table SA table
 #' @param caaSA data.table with estimates for number at age in samples, format described in \code{\link[h13estimator]{estimateSAcaa}}
 #' @param stratified logical determines whether calculation should be done by strata.
-#' @return data.frame
+#' @return data.frame with columns
+#'
+#'  FOid: identifies the fishing operation estimate was made for
+#'
+#'  stratum: any stratum the catch at age was estimated for
+#'
+#'  age: the age the catch in numbers was estimated for
+#'
+#'  numberAtAge: the estimated number of fish at the given age in the given stratum
+#'
+#'  FOselectMeth: the selectionmethod used for selecting fishingoperations. If the selectionMethod is not given or is mixed, this should be NA.
+#'
+#'
 #' @export
 estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
 
@@ -433,10 +447,10 @@ estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
   #
 
   caaSA <- merge(caaSA, samplesWest[,c("SAid", "FOid")], all.x=T)
-  meanCaa <- aggregate(list(meanNumberAtAge=caaSA$numberAtAge), by=list(FOid=caaSA$FOid, stratum=caaSA$stratum), FUN=mean) #mean within strata
+  meanCaa <- aggregate(list(meanNumberAtAge=caaSA$numberAtAge), by=list(FOid=caaSA$FOid, stratum=caaSA$stratum, age=caaSA$age), FUN=mean) #mean within strata
   meanCaa <- merge(meanCaa, caaSA[,c("FOid", "stratum", "proportionStrata")], all.x=T)
   meanCaa$wmean <- meanCaa$meanNumberAtAge * meanCaa$proportionStrata
-  numAgeFO <- aggregate(list(numberAtAge=meanCaa$wmean), by=list(FOid=meanCaa$FOid), FUN=sum) #strata weighted sum across strata
+  numAgeFO <- aggregate(list(numberAtAge=meanCaa$wmean), by=list(FOid=meanCaa$FOid, age=meanCaa$age), FUN=sum) #strata weighted sum across strata
 
   #
   # Calculate proportions in each strata
@@ -470,16 +484,66 @@ estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
   return(numAgeFO)
 }
 
+#' Hansen-Hurwitz estimator for catch at age in numbers
+#' @description Estimates catch at age in numbers from a selection of fishing operations (FO table) that was sampled with unequal probability
+#' @param caaFO data.frame with estimates of catch at age for each fishing operation, format described in \code{\link[h13estimator]{estimateFOCatchAtAge}}
+#' @param ages vecotr of ages to estimate for
+estimateTotalHH <- function(FO, caaFO, ages=as.character(seq(0,max(as.integer(caaFO$age))))){
+
+  supportedFOselectMeth <- c(codelist$RS_SelectionMethod$UPSWR)
+
+  if (!all(caaFO$FOselectMeth %in% supportedFOselectMeth)){
+    stop("Some sample estimates where obtained by unsupported selection methods")
+  }
+
+  #
+  # caaFO contains estimates for only the age groups present
+  # collate here for all age groups
+  #
+  caaFO <- merge(caaFO, FO[,c("FOid", "FOprob")], all.x=T)
+  allages <- data.table(age=as.integer(rep(ages, length(unique(caaFO$FOid)))), FOid=sort(rep(unique(caaFO$FOid), length(ages))))
+  setorder(allages, FOid, age)
+  allages$age <- as.character(allages$age)
+  allages <- merge(allages, unique(caaFO[,c("FOid", "stratum", "proportionStrata", "FOprob")]), all.x=T)
+  allages <- merge(allages, unique(caaFO[,c("FOid", "age", "numberAtAge")]), by=c("FOid", "age"), all.x=T)
+
+  #
+  # age groups not sampled are estimated to be zero in haul
+  #
+  allages[is.na(allages$numberAtAge),"numberAtAge"] <- 0
+
+  #
+  # estimate pr strata
+  #
+  allages$wNumberAtAge <- allages$numberAtAge / allages$FOprob
+  result_by_strata <- as.data.table(aggregate(list(numberAtAge=allages$wNumberAtAge), by=list(stratum=allages$stratum, age=allages$age), FUN=mean))
+  result_by_strata$age <- as.integer(result_by_strata$age)
+  setorder(result_by_strata, stratum, age)
+  result_by_strata$age <- as.character(result_by_strata$age)
+
+  #
+  # estimate across strata
+  #
+  result_total <- as.data.table(aggregate(list(NumberAtAge=result_by_strata$numberAtAge), by=list(age=result_by_strata$age), FUN=sum))
+  result_total$age <- as.integer(result_total$age)
+  setorder(result_total, age)
+  result_total$age <- as.character(result_total$age)
+
+  return(result_total)
+
+}
 
 #' Estimate total catch at age for the herring lottery
 #' @description Example workflow for estimating from the herring lottery pilot (2018)
 #' @details Assumptions made:
 #'
 #'  - Assumes systematic sampling of typically small fraction of catch as simple random with replacement
+#'  - Assumes unequal probability sampling without replacement of typically small fraction of hauls is unequal probability sampling with replacement
 #'
 #' @noRd
 #' @keywords internal
 herringlottery_workflow <- function(){
+  require(data.table)
   data <- herringlottery
   proportionsAtAgeBV <- calculateBVProportions(data$BV, "Age", stratified = F)
   meanWeightsBV <- calculateBVmeans(data$BV, "Weight", stratified = F)
@@ -487,9 +551,10 @@ herringlottery_workflow <- function(){
   data$SA <- assumeSelectionMethod(data$SA, "SYSS", "SRSWR")
   sampleTotals <- estimateSAcaa(data$SA, data$SS, data$SL, "126417", proportionsAtAgeBV, meanWeightsBV, stratified = F)
 
+  data$FO <- assumeSelectionMethod(data$FO, "UPSWOR", "UPSWR")
   haulTotals <- estimateFOCatchAtAge(data$FO, data$SS, data$SA, sampleTotals, stratified=F)
-  #FO totals
 
+  grandTotals <- estimateTotalHH(data$FO, haulTotals)
   # grand totals
 
   # between SA variance
@@ -503,5 +568,5 @@ herringlottery_workflow <- function(){
   #grand total variance
 
 
-  return(haulTotals)
+  return(grandTotals)
 }
