@@ -11,7 +11,6 @@
 #'
 #' @examples
 #' 
-
 generic_su_object_upper_hie <- function(input_list = H1_upper, hierachy = 1) {
   
   library(dplyr)
