@@ -1,0 +1,925 @@
+---
+title: "Sampling strategies for age composition in commercial sampling and its effects on age distribution estimates: a simulation tool"
+author: "Laurent Dubroca in WKBIOPTIM3"
+date: "`r format(Sys.time(),'%d/%m/%Y')`"
+output: 
+  pdf_document
+bibliography: '/home/moi/datahome/work/biblio/enfin/biblioloran.bib'
+---
+
+# Introduction
+
+Some words about the framework, the needs and etc.
+This document follows the framework proposed by @aanes2015.
+
+
+```{r global_options, include=T,cache=F,echo=F,warning=F,message=F,progress=F,verbose=F}
+#knitr option
+operationnel<-TRUE
+knitr::opts_chunk$set(echo=FALSE, 
+		      warning=!operationnel, 
+		      message=!operationnel,
+		      fig.height=4,
+		      progress=!operationnel,
+		      verbose=!operationnel,
+		      include=TRUE,dev='png',autodep=FALSE)
+#package
+library(dplyr)
+library(ggplot2)
+library(sampling)
+library(FSA)
+library(FSAsim)
+library(purrr)
+##library(openxlsx);library(mailR)
+library(pander);library(captioner)
+#local fct
+#source("credo_fct.R")
+#initialise les fonctions pour légender tables et figures
+tabcap <- captioner(prefix = "Table")
+figcap <- captioner(prefix = "Figure")
+
+#general parameters
+nbpopfish<-100000 #number of fish in the virtual population
+natmortpopfish<-0.3 # the natural mortality of the virtual population
+vbLinf <- 500  #von berta: Linf value of the virtual fish
+vbK <- 0.2#von berta: K value of the virtual fish
+vbt0 <- 0#von berta: t0 of the virtual fish
+vbsigma <- 10#von berta sd around age for length distribution 
+rtp<-data.frame(sciname="Virtus piscem",a=0.01/1000,b=3)
+
+#fix randomness with the number of the Beast
+set.seed(666)
+```
+
+# Materials and methods
+
+
+## Simulation
+
+Simulation of a virtual fish population.
+Principles and paramaters.
+
+
+### A virtual fish population 
+
+Comments of `r figcap("popsimplt1",display="cite")` and `r figcap("popsimplt2",display="cite")`.
+
+
+```{r popsim1, include=T,cache=T,echo=F,eval=T}
+#a population of fish A
+popage<-simAges(N0=nbpopfish,A=natmortpopfish,incl.zero=T)
+#their lengths
+poplen <- simLenFromAge(popage,Linf=vbLinf,K=vbK,t0=vbK,sigma=vbsigma)
+#the population dataframe (filtering out negative length if any) 
+popfish <- data.frame(age=popage,len=poplen)%>%filter(len>0)
+#adding weight
+popfish$w<-rtp$a*(popfish$len/10)^rtp$b
+#trunc the fish size
+popfish$len <- lencat(popfish$len,w=10)
+#some text summarizing the simulation parameters
+txtparam1<-paste0("n=",nbpopfish,",A=",natmortpopfish)
+txtparam2<-paste0("Linf=",vbLinf,",K=",vbK,",t0=",vbt0,",sd=",vbsigma)
+txtparam3<-paste0("a=",rtp$a,",b=",rtp$b)#,",t0=",vbt0,",sd=",vbsigma)
+```
+
+```{r popsimplt1, include=T,cache=T,echo=F,eval=T,height=5}
+p1<-ggplot(popfish,aes(x=age,y=len))+geom_point(alpha=.4)+
+	theme_bw()+xlab("Age (year)")+ylab("Length (mm)")+
+	ggtitle(paste0("Length at age of the simulated population\n",
+		       txtparam1,"\n",txtparam2,"\n",txtparam3))
+print(p1)
+ggsave("fishpop.png")
+```
+
+```{r popsimplt1cap,cache=T,eval=T,echo=FALSE,results="asis"}
+cat(figcap(name="popsimplt1",caption="Length at age in the virtual population"))
+```
+
+```{r popsimplt1bis, include=T,cache=T,echo=F,eval=T,height=5}
+p1<-ggplot(popfish,aes(x=len,y=w))+geom_point(alpha=.4)+
+	theme_bw()+xlab("Length (mm)")+ylab("Weight (kg)")+
+	ggtitle(paste0("Weight at length of the simulated population\n",
+		       txtparam1,"\n",txtparam2,"\n",txtparam3))
+print(p1)
+```
+
+```{r popsimplt1biscap,cache=T,eval=T,echo=FALSE,results="asis"}
+cat(figcap(name="popsimplt1",caption="Weight at length in the virtual population"))
+```
+
+```{r popsimplt2, include=T,cache=T,echo=F,eval=T,height=5}
+p2<-ggplot(tidyr::gather(popfish),aes(value))+geom_histogram()+#binwidth=c(1,10))+
+	facet_wrap(~key,scale="free")+
+	theme_bw()+ylab("Count")+xlab("Value")+
+	ggtitle(paste0("Age and length distribution of the simulated population\n",txtparam1,"\n",txtparam2))
+print(p2)
+ggsave("fishpop2.png")
+```
+```{r popsimplt2cap,cache=T,eval=T,echo=FALSE,results="asis"}
+cat(figcap(name="popsimplt2",caption="Length distribution of the virtual population"))
+```
+
+
+### A virtual fleet targeting a virtual fish population 
+
+Principles.
+A gear is define by its selectiviy curve. This curve is supplied using a beta
+distribution.
+An example of a selectivity curve
+
+```{r fleetexample, include=T,cache=T,echo=F,eval=T}
+selex1<-data.frame(x=seq(0,1,0.01))%>%mutate(sel=dbeta(x,shape1=10,shape2=20),gear="1")
+selex2<-data.frame(x=seq(0,1,0.01))%>%mutate(sel=dbeta(x,shape1=4,shape2=3),gear="2")
+selex3<-data.frame(x=seq(0,1,0.01))%>%mutate(sel=dbeta(x,shape1=8,shape2=1),gear="3")
+selex<-rbind(selex1,selex2,selex3)
+p1<-ggplot(selex,aes(x=x,y=sel,color=gear))+
+	geom_path()+
+	theme_bw()+ylab("Selectity")+xlab("Normalized size")+
+	ggtitle(paste0("Selectivity curve from three gamma distributions"))#\n",txtparam1,"\n",txtparam2))
+print(p1)
+ggsave("vesselsel.png")
+```
+
+Population by gears + trips: 
+
+```{r fleetandtrip, include=T,cache=T,echo=F,eval=T}
+#population accessible to each trip
+lengear1<-simLenSelectP(popfish$len, alpha = 10, beta = 20, max.height = 1, show = FALSE)
+lengear2<-simLenSelectP(popfish$len, alpha = 4, beta = 3, max.height = 1, show = FALSE)
+lengear3<-simLenSelectP(popfish$len, alpha = 8, beta = 1, max.height = 1, show = FALSE)
+popfish1<-popfish%>%filter(lengear1)%>%mutate(gear="1")
+popfish2<-popfish%>%filter(lengear2)%>%mutate(gear="2")
+popfish3<-popfish%>%filter(lengear3)%>%mutate(gear="3")
+popfishgear<-rbind(popfish1,popfish2,popfish3)
+p1<-ggplot(tidyr::gather(popfishgear,key="key",value="value",age:len),
+	   aes(value,fill=gear,group=gear))+
+	geom_histogram(position="dodge")+
+	facet_wrap(~key,scale="free")+
+	theme_bw()+ylab("Count")+xlab("Value")+
+	ggtitle(paste0("Age and length distributions available by gear"))
+print(p1)
+ggsave("fish4vessel.png")
+
+#generate some trips
+#a fct to generate 1 haul, then 1 trip, then 1 vessel
+do1haul<-function(df){
+	sample_n(df,sample(50:450,1))%>%
+		mutate(idhaul=sub("\\.","",format(Sys.time(),"%s%OS3")))
+}
+do1trip<-function(df,nbhaul=sample(1:10,1)){
+	do.call("rbind",rerun(nbhaul,do1haul(df)))%>%
+		mutate(idtrip=sub("\\.","",format(Sys.time(),"%s%OS3")))
+}
+do1vessel<-function(df,nbtrip=sample(1:50,1)){
+	do.call("rbind",rerun(nbtrip,do1trip(df)))%>%
+		mutate(idvessel=sub("\\.","",format(Sys.time(),"%s%OS3")))
+}
+	
+
+#generate 100 trip for popfish1
+vess1<-do.call("rbind",rerun(50,do1vessel(popfish1))) %>%mutate(gear="1")
+vess2<-do.call("rbind",rerun(30,do1vessel(popfish1))) %>%mutate(gear="2")
+vess3<-do.call("rbind",rerun(10,do1vessel(popfish1))) %>%mutate(gear="3")
+popvess<-rbind(vess1,vess2,vess3)%>%ungroup()%>%mutate(pk=row_number())
+saveRDS(popvess,file="popvess.rds")
+#select vessel and then trip and then systematic on haul 1 on 3
+vesselection<-popvess%>%select(gear,idvessel)%>%distinct()%>%
+	group_by(gear)%>%
+	mutate(n=n_distinct(idvessel))%>%
+	sample_frac(.1,weight=n)#unique(popvess$vessid)
+#select n trip by vessel
+tripselection<-popvess%>%select(idvessel,idtrip)%>%distinct()%>%
+	filter(idvessel%in%vesselection$idvessel)%>%
+	group_by(idvessel)%>%
+	mutate(n=n_distinct(idtrip))%>%
+	sample_n(1)
+#select 1 haul every 3 haul
+haulselection<-popvess%>%select(idvessel,idtrip,idhaul)%>%distinct()%>%
+	filter(idtrip%in%tripselection$idtrip)%>%
+	group_by(idtrip)%>%
+	mutate(id=row_number())%>%
+	filter(id%in%seq(1,10,2))%>%select(-id)
+#select n length by haul and add a samp id
+selvess<-left_join(haulselection%>%ungroup(),popvess)%>%
+	group_by(idhaul)%>%
+	sample_n(30)%>%mutate(idsamp=group_indices())
+#pop file with sampling id
+popvess<-full_join(popvess,selvess%>%select(pk,idsamp)%>%distinct())
+saveRDS(popvess,file="popvess.rds")
+
+
+
+if(F){
+#using sampling to get a complex statified example
+pipo<-popvess[order(popvess$gear,popvess$idvessel,popvess$idtrip,popvess$idhaul),c("gear","idvessel","idtrip","idhaul","w","len","age")]%>%transmute(gear=as.numeric(gear),idvessel=as.numeric(idvessel),w)%>%distinct()
+mstage(pipo,stage=list("stratified",""),varnames=list("gear","idvessel"),size=list(c(3,3),method=list("srswor","srswor"))
+pipo<-data.frame(gear=c(rep(1,5),rep(2,3)),idvessel=1:8,w=rnorm(8,mean=10))
+strata(pipo,c("gear"),size=c(2,3),method="srswor")
+mstage(pipo,stage=list("stratified","stratified"),
+       varnames=list("gear","idvessel"),
+       size=list(2,1),method=c("srswor"))
+mstage(pipo,stage=list("stratified",""),
+       varnames=list("gear","idvessel"),
+       size=list(c(2,1),c(1,1)),method=c("","srswor"))
+}
+
+
+###################################################
+#reverse methods
+#start from lower hierarchy then build up information needed in each table
+FM<-popvess%>%filter(!is.na(idsamp))%>%group_by(idsamp,FMclass=len)%>%
+	summarise(FMnumberAtUnit=n())%>%
+	ungroup()%>%
+	transmute(FMid=row_number(),
+		  SAid=idsamp,
+		  FMrecType="FM",
+		  FMclass,
+		  FMnumberAtUnit,
+		  FMtype="length",
+		  FMMeasurementEquipement="",
+		  FMaccuracy="",
+		  Fmsampler="")
+
+####################################################
+#SA
+tmp<-popvess%>%group_by(idhaul)%>%mutate(haulw=sum(w))%>%
+	ungroup()%>%group_by(idsamp,haulw)%>%summarise(sampw=sum(w))%>%ungroup()
+SA<-tmp%>%transmute(SAid=idsamp,
+		  SAparentID=NA,
+		  SSid="SSsppA",
+		  SArecType="SA",
+		  SAnatCode="",
+		  SAstratification="N",
+		  SAstratum="U",
+		  SAsppCode="Genus species",
+		  SAcommSpp="AAA",
+		  SApres="",
+		  SAcatchCat="Lan",
+		  SAlandCat="HUC",
+		  SAcommCatScl="",
+		  SAcommCat="",
+		  SAsex="U",
+		  SAunitType="Haul",
+		  SAtotalWtLive=haulw,
+		  SAsampWtLive=sampw,
+		  SAtotal=1,
+		  SAsampled=1,
+		  SAprob=NA,
+		  SAselectMeth="Census",
+		  SAlowHierarchy="FM",
+		  SAsampler="Observer",
+		  SAnoSampReasonFM="",
+		  SAnoSampReasonBV="",
+		  SAtotalWtMes=haulw,
+		  SAsampWtMes=sampw,
+		  SAconFacMesLive=1,
+		  SAspecState="")
+
+#species selection 
+tmp<-popvess%>%filter(!is.na(idsamp))%>%select(idhaul)%>%distinct()
+SS<-tmp%>%transmute(SSid="SSsppA",
+	       LEid=NA,
+	       FOid=idhaul,
+	       SLid="SLsppA",
+	       SSrecType="SS",
+	       SSstratification="U",
+	       SSobsActTyp="Haul",
+	       SScatchCat="Lan",
+	       SSobsTyp="visual",
+	       SSstratum="U",
+	       SSclustering="No",
+	       SSclusterName="U",
+	       SSsampler="",
+	       SSsppListName="",
+	       SStotal=1,
+	       SSsampled=1,
+	       SSselectMeth="Census",
+	       SSselectMethCluster="U",
+	       SStotalClusters="",
+	       SSsampledClusters="",
+	       SSprobCluster="",
+	       SSnoSampReason="")
+###########################################################
+#FO
+tmp<-popvess%>%group_by(idtrip)%>%mutate(check=sum(idsamp,na.rm=T))%>%
+	ungroup()%>%filter(check>0)%>%
+	select(idhaul,idtrip,idsamp)%>%distinct()%>%
+	group_by(idtrip)%>%mutate(tothaul=n_distinct(idhaul),samphaul=n_distinct(idsamp)-1) %>%
+	ungroup()%>%
+	select(idhaul,idtrip,tothaul,samphaul)%>%distinct()%>%
+	group_by(idtrip)%>%mutate(n=row_number())%>%ungroup()
+FO<-tmp%>%transmute(FOid=idhaul,
+	       FTid=idtrip,
+	       SDid="",
+	       FOrecType="FO",
+	       FOstratification="N",
+	       FOhaulNum=n,
+	       FOstratum="U",
+	       FOclustering="No",
+	       FOclusterName="",
+	       FOsampler="",
+	       FOaggLev="H",
+	       FOval="V",
+	       FOcatReg="Lan",
+	       FOstartDate="",
+	       FOstartTime="",
+	       FOendDate="",
+	       FOendTime="",
+	       FOdur="",
+	       FOstartLat="",
+	       FOstartLon="",
+	       FOstopLat="",
+	       FOstopLon="",
+	       FOecoZone="",
+	       FOarea="",
+	       FOstatRect="",
+	       FOsubRect="",
+	       FOdep="",
+	       FOwaterDep="",
+	       FOnatCat="",
+	       FOmetier5="",
+	       FOmetier6="",
+	       FOgear="",
+	       FOmeshSize="",
+	       FOselDev="",
+	       FOselDevMeshSize="",
+	       FOtarget="",
+	       FOobsCo="Ha",
+	       FOtotal=tothaul,
+	       FOsampled=samphaul,
+	       FOprob="",
+	       FOselectMeth="SYSS",
+	       FOselectMethCluster="",
+	       FOtotalClusters="",
+	       FOsampledClusters="",
+	       FOprobCluster="",
+	       FOnoSampReason="")
+
+###########################################################
+#FT
+tmp<- popvess%>%group_by(idvessel)%>%mutate(nbtrip=n_distinct(idtrip))%>%
+	group_by(idvessel,idtrip)%>%mutate(nbhaul=n_distinct(idhaul))%>%
+	group_by(idvessel,idtrip,idhaul)%>%mutate(nbsamp=n_distinct(idsamp)-1)%>%
+	ungroup()%>%
+	select(idvessel,idtrip,nbtrip,nbhaul,nbsamp)%>%distinct() %>%
+	filter(nbsamp>0)
+
+
+FT<-tmp%>%transmute(FTid=idtrip,
+	       OSid="",
+	       VSid=idvessel,
+	       VDid=idvessel,
+	       SDid="",
+	       FOid="",
+	       TEid="",
+	       FTrecType="FT",
+	       FTnatCode="",
+	       FTstratification="N",
+	       FTstratum="U",
+	       FTclustering="No",
+	       FTclusterName="U",
+	       FTsampler="",
+	       FTfoNum=nbhaul,
+	       FTdepLoc="",
+	       FTdepDate="",
+	       FTdepTime="",
+	       FTarvLoc="",
+	       FTarvDate="",
+	       FTarvTime="",
+	       FTtotal=nbtrip,
+	       FTsampled=nbsamp,
+	       FTprob="",
+	       FTselectMeth="random",
+	       FTselectMethCluster="",
+	       FTtotalClusters="",
+	       FTsampledClusters="",
+	       FTprobCluster="",
+	       FTnoSampReason=""
+	       )
+
+#VS
+tmp<- popvess%>%group_by(gear)%>%mutate(nbvessel=n_distinct(idvessel))%>%
+	group_by(gear,idvessel)%>%mutate(nbsamp=n_distinct(idsamp)-1)%>%
+	ungroup()%>%
+	filter(nbsamp>0)%>%
+	select(gear,idvessel,nbvessel,nbsamp)%>%distinct()
+
+VS<-tmp%>%transmute(VSid=idvessel,
+		SDid=2,
+		VDid=idvessel,
+		TEid="",
+		VSrecType="VS",
+		VSstratification="Y",
+		VSstratum=paste("Gear",gear),
+		VSclustering="N",
+		VSclusterName="U",
+		VSsampler="Someone",
+		VStotal=nbvessel,
+		VSsampled=nbsamp,
+		VSprob=.1,
+		VSselectMeth="random",
+		VSselectMethCluster="",
+		VStotalClusters="",
+		VSsampledClusters="",
+		VSprobCluster="",
+		VSnoSampReason="")
+
+
+all<-list(VS,FT,FO,SS,SA,FM)
+
+#inclusion proba basique
+pipo<-data.frame(sample(1:4,4))
+
+inclusionprobabilities(c(1,1,1,1),2)
+inclusionprobabilities(c(2,2,5,2),2)
+
+
+stop()
+#fct rdbes to pik
+RDBESmodel<-readRDS("RDBESmodel.rds")
+rname<-RDBESmodel%>%select(shortname,R.Name)
+
+rname%>%filter(grepl("cluster",tolower(R.Name)))
+rname%>%filter(grepl("strat",tolower(R.Name)))
+rname%>%filter(grepl("selectmeth",tolower(R.Name)))
+rname%>%filter(grepl("prob",R.Name))
+
+#extract info
+
+
+
+#build table
+#H1: DE/SD/VD/VS/FT/FO/SS/SL/SA/FM/BV
+tabstruc<-readRDS("RDBESmodel.rds")
+idname<-which(grepl("ID",tabstruc$Short.Description))
+#DE: 4 design here
+#4 design
+DE<-data.frame(DEid=1:2,
+        DErecType="DE",
+	DEsampScheme=paste("Program",1:2),
+	DEyear=2054,
+	DEstratum=c("Total census","Stratified by fleet")
+	DEhierarchyCor=c("Yes"),
+	DEhierarchy="H1")
+#SD: sampling details 
+SD<-data.frame(SDid=1:2,
+	       DEid=1:2,
+	       SDrecType="SD",
+	       SDctry="EU",
+	       SDinst="Fishery Agency")
+#VD: vessel details
+VD<-data.frame(VDid=1:length(unique(popvess$idvess)),
+	       VDrecType="VD",
+	       VDencrCode=sort(unique(popvess$idvess)),
+	       VDhomePort="somewhere",
+	       VDflgCtry="EU",
+	       VDlen=25,
+	       VDlenCat="25",
+	       VDpwr=1000,
+	       VDsize=100,
+	       VDsizeUnit="GT",
+	       VDtype="other boats")
+#VS: vessel selection : 2 type census vs stratified sampling
+#1 sensus
+tmp<-popvess%>%select(idvessel,idtrip)%>%distinct()%>%
+	group_by(idvessel)%>%summarise(n=n())%>%
+	ungroup()%>%mutate(pi=n/sum(n))%>%ungroup()
+VS1<-data.frame(VSid=1:nrow(tmp),
+		SDid=1,
+		VDid=tmp$idvessel,
+		TEid=NA,
+		VSrecType="VS",
+		VSstratification="N",
+		VSstratum="Complete fleet",
+		VSclustering="N",
+		VSclusterName="U",
+		VSsampler="Someone",
+		VStotal=length(unique(popvess$idvessel)),
+		VSsampled=length(unique(popvess$idvessel)),
+		VSprob=NA,
+		VSselectMeth="Census",
+		VSselectMethCluster="",
+		VStotalClusters=NA,
+		VSsampledClusters=NA,
+		VSprobCluster=NA,
+		VSnoSampReason="")
+#2 stratification
+tmp<-selvess%>%select(idvessel,idtrip)%>%distinct()%>%
+	group_by(idvessel)%>%summarise(n=n())%>%
+	ungroup()%>%mutate(pi=n/sum(n))%>%ungroup()
+tmp2<-popvess%>%select(idvessel,gear)%>%distinct()%>%
+	group_by(gear)%>%mutate(ntot=n_distinct(idvessel))%>%ungroup()
+tmp<-left_join(tmp,tmp2)%>%arrange(idvessel)%>%group_by(gear)%>%
+	mutate(nsamp=n_distinct(idvessel))%>%ungroup()%>%
+	mutate(pi2=nsamp/ntot)
+VS2<-data.frame(VSid=1:nrow(tmp),
+		SDid=2,
+		VDid=tmp$idvessel,
+		TEid=NA,
+		VSrecType="VS",
+		VSstratification="Y",
+		VSstratum="Stratified by gear",
+		VSclustering="Y",
+		VSclusterName=paste("Gear",tmp$gear),
+		VSsampler="Someone",
+		VStotal=tmp$ntot,
+		VSsampled=tmp$nsamp,
+		VSprob=NA,
+		VSselectMeth="Random",
+		VSselectMethCluster="Systematic",
+		VStotalClusters=3,
+		VSsampledClusters=3,
+		VSprobCluster=1/3,
+		VSnoSampReason="")
+#VS total
+VS<-rbind(VS1,VS2)
+
+#H1: DE/SD/VD/VS/FT/FO/SS/SL/SA/FM/BV
+#FT: Fishing trip
+tmp<-selvess%>%select(idvessel,idtrip)%>%distinct()%>%
+	group_by(idvessel)%>%summarise(n=n())%>%
+	ungroup()%>%mutate(pi=n/sum(n))%>%ungroup()
+tmp2<-popvess%>%select(idvessel,gear)%>%distinct()%>%
+	group_by(gear)%>%mutate(ntot=n_distinct(idvessel))%>%ungroup()
+tmp<-left_join(tmp,tmp2)%>%arrange(idvessel)%>%group_by(gear)%>%
+	mutate(nsamp=n_distinct(idvessel))%>%ungroup()%>%
+	mutate(pi2=nsamp/ntot)
+
+FT1<-data.frame(FTid=,
+		OSid=NA,
+		VSid=,
+		VDid=,
+		SDid
+		FOid
+		TEid
+		FTrecType="FT",
+		FTnatCode="EU",
+		FTstratification
+		FTstratum
+		FTclustering
+		FTclusterName
+		FTsampler
+		FTfoNum
+		FTdepLoc
+		FTdepDate
+		FTdepTime
+		FTarvLoc
+		FTarvDate
+		FTarvTime
+		FTtotal
+		FTsampled
+		FTprob
+		FTselectMeth
+		FTselectMethCluster
+		FTtotalClusters
+		FTsampledClusters
+		FTprobCluster
+		FTnoSampReason
+		)
+
+
+
+	       	
+tmp<-tabstruc%>%filter(tabname=="Vessel Selection")
+dattmp<-data.frame(matrix(nrow=0,ncol=nrow(tmp)))
+names(dattmp)<-tmp$R.Name
+str(dattmp)
+
+#length distribution of the trips by gear
+p1<-ggplot(tidyr::gather(tripgear,key="key",value="value",age:len),
+	   aes(value,fill=gear,group=gear))+
+	#geom_histogram(alpha=1,position="dodge",binwidth=10)+
+	geom_histogram(alpha=1,position="dodge")+
+	facet_wrap(~key,scale="free")+
+	theme_bw()+ylab("Count")+xlab("Value")+
+	ggtitle(paste0("Age and length distributions of the trips by gear"))
+print(p1)
+#raise the trip data to pop using weight
+wpopgear<-popfishgear%>%group_by(gear)%>%summarise(wtot=sum(w))%>%ungroup()
+wtripgear<-tripgear%>%group_by(gear,id)%>%mutate(wtrip=sum(w))%>%ungroup()%>%
+		left_join(wpopgear,by="gear")
+
+wgear2%>%group_by(gear)%>%summarise(w1=sum(wtrip))
+
+wtripgear%>%select(gear,id,wtrip,wtot)%>%
+	distinct()%>%group_by(gear)%>%
+	summarise(wtottrip=sum(wtrip),wtot=unique(wtot))%>%
+	group_by(gear)%>%
+	mutate(f=wtot/wtottrip)%>%
+	mutate(westim=f*wtottrip)%>%left_join(wpopgear)
+
+tripgear%>%group_by(gear,id)%>%mutate(wtrip=sum(w))%>%
+	group_by(gear)%>%mutate(wtottrip=sum(w))%>%
+	left_join(wpopgear,by="gear")%>%
+	select(wtottrip,wtot)%>%distinct()
+	
+
+
+
+
+
+#total age distribution for gear vs trip gear
+pipo1<-popfishgear%>%group_by(age)%>%summarise(n=n())%>%ungroup()%>%
+	mutate(type="popfishgear")
+prop<-data.frame(gear=as.character(1:3),
+		 prop=tapply(popfishgear$age,popfishgear$gear,sum)/300)
+pipo2<-tripgear%>%
+	left_join(prop,by="gear")%>%
+	group_by(age,prop)%>%summarise(n=n())%>%ungroup()%>%
+	mutate(type="popfishgear")
+
+
+p1<-ggplot(gather(tripgear,key="key",value="value",age:len),
+	   aes(value,fill=gear,group=gear))+
+	#geom_histogram(alpha=1,position="dodge",binwidth=10)+
+	geom_histogram(alpha=1,position="dodge")+
+	facet_wrap(~key,scale="free")+
+	theme_bw()+ylab("Count")+xlab("Value")+
+	ggtitle(paste0("Age and length distributions of the trips by gear"))
+print(p1)
+```
+
+## ALK sampling
+
+Samples of ALK.
+- samples the trips,
+- independent samples,
+- ??
+
+```{r alk, include=T,cache=T,echo=F,eval=F}
+# random sample of age from the total pop
+ranalk<-function(nb=100,popfish,popfishgear){
+	sampalk<-sample_n(popfish,100)
+	#complete the alkprop with zero for the non sample length
+	lenall<-data.frame(len=sort(unique(popfishgear$len)))
+	sampalkall<-left_join(lenall,sampalk,by="len")#%>%
+	sampalkall[is.na(sampalkall)]<-0
+	#compute the alk
+	alk <- xtabs(~len+age,data=sampalkall)#%>%transmute(age=trueage,lenCat))
+	alkprop <- prop.table(alk,margin=1)
+	#raise length to the pop using number
+	rez1<-alkIndivAge(alkprop,age~len,data=popfishgear)#%>%mutate(trueage=age))
+	rez1%>%mutate(id="ranalk",nb,rep=sub("\\.","",format(Sys.time(),"%s%OS3")))
+}
+#generate 100 trip for popfish1
+ranalk50<-do.call("rbind",rerun(30,ranalk(50,popfish,tripgear)))
+ranalk100<-do.call("rbind",rerun(30,ranalk(100,popfish,tripgear)))
+ranalk300<-do.call("rbind",rerun(30,ranalk(300,popfish,tripgear)))
+ranalkall<-rbind(ranalk50,ranalk100,ranalk300)
+
+# stratified random sample of age from the total pop
+ranstratalk<-function(nb=5,popfish,popfishgear){
+	nbbyage<-rep(5,length(unique(popfish$len)))
+	sampalk<-strata(popfish,stratanames="len",size=nbbyage,method="srswr")
+	sampalk<-popfish[sampalk$ID_unit,]
+	#complete the alkprop with zero for the non sample length
+	lenall<-data.frame(len=sort(unique(popfishgear$len)))
+	sampalkall<-left_join(lenall,sampalk,by="len")#%>%
+	sampalkall[is.na(sampalkall)]<-0
+	#compute the alk
+	alk <- xtabs(~len+age,data=sampalkall)#%>%transmute(age=trueage,lenCat))
+	alkprop <- prop.table(alk,margin=1)
+	#raise length to the pop using number
+	rez1<-alkIndivAge(alkprop,age~len,data=popfishgear)#%>%mutate(trueage=age))
+	rez1%>%mutate(id="ranstratalk",nb,rep=sub("\\.","",format(Sys.time(),"%s%OS3")))
+}
+#generate 100 trip for popfish1
+ranstratalk1<-do.call("rbind",rerun(30,ranstratalk(1,popfish,tripgear)))
+ranstratalk3<-do.call("rbind",rerun(30,ranstratalk(3,popfish,tripgear)))
+ranstratalk5<-do.call("rbind",rerun(30,ranstratalk(5,popfish,tripgear)))
+ranstratalkall<-rbind(ranstratalk1,ranstratalk3,ranstratalk5)
+
+#summarize results
+rezestim<-rbind(ranalkall,ranstratalkall)%>%group_by(id,age,gear,nb,rep)%>%
+	summarise(nage=n())%>%
+	group_by(id,gear,nb,age)%>%
+	summarise(mage=mean(nage),sdage=sd(nage))%>%
+	#mutate(nb=as.character(nb))%>%
+	ungroup()
+
+#add tripgear age real
+pipo<-tripgear%>%group_by(gear,age)%>%
+	summarise(mage=n())%>%ungroup()%>%
+	transmute(id="ranalk",gear,nb="pop",age,mage,sdage=0)
+rezestim<-rbind(rezestim,pipo)
+
+#raising to the pop ?
+
+
+
+p1<- ggplot(rezestim, aes(x=age, y=mage,color=nb))+
+	  geom_path(alpha=.5)+
+  facet_grid(id~gear,scale="free")#+theme_bw() 
+  print(p1)
+
+
+pipo<-rbind(ranalkall%>%select(age)%>%mutate(type="estim"),
+	    tripgear%>%select(age)%>%mutate(type="pop"))
+p1<-ggplot(pipo,aes(age,fill=type,group=type))+
+	geom_histogram(alpha=1,position="dodge",binwidth=1)+
+	theme_bw()+ylab("")+xlab("Length (mm)")+
+	ggtitle(paste0("Length distribution of the trips by gear"))
+print(p1)
+
+earthmovdist::emdL1(rez1$age,popfishgear$age)
+
+
+```
+
+
+
+```{r data_and_param000, include=T,cache=T,echo=F,eval=F}
+
+
+
+
+
+#apply age length key to length data
+#from FSA
+rez1<-alkIndivAge(alkprop,age~lenCat,data=df1%>%mutate(age=0))
+rez1hist<-rez1%>%group_by(age)%>%summarise(n=n()*2,type="sampalk")
+rez2hist<-rez1%>%group_by(age=trueage)%>%summarise(n=n()*2,type="sampreal")
+rez3hist<-df%>%group_by(age)%>%summarise(n=n(),type="pop")
+rez1hist<-rbind(rez1hist,rez2hist,rez3hist)
+ggplot(rez1hist,aes(x=age,y=n,color=type))+geom_point()+geom_path()
+
+#a more complete example
+#a population of fish
+tabage<-simAges(N0=100000,A=.35,incl.zero=T)
+#their lengths
+tablen <- simLenFromAge(tabage,Linf=228,K=0.206,t0=0,sigma=8)
+## Some summaries
+df <- data.frame(age=tabage,len=tablen)%>%filter(len>0)
+Summarize(len~age,data=df,digits=1)
+plot(len~age,data=df,pch=16,col=rgb(0,0,0,0.1),xlab="Age",ylab="Length")
+hist(df$len,n=50)
+
+
+
+
+
+# independant sample
+nbbyage<-rep(5,length(unique(df1$lenCat)))
+df2<-strata(df1,stratanames="lenCat",size=nbbyage,method="srswr")
+df2$trueage<-df1$trueage[df2$ID_unit]
+alk <- xtabs(~lenCat+age,data=df2%>%transmute(age=trueage,lenCat))
+alkprop <- prop.table(alk,margin=1)
+round(alkprop,2)
+
+```
+
+
+
+```{r data_and_param, include=T,cache=T,echo=F,eval=F}
+
+
+
+
+
+#apply age length key to length data
+#from FSA
+rez1<-alkIndivAge(alkprop,age~lenCat,data=df1%>%mutate(age=0))
+rez1hist<-rez1%>%group_by(age)%>%summarise(n=n()*2,type="sampalk")
+rez2hist<-rez1%>%group_by(age=trueage)%>%summarise(n=n()*2,type="sampreal")
+rez3hist<-df%>%group_by(age)%>%summarise(n=n(),type="pop")
+rez1hist<-rbind(rez1hist,rez2hist,rez3hist)
+ggplot(rez1hist,aes(x=age,y=n,color=type))+geom_point()+geom_path()
+
+#a more complete example
+#a population of fish
+tabage<-simAges(N0=100000,A=.35,incl.zero=T)
+#their lengths
+tablen <- simLenFromAge(tabage,Linf=228,K=0.206,t0=0,sigma=8)
+## Some summaries
+df <- data.frame(age=tabage,len=tablen)%>%filter(len>0)
+Summarize(len~age,data=df,digits=1)
+plot(len~age,data=df,pch=16,col=rgb(0,0,0,0.1),xlab="Age",ylab="Length")
+hist(df$len,n=50)
+#1 gear no selectivity
+## take some length sample randomly
+df1<-df%>%sample_frac(0.01)
+df1$lenCat <- lencat(df1$len,w=10)
+df1<-df1%>%mutate(trueage=age)%>%select(-age)
+## sample age based on df1
+fct1<-function(df1,nb=5){
+	nbbyage<-rep(nb,length(unique(df1$lenCat)))
+	df2<-strata(df1,stratanames="lenCat",size=nbbyage,method="srswr")
+	df2$trueage<-df1$trueage[df2$ID_unit]
+	alk <- xtabs(~lenCat+age,data=df2%>%transmute(age=trueage,lenCat))
+	alkprop <- prop.table(alk,margin=1)
+	rez1<-alkIndivAge(alkprop,age~lenCat,data=df1%>%mutate(age=0))
+	rez1%>%mutate(n=nb)
+}
+#generate differente sample rate
+rezall<-data.frame()
+for(i in 1:30){
+	rez0<-fct1(df1,i)
+	rezall<-rbind(rez0,rezall)
+}
+#apply age length key to length data
+#from FSA
+prop<-1/0.01
+rez1hist<-rezall%>%group_by(age,nbsamp=n)%>%summarise(n=n()*prop,type="sampalk")%>%ungroup()
+rez2hist<-df1%>%group_by(age=trueage)%>%summarise(n=n()*prop,type="sampreal")%>%ungroup()
+rez3hist<-df%>%group_by(age)%>%summarise(n=n(),type="pop")%>%ungroup()
+#rez1hist<-rbind(rez1hist,rez2hist,rez3hist)
+#ggplot(rez1hist,aes(x=age,y=n,color=nbsamp))+geom_boxplot()+
+ggplot(data=rez1hist,aes(x=age,y=n,group=age))+geom_boxplot()+
+geom_point(data=rez1hist,aes(x=age,y=n,color=nbsamp,group=NULL),alpha=.2)+#geom_point(alpha=.2)+
+	geom_line(data=rez2hist,aes(x=age,y=n,group=NULL),col="red")+
+	geom_path(data=rez3hist,aes(x=age,y=n,group=NULL),col="green")
+
+#######################################################
+#a more complete example, again, with PSU and so on
+#a population of fish
+tabage<-simAges(N0=100000,A=.35,incl.zero=T)
+#their lengths
+tablen <- simLenFromAge(tabage,Linf=228,K=0.206,t0=0,sigma=8)
+## Some summaries
+df <- data.frame(age=tabage,len=tablen)%>%filter(len>0)
+Summarize(len~age,data=df,digits=1)
+plot(len~age,data=df,pch=16,col=rgb(0,0,0,0.1),xlab="Age",ylab="Length")
+hist(df$len,n=50)
+dfhist<-df%>%group_by(len)%>%summarise(n=n(),type="pop")
+
+#1 gear with a given selectivity
+aa<-simLenSelectP(df$len, alpha = 3, beta = 10, max.height = 1, show = FALSE)
+df1<-df%>%filter(aa)%>%sample_frac(0.01)
+dfhist1<-df1%>%group_by(len)%>%summarise(n=n(),type="gear1")
+ggplot(rbind(dfhist,dfhist1),aes(x=len,y=n,col="type"))+geom_path()+facet_wrap(~type,scale="free")
+
+#generate xx trips
+dontrip<-function(df,n=5,prop0=0.01,alpha0=5,beta0=10){
+	dotrip<-function(df,prop=prop0,alpha=alpha0,beta=beta0){
+		aa<-simLenSelectP(df$len, alpha, beta, max.height = 1, show = FALSE)
+		df%>%filter(aa)%>%sample_frac(0.01)%>%
+			mutate(trip=paste(sample(letters,5),collapse=""))
+	}
+	aa<-rerun(n,dotrip(df,prop=prop0,alpha=alpha0,beta=beta0))
+	aa<-do.call("rbind",aa)
+	aa$lenCat <- lencat(aa$len,w=10)
+	return(aa)
+}
+
+trip1<-dontrip(df,n=10,alpha0=2,beta0=7)
+trip1hist<-trip1%>%group_by(len,trip)%>%summarise(n=n(),type="gear1")
+prop<-max(trip1hist$n)/max(dfhist$n)
+ggplot(trip1hist,aes(x=len,y=n,col=trip))+geom_path()+
+	geom_path(data=dfhist,aes(x=len,y=n*prop,col="type"),col="black")
+
+trip2<-dontrip(df,n=10,alpha0=6,beta0=7)
+trip1hist<-trip2%>%group_by(len,trip)%>%summarise(n=n(),type="gear1")
+prop<-max(trip1hist$n)/max(dfhist$n)
+ggplot(trip1hist,aes(x=len,y=n,col=trip))+geom_path()+
+	geom_path(data=dfhist,aes(x=len,y=n*prop,col="type"),col="black")
+
+## sample age based on df1
+fct1<-function(df1=rbind(trip1,trip2),nb=5){
+df1=rbind(trip1,trip2);nb<-5
+	nbbyage<-rep(nb,length(unique(df1$lenCat)))
+	df2<-strata(df1,stratanames="lenCat",size=nbbyage,method="srswr")
+	df2$trueage<-df1$age[df2$ID_unit]
+	alk <- xtabs(~lenCat+age,data=df2%>%transmute(age=trueage,lenCat))
+	alkprop <- prop.table(alk,margin=1)
+	rez1<-alkIndivAge(alkprop,age~lenCat,data=df1%>%mutate(age=0))
+	rez1%>%mutate(n=nb)
+}
+
+#generate differente sample rate
+rezall<-data.frame()
+for(i in 1:30){
+	rez0<-fct1(df1,i)
+	rezall<-rbind(rez0,rezall)
+}
+
+#apply age length key to length data
+#from FSA
+prop<-1/0.01
+rez1hist<-rezall%>%group_by(age,nbsamp=n)%>%summarise(n=n()*prop,type="sampalk")%>%ungroup()
+rez2hist<-df1%>%group_by(age=trueage)%>%summarise(n=n()*prop,type="sampreal")%>%ungroup()
+rez3hist<-df%>%group_by(age)%>%summarise(n=n(),type="pop")%>%ungroup()
+#rez1hist<-rbind(rez1hist,rez2hist,rez3hist)
+#ggplot(rez1hist,aes(x=age,y=n,color=nbsamp))+geom_boxplot()+
+ggplot(data=rez1hist,aes(x=age,y=n,group=age))+geom_boxplot()+
+geom_point(data=rez1hist,aes(x=age,y=n,color=nbsamp,group=NULL),alpha=.2)+#geom_point(alpha=.2)+
+	geom_line(data=rez2hist,aes(x=age,y=n,group=NULL),col="red")+
+	geom_path(data=rez3hist,aes(x=age,y=n,group=NULL),col="green")
+
+
+
+
+
+
+```
+
+\newpage
+# Session
+```{r}
+print(sessionInfo())
+```
+\newpage
+# References
+
+
+
+
