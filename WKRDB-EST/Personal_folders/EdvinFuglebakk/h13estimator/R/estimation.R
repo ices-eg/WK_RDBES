@@ -521,7 +521,7 @@ estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
 
   caaSA <- merge(caaSA, samplesWest[,c("SAid", "FOid")], by="SAid", all.x=T)
   meanCaa <- aggregate(list(meanNumberAtAge=caaSA$numberAtAge), by=list(FOid=caaSA$FOid, stratum=caaSA$stratum, age=caaSA$age), FUN=mean) #mean within strata
-  meanCaa <- merge(meanCaa, caaSA[,c("FOid", "stratum", "proportionStrata")], all.x=T)
+  meanCaa <- merge(meanCaa, unique(caaSA[,c("FOid", "stratum", "proportionStrata")]), all.x=T)
   meanCaa$wmean <- meanCaa$meanNumberAtAge * meanCaa$proportionStrata
   numAgeFO <- aggregate(list(numberAtAge=meanCaa$wmean), by=list(FOid=meanCaa$FOid, age=meanCaa$age), FUN=sum) #strata weighted sum across strata
 
