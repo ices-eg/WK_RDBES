@@ -16,7 +16,7 @@ These simulations are based on the examples in Mary Chrisman's presentation: "3)
 
 
 ## Set up the population of vessels
-We have a data frame 5 vessels and we base our (unequal probability sampling) selection probability (UPSprobs) on the landings in year y minus 1
+We have a data frame 5 vessels, each vessel only does one trip per year. We base our (unequal probability sampling) selection probability (UPSprobs) on the landings in year y minus 1
 
 ```{r}
 df1 <- data.frame(Vessel=1:5,
@@ -92,7 +92,9 @@ If we adjust the weights, we get a mean of `r mean(hhadj)` and a standard error 
 ## Adjusted weights
 So we seem to get an unbiased answer using the original sampling design and HH estimator. But if we adjust the probabilities (weights) post-hoc to the true population values, we get the perfect answer without bias and zero standard error.
 
-I would imagine that this means that if you have census data of landings, which you think correlates with what you want to estimate (e.g. discards). Then you can design your sampling, based on landings in year-1 but once you have your logbooks for the current year, you can adjust these probabilities for your estimation and presumably get a better answer. This is probably a form of post-stratification, where the vessels become strata.
+However in real-life you will never have a perfect correlation between the landings and, say, discards, or whatever you are trying to estimate. In those cases adjusting the probabilities will probably create bias because they no longer reflect your sampling design.
+
+You could post-stratify but this cannot be done inside the HH estimator.
 
 ## Vessel leaves the fleet
 One more thing: What if a vessel is sold and no longer available for sampling. In our design we think we have a probability of sampling this vessel but in practice we dont. Otherwise the actual landings are excatly as in Y-1
@@ -121,3 +123,55 @@ mean(hh); sd(hh)
 mean(hhadj); sd(hhadj)
 ```
 So, the true answer is 10 which is correctly estimated by using the actual probabilities (e.g. by setting the probability of vessel 5 to zero because it is no longer available). Using the old probabilities will give an answer of 60 is what would have been the answer if vessel 5 would not have left the fleet.
+
+## ok last one: mean length
+Lets have a quick look to see what would happen if you estimate the mean length of the landings.
+```{r}
+df1 <- data.frame(Vessel=1:5,
+                  LandYearMinus1=c(1,2,3,4,50),
+                  LandYear0=c(2,4,6,8,30),
+                  MeanLength=c(8,12,14,11,6))
+df1$UPSprobs <- df1$LandYearMinus1/sum(df1$LandYearMinus1)
+```
+
+## mean length
+```{r}
+df1
+```
+
+so now the true mean length in the population is:
+```{r}
+sum(df1$MeanLength*df1$LandYear0)/sum(df1$LandYear0)
+```
+
+## Pretend the selection probs were different
+
+We could now pretend the UPS probs were actually proportional to the landings in the current year (LandYear0).
+```{r}
+df1$UPSprobsPretend <- df1$LandYear0/sum(df1$LandYear0)
+df1$UPSprobs
+df1$UPSprobsPretend
+```
+
+## Final sim
+```{r,results=F}
+hh <- hhpretend <- NULL
+for(i in 1:1000){
+  j <- sample(1:nrow(df1),n,TRUE,df1$UPSprobs)
+  df2 <- df1[j,]
+  hh1 <- (1/n)*sum(df2$MeanLength/df2$UPSprobs)*
+    (1/nrow(df1))
+  hh <- c(hh,hh1)
+  hh1 <- (1/n)*sum(df2$MeanLength/df2$UPSprobsPretend)*
+    (1/nrow(df1))
+  hhpretend <- c(hhpretend,hh1)
+}
+mean(hh);sd(hh);mean(hhpretend); sd(hhpretend)
+```
+
+## conclusion
+So the estimate following the sampling design is `r mean(hh)`, adjusting the UPSprobs gives `r mean(hhpretend)`. Remeber the true value was `r sum(df1$MeanLength*df1$LandYear0)/sum(df1$LandYear0)`
+
+Neither of them are correct. The first one is wrong because the landings in year -1 were different from year 0. (and the mean length needs to be weighted by the landings to be unbiased). The second one is incorrect because you are not following the sampling design.
+
+Conclusion: you would have to post-stratify but you cannot do this inside the HH estimator.
