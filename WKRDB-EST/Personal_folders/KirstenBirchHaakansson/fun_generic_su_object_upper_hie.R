@@ -17,13 +17,14 @@ generic_su_object_upper_hie <- function(input_list = H1_upper, hierachy = 1) {
   library(dplyr)
   
   
-  # Varibale names for the output
+  # Varibale names for the output ----
+
   var_names <- c("hierachy", "su", "recType", "idAbove", "id",
                  "stratification", "stratum", "clustering", "clusterName", 
                  "total", "sampled", "prob", "selectMeth", "selectMethCluster", "totalClusters", 
                  "sampledClusters", "probCluster")
   
-  # createing a list with expected tables for each hierachy
+  # createing a list with expected tables for each hierachy ----
   expected_tables <- list(
     H1 = data.frame(
       table_names = c("DE", "SD", "VS", "FT", "FO"),
@@ -80,10 +81,13 @@ generic_su_object_upper_hie <- function(input_list = H1_upper, hierachy = 1) {
   )
   
   
+
   out <- list()
 
 
   expected_tables_here <- eval(parse(text = paste0('expected_tables$H', hierachy)))
+  
+  # Creating the su data.frames -----
   
   for (i in c(3:length(expected_tables_here$table_names))) {
   
@@ -99,9 +103,12 @@ generic_su_object_upper_hie <- function(input_list = H1_upper, hierachy = 1) {
   eval(parse(text = paste0(expected_tables_here$su_level[[i]], "_done", "<- select(su, one_of(var_names))")))
   
   eval(parse(text = paste0('out$', expected_tables_here$su_level[[i]], " = ", expected_tables_here$su_level[[i]], "_done")))
-
-}
+  
+  }
+  
+  
   
   return(out)
+
   
 }
