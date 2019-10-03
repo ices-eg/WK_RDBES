@@ -34,6 +34,23 @@ herringlottery_workflow <- function(){
   covar <- estimateTotalHHVar(data$FO, grandTotals, haulTotals, FOvarZero)
 
   report <- makeReportTable(grandTotals, covar)
-  plotCaa(report)
   return(report)
+}
+
+#' @noRd
+#' @keywords internal
+compute_and_plot_herring_lottery <- function(){
+  plotCaa(herringlottery_workflow())
+}
+
+#' Compares estimate with that obtained from model based estimation (based on additional samples from other sampling programs)
+#' @noRd
+#' @keywords internal
+compare_with_eca <- function(){
+  report <- herringlottery_workflow()
+  ecaPath <- system.file("exampledata", "eca_2018.csv", package="h13estimator")
+  ecaResults <- read.csv(ecaPath, sep="\t", comment.char = "#") #other reports and plusgroup is commented out in file
+  plotCaa(report, main="95% CI vs ECA point (excl. plusgr)")
+  points(ecaResults$age, ecaResults$mean, col="red") #mean is actually totals, it refers to mean over Bayesian simulations
+  legend("topright", legend = c("Design based", "Model based (ECA)"), fill=c("black", "red"), bty="n")
 }
