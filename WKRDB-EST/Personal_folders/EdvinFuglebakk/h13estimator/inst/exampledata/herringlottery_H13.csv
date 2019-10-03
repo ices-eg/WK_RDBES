@@ -1,6 +1,6 @@
 DE,Pilot of Lottery-sampling herring,2018,Norwegian fleet > 15 m,Y,13
 SD,NO,1351
-FO,No,1,U,No,U,Self-Sampling,H,V,Lan,2018-08-02,,2018-08-02,,,58.58333,2.08333,,,,,27.4.a,46F2,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.233439,UPSWOR,,,,,
+FO,No,1,U,No,U,Self-Sampling,H,V,Lan,2018-08-02,,2018-08-02,,,58.58333,2.08333,,,,,27.4.a,46F2,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.001167195,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,350000000,14120,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -237,7 +237,7 @@ BV,66,No,U,Length,285,mm,,,,67,67,,SRSWOR,Observer
 BV,66,No,U,Weight,246,g,,,,67,67,,SRSWOR,Observer
 BV,67,No,U,Length,250,mm,,,,67,67,,SRSWOR,Observer
 BV,67,No,U,Weight,173,g,,,,67,67,,SRSWOR,Observer
-FO,No,2,U,No,U,Self-Sampling,H,V,Lan,2018-01-18,,2018-01-18,,,68.28300,8.03300,,,,,27.2.a.2,65F8,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.1333937,UPSWOR,,,,,
+FO,No,2,U,No,U,Self-Sampling,H,V,Lan,2018-01-18,,2018-01-18,,,68.28300,8.03300,,,,,27.2.a.2,65F8,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.0006669687,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,200000000,15853,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -419,7 +419,7 @@ BV,45,No,U,Length,370,mm,,,,45,45,,SRSWOR,Observer
 BV,45,No,U,Age,14,Year,,Scale,,45,43,,SRSWOR,Observer
 BV,45,No,U,Weight,385,g,,,,45,45,,SRSWOR,Observer
 BV,45,No,U,Sex,M,,,,,45,45,,SRSWOR,Observer
-FO,No,3,U,No,U,Self-Sampling,H,V,Lan,2018-01-18,,2018-01-18,,,68.21700,7.91700,,,,,27.2.a.2,65F7,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.1000453,UPSWOR,,,,,
+FO,No,3,U,No,U,Self-Sampling,H,V,Lan,2018-01-18,,2018-01-18,,,68.21700,7.91700,,,,,27.2.a.2,65F7,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.0005002265,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,150000000,12774,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -564,7 +564,7 @@ BV,37,No,U,Length,360,mm,,,,37,37,,SRSWOR,Observer
 BV,37,No,U,Age,12,Year,,Scale,,37,30,,SRSWOR,Observer
 BV,37,No,U,Weight,397,g,,,,37,37,,SRSWOR,Observer
 BV,37,No,U,Sex,F,,,,,37,37,,SRSWOR,Observer
-FO,No,4,U,No,U,Self-Sampling,H,V,Lan,2018-01-21,,2018-01-21,,,67.58300,7.81700,,,,,27.2.a.2,64F7,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.08003624,UPSWOR,,,,,
+FO,No,4,U,No,U,Self-Sampling,H,V,Lan,2018-01-21,,2018-01-21,,,67.58300,7.81700,,,,,27.2.a.2,64F7,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.0004001812,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,120000000,14869,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -720,7 +720,7 @@ BV,40,No,U,Sex,M,,,,,41,41,,SRSWOR,Observer
 BV,41,No,U,Length,370,mm,,,,41,41,,SRSWOR,Observer
 BV,41,No,U,Weight,377,g,,,,41,41,,SRSWOR,Observer
 BV,41,No,U,Sex,F,,,,,41,41,,SRSWOR,Observer
-FO,No,5,U,No,U,Self-Sampling,H,V,Lan,2018-01-18,,2018-01-18,,,68.26700,8.01700,,,,,27.2.a.2,65F8,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.1667422,UPSWOR,,,,,
+FO,No,5,U,No,U,Self-Sampling,H,V,Lan,2018-01-18,,2018-01-18,,,68.26700,8.01700,,,,,27.2.a.2,65F8,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.0008337108,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,250000000,29253,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -967,7 +967,7 @@ BV,79,No,U,Length,350,mm,,,,80,80,,SRSWOR,Observer
 BV,79,No,U,Weight,367,g,,,,80,80,,SRSWOR,Observer
 BV,80,No,U,Length,360,mm,,,,80,80,,SRSWOR,Observer
 BV,80,No,U,Weight,366,g,,,,80,80,,SRSWOR,Observer
-FO,No,6,U,No,U,Self-Sampling,H,V,Lan,2018-01-31,,2018-01-31,,,67.00000,10.86667,,,,,27.2.a.2,62G0,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.2667875,UPSWOR,,,,,
+FO,No,6,U,No,U,Self-Sampling,H,V,Lan,2018-01-31,,2018-01-31,,,67.00000,10.86667,,,,,27.2.a.2,62G0,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.001333937,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,400000000,14620,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -1113,7 +1113,7 @@ BV,41,No,U,Length,350,mm,,,,41,41,,SRSWOR,Observer
 BV,41,No,U,Age,11,Year,,Scale,,41,19,,SRSWOR,Observer
 BV,41,No,U,Weight,351,g,,,,41,41,,SRSWOR,Observer
 BV,41,No,U,Sex,F,,,,,41,41,,SRSWOR,Observer
-FO,No,7,U,No,U,Self-Sampling,H,V,Lan,2018-02-04,,2018-02-04,,,67.25000,9.56667,,,,,27.2.a.2,63F9,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.06669687,UPSWOR,,,,,
+FO,No,7,U,No,U,Self-Sampling,H,V,Lan,2018-02-04,,2018-02-04,,,67.25000,9.56667,,,,,27.2.a.2,63F9,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.0003334843,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,100000000,9242,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -1208,7 +1208,7 @@ BV,25,No,U,Sex,M,,,,,26,26,,SRSWOR,Observer
 BV,26,No,U,Length,360,mm,,,,26,26,,SRSWOR,Observer
 BV,26,No,U,Weight,423,g,,,,26,26,,SRSWOR,Observer
 BV,26,No,U,Sex,F,,,,,26,26,,SRSWOR,Observer
-FO,No,8,U,No,U,Self-Sampling,H,V,Lan,2018-02-11,,2018-02-11,,,63.16667,6.63333,,,,,27.2.a.2,55F6,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.042686,UPSWOR,,,,,
+FO,No,8,U,No,U,Self-Sampling,H,V,Lan,2018-02-11,,2018-02-11,,,63.16667,6.63333,,,,,27.2.a.2,55F6,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.00021343,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,64000000,15065,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -1384,7 +1384,7 @@ BV,55,No,U,Length,345,mm,,,,56,56,,SRSWOR,Observer
 BV,55,No,U,Weight,297,g,,,,56,56,,SRSWOR,Observer
 BV,56,No,U,Length,305,mm,,,,56,56,,SRSWOR,Observer
 BV,56,No,U,Weight,253,g,,,,56,56,,SRSWOR,Observer
-FO,No,9,U,No,U,Self-Sampling,H,V,Lan,2018-01-30,,2018-01-30,,,67.01667,10.50000,,,,,27.2.a.2,63G0,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.08337108,UPSWOR,,,,,
+FO,No,9,U,No,U,Self-Sampling,H,V,Lan,2018-01-30,,2018-01-30,,,67.01667,10.50000,,,,,27.2.a.2,63G0,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.0004168554,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,125000000,13904,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -1559,7 +1559,7 @@ BV,43,No,U,Length,335,mm,,,,43,43,,SRSWOR,Observer
 BV,43,No,U,Age,8,Year,,Scale,,43,42,,SRSWOR,Observer
 BV,43,No,U,Weight,311,g,,,,43,43,,SRSWOR,Observer
 BV,43,No,U,Sex,F,,,,,43,43,,SRSWOR,Observer
-FO,No,10,U,No,U,Self-Sampling,H,V,Lan,2018-02-14,,2018-02-14,,,63.15000,6.91667,,,,,27.2.a.2,55F6,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.1133847,UPSWOR,,,,,
+FO,No,10,U,No,U,Self-Sampling,H,V,Lan,2018-02-14,,2018-02-14,,,63.15000,6.91667,,,,,27.2.a.2,55F6,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.0005669234,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,170000000,11848,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -1687,7 +1687,7 @@ BV,32,No,U,Length,340,mm,,,,32,32,,SRSWOR,Observer
 BV,32,No,U,Age,12,Year,,Scale,,32,28,,SRSWOR,Observer
 BV,32,No,U,Weight,354,g,,,,32,32,,SRSWOR,Observer
 BV,32,No,U,Sex,M,,,,,32,32,,SRSWOR,Observer
-FO,No,11,U,No,U,Self-Sampling,H,V,Lan,2018-02-01,,2018-02-01,,,66.36667,11.66667,,,,,27.2.a.2,61G1,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.126724,UPSWOR,,,,,
+FO,No,11,U,No,U,Self-Sampling,H,V,Lan,2018-02-01,,2018-02-01,,,66.36667,11.66667,,,,,27.2.a.2,61G1,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.0006336202,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,190000000,11824,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -1810,7 +1810,7 @@ BV,33,No,U,Length,350,mm,,,,34,34,,SRSWOR,Observer
 BV,33,No,U,Weight,351,g,,,,34,34,,SRSWOR,Observer
 BV,34,No,U,Length,335,mm,,,,34,34,,SRSWOR,Observer
 BV,34,No,U,Weight,318,g,,,,34,34,,SRSWOR,Observer
-FO,No,12,U,No,U,Self-Sampling,H,V,Lan,2018-02-13,,2018-02-13,,,63.23333,6.86667,,,,,27.2.a.2,55F6,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.2000906,UPSWOR,,,,,
+FO,No,12,U,No,U,Self-Sampling,H,V,Lan,2018-02-13,,2018-02-13,,,63.23333,6.86667,,,,,27.2.a.2,55F6,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.001000453,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,300000000,13291,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -1948,7 +1948,7 @@ BV,38,No,U,Length,350,mm,,,,39,39,,SRSWOR,Observer
 BV,38,No,U,Weight,363,g,,,,39,39,,SRSWOR,Observer
 BV,39,No,U,Length,300,mm,,,,39,39,,SRSWOR,Observer
 BV,39,No,U,Weight,258,g,,,,39,39,,SRSWOR,Observer
-FO,No,13,U,No,U,Self-Sampling,H,V,Lan,2018-01-27,,2018-01-27,,,67.61700,8.03300,,,,,27.2.a.2,64F8,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.2834617,UPSWOR,,,,,
+FO,No,13,U,No,U,Self-Sampling,H,V,Lan,2018-01-27,,2018-01-27,,,67.61700,8.03300,,,,,27.2.a.2,64F8,,,,,OTM_SPF,,OTM,,,,SPF,Ha,,,0.001417308,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,425000000,18039,,,,SYSS,C,Self-Sampling,,,,,1,
@@ -2145,7 +2145,7 @@ BV,53,No,U,Length,315,mm,,,,54,54,,SRSWOR,Observer
 BV,53,No,U,Weight,238,g,,,,54,54,,SRSWOR,Observer
 BV,54,No,U,Length,355,mm,,,,54,54,,SRSWOR,Observer
 BV,54,No,U,Weight,385,g,,,,54,54,,SRSWOR,Observer
-FO,No,14,U,No,U,Self-Sampling,H,V,Lan,2018-11-20,,2018-11-20,,,67.48300,4.38300,,,,,27.2.a.2,63F4,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.6136112,UPSWOR,,,,,
+FO,No,14,U,No,U,Self-Sampling,H,V,Lan,2018-11-20,,2018-11-20,,,67.48300,4.38300,,,,,27.2.a.2,63F4,,,,,PS_SPF,,PS,,0,0,SPF,Ha,,,0.003068056,UPSWOR,,,,,
 SS,No,haul,Lan,vol,U,No,U,Self-Sampling,Herring,1,1,CENSUS,,,,,
 SL,Herring,2018,126417,HER,Lan
 SA,,No,U,126417,,Whole,Lan,,,,U,Kg,920000000,16664,,,,SYSS,C,Self-Sampling,,,,,1,
