@@ -94,4 +94,30 @@ So we seem to get an unbiased answer using the original sampling design and HH e
 
 I would imagine that this means that if you have census data of landings, which you think correlates with what you want to estimate (e.g. discards). Then you can design your sampling, based on landings in year-1 but once you have your logbooks for the current year, you can adjust these probabilities for your estimation and presumably get a better answer. This is probably a form of post-stratification, where the vessels become strata.
 
+## Vessel leaves the fleet
+One more thing: What if a vessel is sold and no longer available for sampling. In our design we think we have a probability of sampling this vessel but in practice we dont. Otherwise the actual landings are excatly as in Y-1
 
+```{r}
+df1 <- data.frame(Vessel=1:5,
+                  Yminus1=c(1,2,3,4,50))
+df1$UPSprobsDesign <- df1$Yminus1/sum(df1$Yminus1)
+df1$Y <- c(1,2,3,4,0)
+df1$UPSprobsActual <- df1$Y/sum(df1$Y)
+df1
+```
+
+## Simulate
+```{r, results=F}
+hh <- hhadj <- NULL
+for(i in 1:1000){
+  j <- base::sample(1:nrow(df1),n,TRUE,df1$UPSprobsActual)
+  df2 <- df1[j,]
+  hh1 <- (1/n) * sum(df2$Y/df2$UPSprobsDesign)
+  hh <- c(hh,hh1)
+  hh1 <- (1/n) * sum(df2$Y/df2$UPSprobsActual)
+  hhadj <- c(hhadj,hh1)  
+  }
+mean(hh); sd(hh)
+mean(hhadj); sd(hhadj)
+```
+So, the true answer is 10 which is correctly estimated by using the actual probabilities (e.g. by setting the probability of vessel 5 to zero because it is no longer available). Using the old probabilities will give an answer of 60 is what would have been the answer if vessel 5 would not have left the fleet.
