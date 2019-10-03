@@ -54,6 +54,24 @@ getPropStrataFO <- function(FO){
   return(propStrata)
 }
 
+#' Add non-present ages
+#' @description Adds ages not present in a fishingoperation estimate. Treat as estimated to 0.
+#' @param caaFO data.table data table with estimates
+#' @param ages all age groups
+#' @noRd
+#' @keywords internal
+getAllAgesFO <- function(caaFO, ages){
+  allages <- data.table(age=as.character(rep(ages, length(unique(caaFO$FOid)))), FOid=sort(rep(unique(caaFO$FOid), length(ages))))
+  allages <- merge(allages, unique(caaFO[,c("FOid", "stratum", "proportionStrata", "FOprob")]), all.x=T)
+  allages <- merge(allages, unique(caaFO[,c("FOid", "age", "numberAtAge")]), by=c("FOid", "age"), all.x=T)
+  #
+  # age groups not sampled are estimated to be zero in haul
+  #
+  allages[is.na(allages$numberAtAge),"numberAtAge"] <- 0
+
+  return(allages)
+}
+
 #
 #
 # Functions for coding assumptions.
@@ -93,7 +111,8 @@ assumeSelectionMethod <- function(datatable, actual, assumed){
 #' @param constant numeric() the constant variance to assign to fishing operations
 #' @param ages character() the ages to give covariances for
 #' @return list() a list of variance-covariance matrices, identified by FOid
-assumeFOconstantVar <- function(caaFO, constant, ages=as.character(seq(0,max(as.integer(caaFO$age))))){
+#' @export
+assumeFOconstantVar <- function(caaFO, constant, ages){
 
   constant_matrix <- diag(rep(constant, length(ages)))
   colnames(constant_matrix) <- ages
@@ -539,6 +558,7 @@ estimateFOCatchAtAge <- function(FO, SS, SA, caaSA, stratified=T){
 #'  \item{age}{age for which catch at age was estimated}
 #'  \item{numberAtAge}{The estimated number of fish at age.}
 #'
+#' @export
 estimateTotalHH <- function(FO, caaFO, ages=as.character(seq(0,max(as.integer(caaFO$age))))){
 
   supportedFOselectMeth <- c(codelist$RS_SelectionMethod$UPSWR)
@@ -551,33 +571,19 @@ estimateTotalHH <- function(FO, caaFO, ages=as.character(seq(0,max(as.integer(ca
   # caaFO contains estimates for only the age groups present
   # collate here for all age groups
   #
-  caaFO <- merge(caaFO, FO[,c("FOid", "FOprob")], all.x=T)
-  allages <- data.table(age=as.integer(rep(ages, length(unique(caaFO$FOid)))), FOid=sort(rep(unique(caaFO$FOid), length(ages))))
-  setorder(allages, FOid, age)
-  allages$age <- as.character(allages$age)
-  allages <- merge(allages, unique(caaFO[,c("FOid", "stratum", "proportionStrata", "FOprob")]), all.x=T)
-  allages <- merge(allages, unique(caaFO[,c("FOid", "age", "numberAtAge")]), by=c("FOid", "age"), all.x=T)
-
-  #
-  # age groups not sampled are estimated to be zero in haul
-  #
-  allages[is.na(allages$numberAtAge),"numberAtAge"] <- 0
+  caaFO <- merge(caaFO, FO[,c("FOid","FOprob")], all.x=T)
+  allages <- getAllAgesFO(caaFO, ages)
 
   #
   # estimate pr strata
   #
   allages$wNumberAtAge <- allages$numberAtAge / allages$FOprob
   result_by_strata <- as.data.table(aggregate(list(numberAtAge=allages$wNumberAtAge), by=list(stratum=allages$stratum, age=allages$age), FUN=mean))
-  result_by_strata$age <- as.integer(result_by_strata$age)
-  setorder(result_by_strata, stratum, age)
-  result_by_strata$age <- as.character(result_by_strata$age)
 
   #
   # estimate across strata
   #
-  result_total <- as.data.table(aggregate(list(NumberAtAge=result_by_strata$numberAtAge), by=list(age=result_by_strata$age), FUN=sum))
-  result_total$age <- as.integer(result_total$age)
-  setorder(result_total, age)
+  result_total <- as.data.table(aggregate(list(numberAtAge=result_by_strata$numberAtAge), by=list(age=result_by_strata$age), FUN=sum))
   result_total$age <- as.character(result_total$age)
 
   return(result_total)
@@ -600,14 +606,117 @@ estimateTotalHH <- function(FO, caaFO, ages=as.character(seq(0,max(as.integer(ca
 #' @param FO data.table FO table
 #' @param caaHH data.table with estimates of total catch at age, format described in \code{\link[h13estimator]{estimateTotalHH}}
 #' @param caaFO data.table with estimates of catch at age for each fishing operation, format described in \code{\link[h13estimator]{estimateFOCatchAtAge}}
-#' @param varFO data.table with estimates of variance of catch at age for each fishing operation, format described in \code{\link[h13estimator]{assumeFOconstantVar}}
+#' @param varFO list of variance-covariance matrices with estimates of variance of catch at age for each fishing operation, format described in \code{\link[h13estimator]{assumeFOconstantVar}}
+#' @return data.frame with columns
+#' @export
 estimateTotalHHVar <- function(FO, caaHH, caaFO, varFO){
 
-  warning("Implement checks on caaFO and varFO consistency")
-  warning("Handle stratification")
+    if (length(unique(lapply(varFO, dim))) != 1){
+    stop("varFO contains matrices of different dimensions")
+  }
+  if (length(unique(lapply(varFO, colnames))) != 1){
+    stop("varFO contains matrices with different column names")
+  }
+  if (length(unique(lapply(varFO, rownames))) != 1){
+    stop("varFO contains matrices with different row names")
+  }
+  if (any(rownames(varFO[[1]]) != caaHH$age)){
+    stop("varFO rownames that differs from caaHH$age")
+  }
+  if (any(colnames(varFO[[1]]) != caaHH$age)){
+    stop("varFO colnames that differs from caaHH$age")
+  }
+  if (any(unlist(unique(lapply(varFO, dim))) != c(length(caaHH$age), length(caaHH$age)))){
+    stop("varFO dimensions does not match caaHH dimensions")
+  }
 
-  caaFO <- merge(caaFO, FO[,c("FOid", "FOprob")])
-  stop("Fix")
+  if (length(unique(caaFO$FOid)) != length(varFO)){
+    stop("number of fishingoperations in caaFO and varFO differ")
+  }
+
+  if (length(unique(caaFO$stratum))!=1){
+    stop("Estimation from stratified station not supported")
+
+    #need stratified variant of caaHH, option to estimateTotalHH ?
+  }
+
+  #
+  # caaFO contains estimates for only the age groups present
+  # collate here for all age groups
+  #
+  caaFO <- merge(caaFO, FO[,c("FOid","FOprob")], all.x=T)
+  ages <- caaHH$age
+  caaFO <- getAllAgesFO(caaFO, ages)
+
+  if (!all(rep(caaHH$age, length(varFO)) == caaFO$age)){
+    stop("Error: ages are ordered differently un caaHH and varFO")
+  }
+
+  caaHH$totalNumberAtAge <- caaHH$numberAtAge
+  caaFO <- merge(caaHH[, c("age", "totalNumberAtAge")], caaFO, by="age", all.x=T)
+
+  sqWdevMatrix <- function(x){
+    mat <- outer(x,x)
+    rownames(mat) <- caaHH$age
+    colnames(mat) <- caaHH$age
+    return(mat)
+  }
+
+
+  #
+  # Estimate between-haul variance
+  #
+
+  caaFO$pWmDnumberAtAge <- caaFO$numberAtAge * (1/caaFO$FOprob) - caaFO$totalNumberAtAge
+  outerDev <- aggregate(list(SqWeigthedDev=caaFO$pWmDnumberAtAge), by=list(FOid=caaFO$FOid, stratum=caaFO$stratum), FUN=sqWdevMatrix, simplify=F)
+
+  SumOuterDev <- outerDev$SqWeigthedDev[[1]]
+  for (m in 2:(length(outerDev$SqWeigthedDev))){
+    SumOuterDev <- SumOuterDev + outerDev$SqWeigthedDev[[m]]
+  }
+
+  n <- length(outerDev$SqWeigthedDev)
+  betweenHaulVar <- SumOuterDev * (1 / (n*(n - 1)))
+
+  #
+  # Estiamte within-haul variance
+  #
+
+  SumWithinH <- varFO[[1]]
+  for (m in 2:length(varFO)){
+    prob <- FO[FO$FOid==m,"FOprob"]
+    SumWithinH <- SumWithinH + varFO[[m]] * (1 / prob**2)
+  }
+  withinHaulVar <- SumWithinH * (1 / n**2)
+
+
+  var <- betweenHaulVar + withinHaulVar
+
+  return(var)
+
+}
+
+#' Compiles report of estimate
+#' @description Compiles a report of estimate with estimat, SE and RSE for each age group
+#' @param grandTotals data.table estimates of totals, format described in \code{\link[h13estimator]{estimateTotalHH}}
+#' @param totalCovar matrix Variance Covariance estimate for totals, format described in \code{\link[h13estimator]{estimateTotalHHVar}}
+#' @return data.table with columns
+#'  \item{age}{age estimates are provided for}
+#'  \item{numberAtAge}{Esitimate of catch at age in numbers}
+#'  \item{numberAtAgeSE}{Standard error estimates}
+#'  \item{numberAtAgeRSE}{Relative standard error estimates}
+#' @export
+makeReportTable <- function(grandTotals, totalCoVar){
+
+  grandTotals$numberAtAgeSE <- sqrt(diag(totalCoVar))
+  grandTotals$numberAtAgeRSE <- grandTotals$numberAtAgeSE / grandTotals$numberAtAge
+
+  # order ages
+  grandTotals$age <- as.numeric(grandTotals$age)
+  setorder(grandTotals, age)
+  grandTotals$age <- as.integer(grandTotals$age)
+
+  return(grandTotals)
 
 }
 
@@ -621,7 +730,6 @@ estimateTotalHHVar <- function(FO, caaHH, caaFO, varFO){
 #' @noRd
 #' @keywords internal
 herringlottery_workflow <- function(){
-
   data <- herringlottery
   proportionsAtAgeBV <- calculateBVProportions(data$BV, "Age", stratified = F)
   meanWeightsBV <- calculateBVmeans(data$BV, "Weight", stratified = F)
@@ -630,6 +738,7 @@ herringlottery_workflow <- function(){
   sampleTotals <- estimateSAcaa(data$SA, data$SS, data$SL, "126417", proportionsAtAgeBV, meanWeightsBV, stratified = F)
 
   data$FO <- assumeSelectionMethod(data$FO, "UPSWOR", "UPSWR")
+  # consider post-stratifying on gear: need post-stratification method, and support for stratification in variance estimator
   haulTotals <- estimateFOCatchAtAge(data$FO, data$SS, data$SA, sampleTotals, stratified=F)
 
   grandTotals <- estimateTotalHH(data$FO, haulTotals)
@@ -639,13 +748,13 @@ herringlottery_workflow <- function(){
   # options:
   # - impute resampled
   # - assume zero
-  FOvarZero <- assumeFOconstantVar(haulTotals, 0)
+  FOvarZero <- assumeFOconstantVar(haulTotals, 0, ages=grandTotals$age)
   # - model assisted
 
-  #FO variance
 
   #grand total variance
+  covar <- estimateTotalHHVar(data$FO, grandTotals, haulTotals, FOvarZero)
 
+  return(makeReportTable(grandTotals, covar))
 
-  return(grandTotals)
 }

@@ -20,8 +20,8 @@ testkeys(data$BV, "BVid")
 
 test_foreign <- function(table, foreignkeys, unusedkeys){
   expect_true(all(c(foreignkeys, unusedkeys) %in% names(table)))
-  expect_true(all(is.na(table[,unusedkeys])))
-  expect_false(any(is.na(table[,foreignkeys])))
+  expect_true(all(is.na(table[,unusedkeys, with=F])))
+  expect_false(any(is.na(table[,foreignkeys, with=F])))
 }
 
 # these are specific to hierarchy 13, lower hiearchy C without subsampling of SA
