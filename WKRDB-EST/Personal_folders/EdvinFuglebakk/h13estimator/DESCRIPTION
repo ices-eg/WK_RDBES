@@ -1,10 +1,15 @@
 Package: h13estimator
 Type: Package
-Title: Prototype for estimating catch at ahe from RDBES hiearchy 13 samples
+Title: Prototype for estimating catch at age from RDBES hiearchy 13 samples
 Version: 0.1.0
 Author: Edvin Fuglebakk
 Maintainer: Edvin Fuglebakk <Edvin.Fuglebakk@hi.no>
 Description: Prepeared as part of WKRD-EST 2019. Based on the RDBES datamodel v1.17
+ Contains estimators for estimating catch at age in numbers, and it variance, from hiearchy 13 with unequal probability sampling of hauls/fishing operations.
+ Contains one example data set of hierarchy 13 sampling with unequal probability, containing 14 sampled hauls.
+ The data set was obtained from The pilot of the Norwegian lottery sampling for Herring in 2018.
+ The pilot was run for a subset of the fleet which is not identified here.
+ Missing samples are not encoded (those are non-response at fishing operation, and readability issues in age determination).
 License: LGPL
 Encoding: UTF-8
 LazyData: true
