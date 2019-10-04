@@ -1,0 +1,35 @@
+---
+title: "WKRDB-EST 2019 - case report"
+author: "Edvin Fuglebakk"
+date: "10/4/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(h13estimator)
+```
+
+## WKRDB-EST hierarchy 13 with unequal probability sampling
+During the workshop I have been developing a package for estimating catch at age in numbers from hiearchy 13 sampling with unequal probability selection of hauls. The RDBES data model v 1.17 was used in the development. Towards ToR a) This may serve as a prototype estimator for this specific sampling scheme, but I have identified few generic coding constructs immidiatley applicable to other schemes. A few ideas that may be considered for the RDBES estimation specification has come up. These will be discussed below. Towards ToR b) the implementation has served to identify some minor issues, discussed below, but more importantly it veriefies that there are very few obstacles to design based estimation of this kind in the data model.
+
+### Data model issues identified
+ * Fields for coding of reason not sampled are not present at the BV table. The particual example that I wanted to handle was ages sampled, but not read because of readability issues with the aging structure (scale or otolith). The SA table contains fields for coding reasons that BV and FM are not sampled
+ * The hierarchical structure in the RDBES data model is a bit ambigous for the SS and SL table. SS allows linking to SL, and both allow linking to upper-level hierarchy elements, such as FO and LE. I found that when considering bootstrap methods, it may be important to have a stricter definition of how SS foreign keys should be used, if it is possible to maintain links to higher levels in the hiearchy in either SS or SL, that would simplify this considerably.
+ * The way I interpret the SA table, it always implies a some level of clustering in sampling below the ultimate sampling unit above the SL table in the hiearchy. The range of options for this clustering is provided by the reference list for SAunitType. FOr SAunitType "number"" and "Kg", it is however possible to get samples in an unclustered way. Consider for instance the selection of 30 fish selected at random from the catch as it is transported on a convery belt, and the selection of 30 consecutive fish selected from a random location on the same conveyer belt). I think the data model, or the data model documentation should be considered to cleary distinguish these two. The issue came up when considering assuming unclustered sampling for sampling that was actually clustered, and discovering that I didn't know if the data model could tell me how it was actually sampled.
+ * BVunitValue is mandatory, but it is unclear to me if it is relevant for categorical variables coded with values from reference lists (such as sex or maturity).
+ * The distinction between the WtMes and WtLive fields on the SA table is not clearly documented.
+
+### Ideas for RDBES estimation specification
+In order to seperate assumptions and approximations from the design based functions, I implemented them with quite strict checks on data, and added data manipulation functions to deal with assumptions. For instance a Hansen-Hurwitz estimator assuming sampling with replacement will stop with an error for samples selected with without replacement, and a separate function "assumeSelectionMethod" manipulates the selectionMeth fields prior to exectuing the Hansen-Hurwitz. In this way, assumptions are made quite clear in the final code that puts together the estimators at different levels. See code below. I think this was worked well, and would suggest considering the principle when developing the RDBES estimation system.
+
+```{r workflow}
+h13estimator:::herringlottery_workflow
+```
+
+### Evaluation of data model
+The data model was well suited for the design based estimation. I implemented an estimator for the Norwegian lottery-sampling, and made estimates from the pilot sampling, with rathe rlow sample size (14 PSUs). Implementation was done with reasonable assumptions on replacement selection at the PSU level, and a possibly less reasonable assummption of the within-haul variances. Those assumptions were suggested or imposed by the sampling design, and not by any restriction in the data model. Below, design based estimates are compared with model based estimates previously obtained for the same stock and year (but with additional samples). The agreement is in my opinion quite good, particularly considering the low sample size in the pilot study.
+
+```{r estimate comparison, fig.cap="Design based estimates from the Herring lottery pilot (2018) with 95% confidence intervals. Point estimates from model based (ECA) estimates for same stock and year is overlayed", echo=F}
+h13estimator:::compare_with_eca()
+```
