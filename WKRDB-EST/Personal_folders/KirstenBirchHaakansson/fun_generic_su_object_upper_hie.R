@@ -102,7 +102,8 @@ generic_su_object_upper_hie <- function(input_list = H1_upper, hierachy = 1) {
   
   eval(parse(text = paste0(expected_tables_here$su_level[[i]], "_done", "<- select(su, one_of(var_names))")))
   
-  eval(parse(text = paste0('out$', expected_tables_here$su_level[[i]], " = ", expected_tables_here$su_level[[i]], "_done")))
+  
+  eval(parse(text = paste0("out$", expected_tables_here$su_level[[i]], "$designTable", " = ", expected_tables_here$su_level[[i]], "_done")))
   
   }
   
