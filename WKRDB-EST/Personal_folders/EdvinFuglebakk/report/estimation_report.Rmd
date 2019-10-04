@@ -2,7 +2,9 @@
 title: "WKRDB-EST 2019 - case report"
 author: "Edvin Fuglebakk"
 date: "10/4/2019"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -21,15 +23,17 @@ During the workshop I have been developing a package for estimating catch at age
  * The distinction between the WtMes and WtLive fields on the SA table is not clearly documented.
 
 ### Ideas for RDBES estimation specification
-In order to seperate assumptions and approximations from the design based functions, I implemented them with quite strict checks on data, and added data manipulation functions to deal with assumptions. For instance a Hansen-Hurwitz estimator assuming sampling with replacement will stop with an error for samples selected with without replacement, and a separate function "assumeSelectionMethod" manipulates the selectionMeth fields prior to exectuing the Hansen-Hurwitz. In this way, assumptions are made quite clear in the final code that puts together the estimators at different levels. See code below. I think this was worked well, and would suggest considering the principle when developing the RDBES estimation system.
+In order to seperate assumptions and approximations from the design based functions, I implemented them with quite strict checks on data, and added data manipulation functions to deal with assumptions. For instance a Hansen-Hurwitz estimator assuming sampling with replacement will stop with an error for samples selected with without replacement, and a separate function "assumeSelectionMethod" manipulates the selectionMeth fields prior to exectuing the Hansen-Hurwitz. In this way, assumptions are made quite clear in the final code that puts together the estimators at different levels. See code appendix. I think this was worked well, and would suggest considering the principle when developing the RDBES estimation system.
 
-```{r workflow}
-h13estimator:::herringlottery_workflow
-```
 
 ### Evaluation of data model
 The data model was well suited for the design based estimation. I implemented an estimator for the Norwegian lottery-sampling, and made estimates from the pilot sampling, with rathe rlow sample size (14 PSUs). Implementation was done with reasonable assumptions on replacement selection at the PSU level, and a possibly less reasonable assummption of the within-haul variances. Those assumptions were suggested or imposed by the sampling design, and not by any restriction in the data model. Below, design based estimates are compared with model based estimates previously obtained for the same stock and year (but with additional samples). The agreement is in my opinion quite good, particularly considering the low sample size in the pilot study.
 
-```{r estimate comparison, fig.cap="Design based estimates from the Herring lottery pilot (2018) with 95% confidence intervals. Point estimates from model based (ECA) estimates for same stock and year is overlayed", echo=F}
+```{r estimate comparison, fig.cap="Design based estimates from the Herring lottery pilot (2018) with 95% confidence intervals. Point estimates from model based (ECA) estimates for same stock and year is overlayed", echo=F, warning=F, message=F}
 h13estimator:::compare_with_eca()
+```
+
+## Code appendix
+```{r workflow, fig.cap="top-level function specifying the design based estimation with assumptions"}
+h13estimator:::herringlottery_workflow
 ```
