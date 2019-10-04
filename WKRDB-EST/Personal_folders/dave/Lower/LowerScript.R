@@ -11,8 +11,8 @@ myList <- list(
   ,"BV" = BV
 )
 
-myoutput <- getLowerProbs(table = myList,hierarchyType = "A",  BVtype = "age", probType = "selection" )
-
+myoutput <- getLowerProbs(table = myList,hierarchyType = "A",  BVtype = "age", probType = "inclusion" )
+myoutput$SSU$probMatrix
 
 
 #' getLowerIncProbs Gets the inclusion probabilities for the RDBES lower hierarchies
@@ -29,10 +29,10 @@ myoutput <- getLowerProbs(table = myList,hierarchyType = "A",  BVtype = "age", p
 getLowerProbs <- function(table, hierarchyType = "A", BVtype = "weight", probType = "inclusion") {
 
   # For testing
-  #table <- myList
-  #hierarchyType <- 'A'
-  #BVtype <- "weight"
-  #probType <- "inclusion"
+  table <- myList
+  hierarchyType <- 'A'
+  BVtype <- "weight"
+  probType <- "inclusion"
   
   if (hierarchyType != "A") stop ("This function is only implemented for lower hierarchy A at the moment")
   
@@ -161,7 +161,7 @@ getLowerProbs <- function(table, hierarchyType = "A", BVtype = "weight", probTyp
   # Set the row names to be equal to BVid (this is guaranteed unique)
   rownames(myBVDesignTable) <- myBVDesignTable$BVid
   
-  probMatrixBV <- as.matrix(myBV$BVprob)
+  probMatrixBV <- as.matrix(myBV$prob)
   rownames(probMatrixBV) <- rownames(myBVDesignTable)
   
   # Here's our SSU output
