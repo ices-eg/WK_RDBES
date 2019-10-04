@@ -1,5 +1,6 @@
+
 context("parseRDBESexchang: read")
-data <- parseRDBESexchange("../../inst/testresources/herringlottery_trimmed_H13.csv")
+data <- parseRDBESexchange(system.file("testresources","herringlottery_trimmed_H13.csv", package="h13estimator"))
 expectedtables <- c("BV", "SA", "SS", "SL", "FO", "SD", "DE")
 expect_equal(length(data), length(expectedtables))
 expect_true(all(names(data) %in% expectedtables))

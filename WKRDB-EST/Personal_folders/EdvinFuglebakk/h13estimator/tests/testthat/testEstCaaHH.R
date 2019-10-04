@@ -1,4 +1,5 @@
-data <- parseRDBESexchange("../../inst/testresources/herringlottery_trimmed_H13.csv")
+
+data <- parseRDBESexchange(system.file("testresources","herringlottery_trimmed_H13.csv", package="h13estimator"))
 
 context("estimateTotalHH: run simple example")
 est <- calculateBVmeans(data$BV, type = "Weight", stratified = F)

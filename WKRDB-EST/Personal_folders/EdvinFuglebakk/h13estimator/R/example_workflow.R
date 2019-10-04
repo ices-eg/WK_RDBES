@@ -46,6 +46,8 @@ compute_and_plot_herring_lottery <- function(){
 #' Compares estimate with that obtained from model based estimation (based on additional samples from other sampling programs)
 #' @noRd
 #' @keywords internal
+#' @import utils
+#' @import graphics
 compare_with_eca <- function(){
   report <- herringlottery_workflow()
   ecaPath <- system.file("exampledata", "eca_2018.csv", package="h13estimator")

@@ -1,4 +1,5 @@
-data <- parseRDBESexchange("../../inst/testresources/herringlottery_trimmed_H13.csv")
+
+data <- parseRDBESexchange(system.file("testresources","herringlottery_trimmed_H13.csv", package="h13estimator"))
 context("calculateBVProportions: run simple example")
 prop <- calculateBVProportions(data$BV, "Age", stratified = F)
 

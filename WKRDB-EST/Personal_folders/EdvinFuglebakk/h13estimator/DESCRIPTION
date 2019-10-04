@@ -13,8 +13,10 @@ Description: Prepeared as part of WKRD-EST 2019. Based on the RDBES datamodel v1
 License: LGPL
 Encoding: UTF-8
 LazyData: true
-Dependes: 
-    data.table
+Imports: 
+    data.table, stats, utils, graphics
+Depends:
+    R (>= 2.10)
 Suggests: 
-    testthat
+    testthat, ggplot2, reshape2
 RoxygenNote: 6.1.1

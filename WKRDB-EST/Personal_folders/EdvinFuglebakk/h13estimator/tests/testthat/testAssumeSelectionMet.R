@@ -1,4 +1,4 @@
-data <- parseRDBESexchange("../../inst/testresources/herringlottery_trimmed_H13.csv")
+data <- parseRDBESexchange(system.file("testresources","herringlottery_trimmed_H13.csv", package="h13estimator"))
 data$SA[1, "SAselectMeth"] <- "dummy"
 context("assumeSelectionMethod: run simple example")
 SAafter <- assumeSelectionMethod(data$SA, "SYSS", "SRSWR")

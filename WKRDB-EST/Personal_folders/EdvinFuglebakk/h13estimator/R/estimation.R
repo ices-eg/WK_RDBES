@@ -1,5 +1,3 @@
-library(data.table)
-
 #' Checks that all values in the vector are the same, and extracts that value
 #' @noRd
 #' @keywords internal
@@ -144,7 +142,7 @@ assumeFOconstantVar <- function(caaFO, constant, ages){
 #'  If output is not grouped in strata, it will be treated as single stratum calculation for a stratum called "measurements"
 #'
 #' @param BV data.tabke BV table
-#' @param BVtype charcter() identifies the BVtype records to include in calculation
+#' @param type charcter() identifies the BVtype records to include in calculation
 #' @param contVar charcter() name of continous variable in BV
 #' @param stratified logical() determines wheter output should be grouped in straa.
 #' @return data.table with means, columns:
@@ -156,6 +154,7 @@ assumeFOconstantVar <- function(caaFO, constant, ages){
 #'    \item{proportionStrata}{the proportion of the sampled fish in each strata from any stratification done during measurment (lower hiearchies)}
 #'    \item{selectionMethod}{the selectionmethod used for selecting fish to measure the contVar If the selectionMethod is not gived or is mixed, this should be NA.}
 #'
+#' @import data.table
 #' @export
 calculateBVmeans <- function(BV, type, contVar="BVvalue", stratified = T){
   bvtyped <- BV[BV$BVtype==type,]
@@ -206,7 +205,7 @@ calculateBVmeans <- function(BV, type, contVar="BVvalue", stratified = T){
 #'  If output is not grouped in strata, it will be treated as single stratum calculation for a stratum called "measurements"
 #'
 #' @param BV a BV table
-#' @param BVtype character() identifies the BVtype records to include in calculation
+#' @param type character() identifies the BVtype records to include in calculation
 #' @param catVar character() name of categorical variable in BV.
 #' @param stratified logical() determines wheter output should be grouped in strata.
 #' @return data.table with columns:
@@ -666,7 +665,7 @@ estimateTotalHHVar <- function(FO, caaHH, caaFO, varFO){
   #
   # Estimate between-haul variance
   #
-
+  browser()
   caaFO$pWmDnumberAtAge <- caaFO$numberAtAge * (1/caaFO$FOprob) - caaFO$totalNumberAtAge
   outerDev <- aggregate(list(SqWeigthedDev=caaFO$pWmDnumberAtAge), by=list(FOid=caaFO$FOid, stratum=caaFO$stratum), FUN=sqWdevMatrix, simplify=F)
 
@@ -684,7 +683,7 @@ estimateTotalHHVar <- function(FO, caaHH, caaFO, varFO){
 
   SumWithinH <- varFO[[1]]
   for (m in 2:length(varFO)){
-    prob <- FO[FO$FOid==m,"FOprob"]
+    prob <- FO[FO$FOid==m,][["FOprob"]]
     SumWithinH <- SumWithinH + varFO[[m]] * (1 / prob**2)
   }
   withinHaulVar <- SumWithinH * (1 / n**2)

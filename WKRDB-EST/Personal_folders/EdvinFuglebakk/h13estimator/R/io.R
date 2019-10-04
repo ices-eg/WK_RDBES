@@ -1,5 +1,3 @@
-library(data.table)
-
 #' parse DE line, add result to datalist
 #' @param linevec list of elements on line
 #' @param datalist list of data frames representing the RDBES data model
@@ -7,6 +5,8 @@ library(data.table)
 #' @param verbose logical whether to print progress info
 #' @noRd
 #' @keywords internal
+#' @import stats
+#' @import data.table
 parseDE <- function(linevec, datalist, DEid, verbose=F){
 
   if (verbose){
@@ -291,7 +291,6 @@ parseBV <- function(linevec, datalist, BVid, SAid=NA, FMid=NA, verbose=F){
 #'  Parser is only implemented for the tables needed for hiearachy 13
 #' @param filename filename for csv file with RDBES exhcange format v1.17
 #' @param verbose logical determining whether progress information should be printed while parsing
-#' @param verbose logical whether to print progress info
 #' @return list of data.tables corresponding to the different tables parsed. Tables are identified with their Record Type, and columns are identified with their R Name
 #' @export
 parseRDBESexchange <- function(filename, verbose=F){
