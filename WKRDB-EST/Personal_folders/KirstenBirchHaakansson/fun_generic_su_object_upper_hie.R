@@ -27,56 +27,56 @@ generic_su_object_upper_hie <- function(input_list = H1_upper, hierachy = 1) {
   # createing a list with expected tables for each hierachy ----
   expected_tables <- list(
     H1 = data.frame(
-      table_names = c("DE", "SD", "VS", "FT", "FO"),
-      su_level = c("NA", "NA", "su1", "su2", "su3")
+      table_names = c("DE", "SD", "VS", "FT", "FO","SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3", "su4")
     ),
     H2 = data.frame(
-      table_names = c("DE", "SD", "FT", "FO"),
-      su_level = c("NA", "NA", "su1", "su2")
+      table_names = c("DE", "SD", "FT", "FO","SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3")
     ),
     H3 = data.frame(
-      table_names = c("DE", "SD", "TE", "VS", "FT", "FO"),
-      su_level = c("NA", "NA", "su1", "su2", "su3", "su4")
+      table_names = c("DE", "SD", "TE", "VS", "FT", "FO","SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3", "su4", "su5")
     ),
     H4 = data.frame(
-      table_names = c("DE", "SD", "OS", "FT", "LE"),
-      su_level = c("NA", "NA", "su1", "su2", "su3")
-    ),
-    H5 = data.frame(
-      table_names = c("DE", "SD", "OS", "LE"),
-      su_level = c("NA", "NA", "su1", "su2")
-    ),
-    H6 = data.frame(
-      table_names = c("DE", "SD", "OS", "FT"),
-      su_level = c("NA", "NA", "su1", "su2")
-    ),
-    H7 = data.frame(
-      table_names = c("DE", "SD", "OS"),
-      su_level = c("NA", "NA", "su1")
-    ),
-    H8 = data.frame(
-      table_names = c("DE", "SD", "TE", "VS", "LE"),
-      su_level = c("NA", "NA", "su1", "su2", "su3")
-    ),
-    H9 = data.frame(
-      table_names = c("DE", "SD", "LO", "TE"),
-      su_level = c("NA", "NA", "su1", "su2")
-    ),
-    H10 = data.frame(
-      table_names = c("DE", "SD", "VS", "TE", "FT", "FO"),
+      table_names = c("DE", "SD", "OS", "FT", "LE","SA"),
       su_level = c("NA", "NA", "su1", "su2", "su3", "su4")
     ),
-    H11 = data.frame(
-      table_names = c("DE", "SD", "LO", "TE", "FT"),
+    H5 = data.frame(
+      table_names = c("DE", "SD", "OS", "LE","SA"),
       su_level = c("NA", "NA", "su1", "su2", "su3")
+    ),
+    H6 = data.frame(
+      table_names = c("DE", "SD", "OS", "FT", "SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3")
+    ),
+    H7 = data.frame(
+      table_names = c("DE", "SD", "OS","SA"),
+      su_level = c("NA", "NA", "su1", "su2")
+    ),
+    H8 = data.frame(
+      table_names = c("DE", "SD", "TE", "VS", "LE","SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3", "su4")
+    ),
+    H9 = data.frame(
+      table_names = c("DE", "SD", "LO", "TE", "SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3")
+    ),
+    H10 = data.frame(
+      table_names = c("DE", "SD", "VS", "TE", "FT", "FO","SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3", "su4", "su5")
+    ),
+    H11 = data.frame(
+      table_names = c("DE", "SD", "LO", "TE", "FT", "SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3", "su4")
     ),
     H12 = data.frame(
-      table_names = c("DE", "SD", "LO", "TE", "LE"),
-      su_level = c("NA", "NA", "su1", "su2", "su3")
+      table_names = c("DE", "SD", "LO", "TE", "LE","SA"),
+      su_level = c("NA", "NA", "su1", "su2", "su3", "su4")
     ),
     H13 = data.frame(
-      table_names = c("DE", "SD", "FO"),
-      su_level = c("NA", "NA", "su1")
+      table_names = c("DE", "SD", "FO","SA"),
+      su_level = c("NA", "NA", "su1", "su2")
     )
   )
   
