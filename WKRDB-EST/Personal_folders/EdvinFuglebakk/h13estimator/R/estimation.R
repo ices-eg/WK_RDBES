@@ -665,7 +665,6 @@ estimateTotalHHVar <- function(FO, caaHH, caaFO, varFO){
   #
   # Estimate between-haul variance
   #
-  browser()
   caaFO$pWmDnumberAtAge <- caaFO$numberAtAge * (1/caaFO$FOprob) - caaFO$totalNumberAtAge
   outerDev <- aggregate(list(SqWeigthedDev=caaFO$pWmDnumberAtAge), by=list(FOid=caaFO$FOid, stratum=caaFO$stratum), FUN=sqWdevMatrix, simplify=F)
 
