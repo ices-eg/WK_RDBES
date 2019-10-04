@@ -4,6 +4,7 @@
 load('./data/BV.Rdata')
 load('./data/FM.Rdata')
 
+# Use this value for testing the function
 BV$BVselectMeth <- 'SRSWOR'
 
 myList <- list(
@@ -12,7 +13,7 @@ myList <- list(
 )
 
 myoutput <- getLowerProbs(table = myList,hierarchyType = "A",  BVtype = "age", probType = "inclusion" )
-myoutput$SSU$probMatrix
+
 
 
 #' getLowerIncProbs Gets the inclusion probabilities for the RDBES lower hierarchies
@@ -29,10 +30,10 @@ myoutput$SSU$probMatrix
 getLowerProbs <- function(table, hierarchyType = "A", BVtype = "weight", probType = "inclusion") {
 
   # For testing
-  table <- myList
-  hierarchyType <- 'A'
-  BVtype <- "weight"
-  probType <- "inclusion"
+  #table <- myList
+  #hierarchyType <- 'A'
+  #BVtype <- "weight"
+  #probType <- "inclusion"
   
   if (hierarchyType != "A") stop ("This function is only implemented for lower hierarchy A at the moment")
   
