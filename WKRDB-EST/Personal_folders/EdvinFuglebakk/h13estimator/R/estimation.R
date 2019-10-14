@@ -124,8 +124,6 @@ assumeFOconstantVar <- function(caaFO, constant, ages){
   return(variances)
 }
 
-
-
 #
 #
 # Lower hiearchy calculations
@@ -281,7 +279,6 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #' @param species character() aphia code for species to estimate for
 #' @param proportionAtAge data.table proportions in each age group calculated from lower hiearchy registrations (format described in e.g. \code{\link[h13estimator]{calculateBVProportions}})
 #' @param meanWeights data.table mean weight of fish calculated from lower hiearchy registrations. (format described in e.g. \code{\link[h13estimator]{calculateBVmeans}})
-#'  Can be NULL if none of the samples are sampled by weight (SAunitType=Kg)
 #' @param stratified logical() determines whether output should be grouped in strata.
 #' @return data.table with columns:
 #'
@@ -292,7 +289,7 @@ calculateBVProportions <- function(BV, type, catVar="BVvalue", stratified=T){
 #'    \item{selectionMethod}{the selectionmethod used for selecting samples. If the selectionMethod is not given or is mixed, this should be NA.}
 #'
 #' @export
-estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL, stratified=T){
+estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights, stratified=T){
 
   #
   # checks on lower hiearchy estimates
@@ -358,37 +355,19 @@ estimateSAcaa <- function(SA, SS, SL, species, proportionAtAge, meanWeights=NULL
   # Estimate total number of fish in sampling unit SA was taken from (e.g. Fishing Operation)
   #
 
-  supportedUnitTypes <- c(codelist$RS_UnitType$kg, codelist$RS_UnitType$number)
-  if (!all(SAtarget$SAunitType %in% supportedUnitTypes)){
-    stop(paste("Not all samping unit types supported (SAunitType). Currently suppports:", supportedUnitTypes))
+  if (is.null(meanWeights)){
+    stop("Need meanWeights to estimate total number of fish in samples")
+  }
+  meanWeights <- meanWeights[meanWeights$SAid %in% SAtarget$SAid,]
+  if (any(meanWeights$unit!=codelist$RS_UnitOfValue$g)){
+    stop("Units of mean weights must match that of total weight (SAtotalWtLive)")
   }
 
-  nfish <- data.table(SAid=integer(), nfish=integer())
+  meanWeights$wmean <- meanWeights$mean * meanWeights$proportionStrata
+  meanWeightsSample <- aggregate(list(mean=meanWeights$wmean), by=list(SAid=meanWeights$SAid), FUN=sum)
+  meanWeightsSample$nfish <- floor((1/meanWeightsSample$mean) * SAtarget$SAtotalWtLive)
 
-  # handle sampling by weight
-  if (any(SAtarget$SAunitType==codelist$RS_UnitType$kg)){
-    if (is.null(meanWeights)){
-      stop(paste("Need meanWeights to estimate total number of fish in samples sampled by weight (SAunitType=", codelist$RS_UnitType$kg, ")", sep=""))
-    }
-    meanWeights <- meanWeights[meanWeights$SAid %in% SAtarget$SAid,]
-    if (any(meanWeights$unit!=codelist$RS_UnitOfValue$g)){
-      stop("Units of mean weights must match that of total weight (SAtotalWtLive)")
-    }
-
-    meanWeights$wmean <- meanWeights$mean * meanWeights$proportionStrata
-    meanWeightsSample <- aggregate(list(mean=meanWeights$wmean), by=list(SAid=meanWeights$SAid), FUN=sum)
-    meanWeightsSample$nfish <- floor((1/meanWeightsSample$mean) * SAtarget$SAtotalWtLive)
-
-    nfish <- rbind(nfish, meanWeightsSample[meanWeightsSample$SAid %in% SAtarget[SAtarget$SAunitType==codelist$RS_UnitType$kg,][["SAid"]],c("SAid", "nfish")])
-  }
-
-  # handle sampling by number
-  if (any(SAtarget$SAunitType==codelist$RS_UnitType$number)){
-    nfish <- rbind(nfish, SAtarget[SAtarget$SAunitType==codelist$RS_UnitType$number, c("SAid", "SAtotal")])
-  }
-  if (nrow(nfish) != nrow(SAtarget)){
-    stop("Could not estimate number of fish for all SAid")
-  }
+  nfish <- meanWeightsSample[,c("SAid", "nfish")]
 
 
   #
@@ -610,7 +589,7 @@ estimateTotalHH <- function(FO, caaFO, ages=as.character(seq(0,max(as.integer(ca
 #' @export
 estimateTotalHHVar <- function(FO, caaHH, caaFO, varFO){
 
-    if (length(unique(lapply(varFO, dim))) != 1){
+  if (length(unique(lapply(varFO, dim))) != 1){
     stop("varFO contains matrices of different dimensions")
   }
   if (length(unique(lapply(varFO, colnames))) != 1){
