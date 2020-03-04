@@ -35,8 +35,8 @@ generate_zeros_in_SA<-function(sppCode, SAtable, sppFrame){
     # Example
     # creates example species frame (according to discussions held on commercial species)
  
-     sppFrame <- data.frame(SLlistName = "XYZ", SLyear = "20XX", SLcatchFraction = "Lan", SLcommAphiaID = c(125802, 126436), SLcommName = c("Monkfishes","Cod"), 
-          SLsppCode = c(126555, 126555,126436), SLsppName = c("Lophius piscatorius", "Gadus morhua"))
+     sppFrame <- data.frame(SLlistName = "XYZ", SLyear = "20XX", SLcatchFraction = "Lan", SLcommAphiaID = c(125802, 125802, 126436), SLcommName = c("Monkfishes","Monkfishes","Cod"), 
+          SLsppCode = c(126554, 126555,126436), SLsppName = c("Lophius budegassa", "Lophius piscatorius", "Gadus morhua"))
     
     # generates example SA table
     SA<-data.frame(SAid = as.character(c(1, 1, 2, 2)), SAsppCode = c(126554, 126436, 126555, 126554), SAtotalWtLive = c(34, 10,20,30))
