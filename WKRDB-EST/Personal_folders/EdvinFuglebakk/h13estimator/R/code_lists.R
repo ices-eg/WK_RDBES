@@ -40,6 +40,7 @@ codelist$RS_Presentation$whole <- "Whole"
 codelist$RS_UnitType<-list()
 codelist$RS_UnitType$number <- "Number"
 codelist$RS_UnitType$kg <- "Kg"
+codelist$RS_UnitType$kg <- "Basket"
 codelist$RS_UnitOfValue <- list()
 codelist$RS_UnitOfValue$mm <- "mm"
 codelist$RS_UnitOfValue$g <- "g"
