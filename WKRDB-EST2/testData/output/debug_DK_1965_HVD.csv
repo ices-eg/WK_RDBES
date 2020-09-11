@@ -1,0 +1,11 @@
+VDid,VDrecordType,VDencryptedVesselCode,VDyear,VDcountry,VDhomePort,VDflagCountry,VDlength,VDlengthCategory,VDpower,VDtonnage,VDtonUnit
+1,VD,VDcode_1,1965,DK,,DK,,40<,,,
+2,VD,VDcode_2,1965,DK,,DK,,40<,,,
+3,VD,VDcode_3,1965,DK,,DK,,10-<12,,,
+4,VD,VDcode_4,1965,DK,,DK,,Unknown,,,
+5,VD,VDcode_5,1965,DK,,DK,,18-<24,,,
+6,VD,VDcode_6,1965,DK,,DK,,18-<24,,,
+7,VD,VDcode_7,1965,DK,,DK,,12-<15,,,
+8,VD,VDcode_8,1965,DK,,DK,,40<,,,
+9,VD,VDcode_9,1965,DK,,DK,,18-<24,,,
+10,VD,VDcode_10,1965,DK,,DK,,15-<18,,,
