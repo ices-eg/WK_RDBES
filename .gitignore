@@ -2,6 +2,5 @@
 *.Rhistory
 *.RData
 *.Ruserdata
-*.csv
 .Rproj.user
 data_for_Mary.R
