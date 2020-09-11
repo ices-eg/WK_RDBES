@@ -14,7 +14,7 @@
 baseType_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
 hierarchies_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
 
-setwd("./WKRDB-EST2/testData")
+setwd("./WKRDB-EST2/testDataStart")
 DBErawObj_path <- "./output/DBErawObj/"
 
 
