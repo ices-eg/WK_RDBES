@@ -12,9 +12,10 @@
 
 baseType_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
 hierarchies_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
+setwd("./WKRDB-EST2/testData")
 
 # Load our functions
-source("./WKRDB-EST2/testData/RDBES_Functions.R")
+source("./RDBES_Functions.R")
 
 # This file shows how to generate test data for the RDBES
 
@@ -32,7 +33,7 @@ validationData[validationData$type == 'tRS_Stratification','type'] <- 'tYesNoFie
 
 # Load the reference data: either refresh from ICES or just use a local copy
 # Use line below for WKRDB-EST2
-allowedValues <- readRDS(file="./WKRDB-EST2/testData/referenceData/allowedValues.RDS")
+allowedValues <- readRDS(file="./referenceData/allowedValues.RDS")
 
 # Get icesVocab for R version 4.0.2
 # This is not needed for WKRDB-EST values are already downloaded
@@ -57,7 +58,7 @@ for (i in 1:1){
   print(myHierarchyToGenerate)
   myLowerHierarchyToGenerate <- 'A'
   myYear <- 2015
-  myCountry <- 'IE'
+  myCountry <- 'VA'
   # Number of strata in different tables - if no value if given for a table then it is assumed to be unstratified
   myStrata <- list(DE = 2, VS = 2)
   # Number of things sampled in different tables - if no value is given for a table then it is assumed to be 1
@@ -68,21 +69,65 @@ for (i in 1:1){
   myMethods <- list()
   
   # Generate some random data
-  myTestData <- createTestData(HierarchyToGenerate = myHierarchyToGenerate, LowerHierarchyToGenerate = myLowerHierarchyToGenerate, RDBESvalidationdata = validationData, RDBEScodeLists = allowedValues, RequiredTables = allRequiredTables, NumberOfStrata = myStrata, NumberSampled = mySampled, NumberTotal = myTotal, SelectionMethods = myMethods)
+  myTestData <-
+    createTestData(
+      HierarchyToGenerate = myHierarchyToGenerate,
+      LowerHierarchyToGenerate = myLowerHierarchyToGenerate,
+      RDBESvalidationdata = validationData,
+      RDBEScodeLists = allowedValues,
+      RequiredTables = allRequiredTables,
+      NumberOfStrata = myStrata,
+      NumberSampled = mySampled,
+      NumberTotal = myTotal,
+      SelectionMethods = myMethods
+    )
   
   # The data we just geenerated is too random and won't pass validation or upload check - lets fix that now
-  myNewTestData <- makeTestDataMoreRealistic(DataToUse = myTestData,CountryToUse=myCountry,YearToUse=myYear,MetierList= NULL,SpeciesList= NULL,RDBEScodeLists=allowedValues)
+  myNewTestData <-
+    makeTestDataMoreRealistic(
+      DataToUse = myTestData,
+      CountryToUse = myCountry,
+      YearToUse = myYear,
+      MetierList = NULL,
+      SpeciesList = NULL,
+      RDBEScodeLists = allowedValues
+    )
   
   # Lets validate our data (Optional)
   #errorsTestData <- validateTables(RDBESdata = myNewTestData, RDBESvalidationdata = validationData, RDBEScodeLists = allowedValues, shortOutput = TRUE,framestoValidate = c("BV","DE","FM","FO","FT","LE","LO","OS","SA","SD","SL","SS","TE","VD","VS"))
   
   # Create a VD output file
-  generateSimpleExchangeFile(typeOfFile = 'VD', yearToUse = myYear, country = myCountry, RDBESdata = myNewTestData,cleanData = TRUE, RDBESvalidationdata = validationData, RDBEScodeLists = allowedValues)
+  generateSimpleExchangeFile(
+    typeOfFile = 'VD',
+    yearToUse = myYear,
+    country = myCountry,
+    RDBESdata = myNewTestData,
+    cleanData = TRUE,
+    RDBESvalidationdata = validationData,
+    RDBEScodeLists = allowedValues
+  )
   
   # Create a SL output file
-  generateSimpleExchangeFile(typeOfFile = 'SL', yearToUse = myYear, country = myCountry, RDBESdata = myNewTestData,cleanData = TRUE, RDBESvalidationdata = validationData, RDBEScodeLists = allowedValues)
+  generateSimpleExchangeFile(
+    typeOfFile = 'SL',
+    yearToUse = myYear,
+    country = myCountry,
+    RDBESdata = myNewTestData,
+    cleanData = TRUE,
+    RDBESvalidationdata = validationData,
+    RDBEScodeLists = allowedValues
+  )
   
   # Create a complex exchange file (Hx)
-  generateComplexExchangeFile(typeOfFile = myHierarchyToGenerate, yearToUse = myYear, country = myCountry, RDBESdata = myNewTestData, cleanData = TRUE, RDBESvalidationdata = validationData, RDBEScodeLists = allowedValues, RequiredTables = allRequiredTables)
+  generateComplexExchangeFile(
+    typeOfFile = myHierarchyToGenerate,
+    yearToUse = myYear,
+    country = myCountry,
+    RDBESdata = myNewTestData,
+    cleanData = TRUE,
+    RDBESvalidationdata = validationData,
+    RDBEScodeLists = allowedValues,
+    RequiredTables = allRequiredTables
+  )
   
 }
