@@ -9,6 +9,7 @@
 ##############################################################################
 
 # Local paths to .xsd files
+# kibi - pulled 20200911 19:15
 
 baseType_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
 hierarchies_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
