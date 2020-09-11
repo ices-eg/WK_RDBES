@@ -1,9 +1,20 @@
 # Author: https://github.com/davidcurrie2001
 # Copied: 20200911
 
+###############################################################################
+# TODO
+# (kibi - 20200911): It would be nice if RDBES_Functions.R was sourced directly 
+#     from https://github.com/davidcurrie2001, but I can figure out how
+#
+##############################################################################
+
+# Get icesVocab for R version 4.0.2
+
+library(devtools)
+install_github("ices-tools-prod/icesVocab")
 
 # Load our functions
-source("RDBES_Functions.R")
+source("./WKRDB-EST2/testData/RDBES_Functions.R")
 
 # This file shows how to generate test data for the RDBES
 
@@ -13,24 +24,27 @@ options(scipen=500) # big number of digits
 ## STEP 1) LOAD OUR DATA
 
 # Load the validation data
-validationData <- getValidationData(downloadFromGitHub = FALSE, fileLocation = './tableDefs/BaseTypes.xsd')
+validationData <- getValidationData(downloadFromGitHub = FALSE, fileLocation = 'Q:/mynd/RDB/RDBES/XSD-files/BaseTypes.xsd')
 #validationData <- getValidationData(downloadFromGitHub = TRUE, fileLocation = './tableDefs/BaseTypes.xsd')
 
 # 11/9/2020 Temp fix because the validation fields aren't up to date :-(
 validationData[validationData$type == 'tRS_Stratification','type'] <- 'tYesNoFields'
 
 # Load the reference data: either refresh from ICES or just use a local copy
-allowedValues <- loadReferenceData(downloadFromICES = FALSE)
+# Use line below for WKRDB-EST2
+allowedValues <- readRDS(file="./WKRDB-EST2/testData/referenceData/allowedValues.RDS")
+
+#allowedValues <- loadReferenceData(downloadFromICES = T)
 #allowedValues <- loadReferenceData(downloadFromICES = TRUE, validationData=validationData)
 
 # Load the lists of tables required for each hierarchy: either refresh from ICES or just use a local copy
-allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = FALSE, fileLocation = './tableDefs/')
+allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = FALSE, fileLocation = 'Q:/mynd/RDB/RDBES/XSD-files/')
 #allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = './tableDefs/')
 
 ## STEP 2) GENERATE TEST DATA
 
 # Can use a loop to generate test data for all hierarchies if you want to 
-for (i in 1:13){
+for (i in 1:1){
   myHierarchyToGenerate <- paste('H',i,sep="")
   
   # Define some parameters for our test data
