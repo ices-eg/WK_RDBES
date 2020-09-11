@@ -1,0 +1,133 @@
+1,DE,ESP-AZTI_DCF_Onboard_Sampling,NatpilCF,2015,DE_stratum1,Y,9,9-2015-DE_stratum1
+1,SD,VA,1,1,9-2015-DE_stratum1-1
+1,LO,1,N,abc,VAVAT,U,N,U,NA,2,1,NA,NA,SRSWR,LO_unit_1,NA,NA,NA,NA,NA,Y,NA,1,9-2015-DE_stratum1-1-1
+1,TE,1,N,Day,U,N,U,NA,2,1,NA,NA,SRSWR,TE_unit_1,NA,NA,NA,NA,NA,Y,NA,1,9-2015-DE_stratum1-1-1-1
+1,SS,1,N,haul,Lan,vis,U,N,U,Control,VA_2015_SpeciesList,N,4,1,NA,NA,SRSWR,SS_unit_1,NA,NA,NA,NA,NA,Y,NA,1,9-2015-DE_stratum1-1-1-1-1
+2,DE,ESP-AZTI_DCF_Onboard_Sampling,NatpilCF,2015,DE_stratum2,Y,9,9-2015-DE_stratum2
+2,SD,VA,1,2,9-2015-DE_stratum2-2
+2,LO,1,N,abc,VAVAT,U,N,U,NA,2,1,NA,NA,SRSWR,LO_unit_1,NA,NA,NA,NA,NA,Y,NA,2,9-2015-DE_stratum2-2-2
+2,TE,2,N,Day,U,N,U,NA,2,1,NA,NA,SRSWR,TE_unit_1,NA,NA,NA,NA,NA,Y,NA,2,9-2015-DE_stratum2-2-2-2
+2,SS,1,N,haul,Lan,vis,U,N,U,Control,VA_2015_SpeciesList,N,4,1,NA,NA,SRSWR,SS_unit_1,NA,NA,NA,NA,NA,Y,NA,2,9-2015-DE_stratum2-2-2-2-2
+2,LE,VDcode_9,N,2,NA,U,N,U,NA,N,All,VAVAT,NA,VA,2015-03-26,NA,NA,27,NA,NotApplicable,NA,NA,NA,DRB_MOL_>0_0_0,DRB,NA,NA,NA,NA,Funcping,NA,2,1,NA,NA,SRSWR,LE_unit_1,NA,NA,NA,NA,NA,Y,NA,NA,2,9-2015-DE_stratum2-2-2-2-2-2
+3,SA,3,NA,N,U,1019159,NA,Boiled,Alive,Lan,HuC,NA,NA,F,NA,27,NA,NotApplicable,NA,NA,NA,DRB_CRU_0_0_0,DRB,NA,NA,NA,Basket,NA,NA,3,2,NA,NA,SRSWR,SA_unit_1,A,NA,Y,NA,NA,NA,NA,NA,2,9-2015-DE_stratum2-2-2-2-2-2-3
+41,FM,380,1,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-41
+81,BV,81,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,41,9-2015-DE_stratum2-2-2-2-2-2-3-41-81
+82,BV,82,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,41,9-2015-DE_stratum2-2-2-2-2-2-3-41-82
+42,FM,390,2,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-42
+83,BV,83,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,42,9-2015-DE_stratum2-2-2-2-2-2-3-42-83
+84,BV,84,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,42,9-2015-DE_stratum2-2-2-2-2-2-3-42-84
+43,FM,400,3,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-43
+85,BV,85,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,43,9-2015-DE_stratum2-2-2-2-2-2-3-43-85
+86,BV,86,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,43,9-2015-DE_stratum2-2-2-2-2-2-3-43-86
+44,FM,410,4,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-44
+87,BV,87,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,44,9-2015-DE_stratum2-2-2-2-2-2-3-44-87
+88,BV,88,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,44,9-2015-DE_stratum2-2-2-2-2-2-3-44-88
+45,FM,420,5,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-45
+89,BV,89,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,45,9-2015-DE_stratum2-2-2-2-2-2-3-45-89
+90,BV,90,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,45,9-2015-DE_stratum2-2-2-2-2-2-3-45-90
+46,FM,430,6,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-46
+91,BV,91,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,46,9-2015-DE_stratum2-2-2-2-2-2-3-46-91
+92,BV,92,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,46,9-2015-DE_stratum2-2-2-2-2-2-3-46-92
+47,FM,440,7,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-47
+93,BV,93,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,47,9-2015-DE_stratum2-2-2-2-2-2-3-47-93
+94,BV,94,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,47,9-2015-DE_stratum2-2-2-2-2-2-3-47-94
+48,FM,450,8,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-48
+95,BV,95,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,48,9-2015-DE_stratum2-2-2-2-2-2-3-48-95
+96,BV,96,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,48,9-2015-DE_stratum2-2-2-2-2-2-3-48-96
+49,FM,460,9,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-49
+97,BV,97,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,49,9-2015-DE_stratum2-2-2-2-2-2-3-49-97
+98,BV,98,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,49,9-2015-DE_stratum2-2-2-2-2-2-3-49-98
+50,FM,470,10,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-50
+100,BV,100,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,50,9-2015-DE_stratum2-2-2-2-2-2-3-50-100
+99,BV,99,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,50,9-2015-DE_stratum2-2-2-2-2-2-3-50-99
+51,FM,480,10,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-51
+101,BV,101,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,51,9-2015-DE_stratum2-2-2-2-2-2-3-51-101
+102,BV,102,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,51,9-2015-DE_stratum2-2-2-2-2-2-3-51-102
+52,FM,490,10,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-52
+103,BV,103,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,52,9-2015-DE_stratum2-2-2-2-2-2-3-52-103
+104,BV,104,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,52,9-2015-DE_stratum2-2-2-2-2-2-3-52-104
+53,FM,500,9,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-53
+105,BV,105,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,53,9-2015-DE_stratum2-2-2-2-2-2-3-53-105
+106,BV,106,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,53,9-2015-DE_stratum2-2-2-2-2-2-3-53-106
+54,FM,510,8,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-54
+107,BV,107,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,54,9-2015-DE_stratum2-2-2-2-2-2-3-54-107
+108,BV,108,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,54,9-2015-DE_stratum2-2-2-2-2-2-3-54-108
+55,FM,520,7,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-55
+109,BV,109,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,55,9-2015-DE_stratum2-2-2-2-2-2-3-55-109
+110,BV,110,N,U,Age,10,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,55,9-2015-DE_stratum2-2-2-2-2-2-3-55-110
+56,FM,530,6,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-56
+111,BV,111,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,56,9-2015-DE_stratum2-2-2-2-2-2-3-56-111
+112,BV,112,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,56,9-2015-DE_stratum2-2-2-2-2-2-3-56-112
+57,FM,540,5,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-57
+113,BV,113,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,57,9-2015-DE_stratum2-2-2-2-2-2-3-57-113
+114,BV,114,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,57,9-2015-DE_stratum2-2-2-2-2-2-3-57-114
+58,FM,550,4,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-58
+115,BV,115,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,58,9-2015-DE_stratum2-2-2-2-2-2-3-58-115
+116,BV,116,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,58,9-2015-DE_stratum2-2-2-2-2-2-3-58-116
+59,FM,560,3,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-59
+117,BV,117,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,59,9-2015-DE_stratum2-2-2-2-2-2-3-59-117
+118,BV,118,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,59,9-2015-DE_stratum2-2-2-2-2-2-3-59-118
+60,FM,570,2,Cephalothorax Length,NA,NA,NA,NA,NA,3,9-2015-DE_stratum2-2-2-2-2-2-3-60
+119,BV,119,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,60,9-2015-DE_stratum2-2-2-2-2-2-3-60-119
+120,BV,120,N,U,Age,11,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,60,9-2015-DE_stratum2-2-2-2-2-2-3-60-120
+4,SA,4,NA,N,U,103304,NA,Boiled,Alive,Lan,HuC,NA,NA,F,NA,27,NA,NotApplicable,NA,NA,NA,DRB_MOL_>=0_0_0,DRB,NA,NA,NA,Basket,NA,NA,3,2,NA,NA,SRSWR,SA_unit_2,A,NA,Y,NA,NA,NA,NA,NA,2,9-2015-DE_stratum2-2-2-2-2-2-4
+61,FM,250,1,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-61
+121,BV,121,N,U,Age,5,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,61,9-2015-DE_stratum2-2-2-2-2-2-4-61-121
+122,BV,122,N,U,Age,5,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,61,9-2015-DE_stratum2-2-2-2-2-2-4-61-122
+62,FM,260,2,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-62
+123,BV,123,N,U,Age,5,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,62,9-2015-DE_stratum2-2-2-2-2-2-4-62-123
+124,BV,124,N,U,Age,5,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,62,9-2015-DE_stratum2-2-2-2-2-2-4-62-124
+63,FM,270,3,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-63
+125,BV,125,N,U,Age,5,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,63,9-2015-DE_stratum2-2-2-2-2-2-4-63-125
+126,BV,126,N,U,Age,5,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,63,9-2015-DE_stratum2-2-2-2-2-2-4-63-126
+64,FM,280,4,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-64
+127,BV,127,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,64,9-2015-DE_stratum2-2-2-2-2-2-4-64-127
+128,BV,128,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,64,9-2015-DE_stratum2-2-2-2-2-2-4-64-128
+65,FM,290,5,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-65
+129,BV,129,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,65,9-2015-DE_stratum2-2-2-2-2-2-4-65-129
+130,BV,130,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,65,9-2015-DE_stratum2-2-2-2-2-2-4-65-130
+66,FM,300,6,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-66
+131,BV,131,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,66,9-2015-DE_stratum2-2-2-2-2-2-4-66-131
+132,BV,132,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,66,9-2015-DE_stratum2-2-2-2-2-2-4-66-132
+67,FM,310,7,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-67
+133,BV,133,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,67,9-2015-DE_stratum2-2-2-2-2-2-4-67-133
+134,BV,134,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,67,9-2015-DE_stratum2-2-2-2-2-2-4-67-134
+68,FM,320,8,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-68
+135,BV,135,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,68,9-2015-DE_stratum2-2-2-2-2-2-4-68-135
+136,BV,136,N,U,Age,6,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,68,9-2015-DE_stratum2-2-2-2-2-2-4-68-136
+69,FM,330,9,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-69
+137,BV,137,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,69,9-2015-DE_stratum2-2-2-2-2-2-4-69-137
+138,BV,138,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,69,9-2015-DE_stratum2-2-2-2-2-2-4-69-138
+70,FM,340,10,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-70
+139,BV,139,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,70,9-2015-DE_stratum2-2-2-2-2-2-4-70-139
+140,BV,140,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,70,9-2015-DE_stratum2-2-2-2-2-2-4-70-140
+71,FM,350,10,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-71
+141,BV,141,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,71,9-2015-DE_stratum2-2-2-2-2-2-4-71-141
+142,BV,142,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,71,9-2015-DE_stratum2-2-2-2-2-2-4-71-142
+72,FM,360,10,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-72
+143,BV,143,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,72,9-2015-DE_stratum2-2-2-2-2-2-4-72-143
+144,BV,144,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,72,9-2015-DE_stratum2-2-2-2-2-2-4-72-144
+73,FM,370,9,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-73
+145,BV,145,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,73,9-2015-DE_stratum2-2-2-2-2-2-4-73-145
+146,BV,146,N,U,Age,7,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,73,9-2015-DE_stratum2-2-2-2-2-2-4-73-146
+74,FM,380,8,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-74
+147,BV,147,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,74,9-2015-DE_stratum2-2-2-2-2-2-4-74-147
+148,BV,148,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,74,9-2015-DE_stratum2-2-2-2-2-2-4-74-148
+75,FM,390,7,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-75
+149,BV,149,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,75,9-2015-DE_stratum2-2-2-2-2-2-4-75-149
+150,BV,150,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,75,9-2015-DE_stratum2-2-2-2-2-2-4-75-150
+76,FM,400,6,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-76
+151,BV,151,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,76,9-2015-DE_stratum2-2-2-2-2-2-4-76-151
+152,BV,152,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,76,9-2015-DE_stratum2-2-2-2-2-2-4-76-152
+77,FM,410,5,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-77
+153,BV,153,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,77,9-2015-DE_stratum2-2-2-2-2-2-4-77-153
+154,BV,154,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,77,9-2015-DE_stratum2-2-2-2-2-2-4-77-154
+78,FM,420,4,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-78
+155,BV,155,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,78,9-2015-DE_stratum2-2-2-2-2-2-4-78-155
+156,BV,156,N,U,Age,8,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,78,9-2015-DE_stratum2-2-2-2-2-2-4-78-156
+79,FM,430,3,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-79
+157,BV,157,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,79,9-2015-DE_stratum2-2-2-2-2-2-4-79-157
+158,BV,158,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,79,9-2015-DE_stratum2-2-2-2-2-2-4-79-158
+80,FM,440,2,Cephalothorax Length,NA,NA,NA,NA,NA,4,9-2015-DE_stratum2-2-2-2-2-2-4-80
+159,BV,159,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_1,NA,80,9-2015-DE_stratum2-2-2-2-2-2-4-80-159
+160,BV,160,N,U,Age,9,Year,NA,NA,2,2,NA,NA,SRSWR,BV_unit_2,NA,80,9-2015-DE_stratum2-2-2-2-2-2-4-80-160

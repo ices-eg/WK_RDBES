@@ -1,0 +1,11 @@
+VDid,VDrecordType,VDencryptedVesselCode,VDyear,VDcountry,VDhomePort,VDflagCountry,VDlength,VDlengthCategory,VDpower,VDtonnage,VDtonUnit
+1,VD,VDcode_1,2015,VA,,VA,,40<,,,
+2,VD,VDcode_2,2015,VA,,VA,,Unknown,,,
+3,VD,VDcode_3,2015,VA,,VA,,12-<15,,,
+4,VD,VDcode_4,2015,VA,,VA,,15-<18,,,
+5,VD,VDcode_5,2015,VA,,VA,,Unknown,,,
+6,VD,VDcode_6,2015,VA,,VA,,24-<40,,,
+7,VD,VDcode_7,2015,VA,,VA,,8-<10,,,
+8,VD,VDcode_8,2015,VA,,VA,,<8,,,
+9,VD,VDcode_9,2015,VA,,VA,,12-<15,,,
+10,VD,VDcode_10,2015,VA,,VA,,10-<12,,,

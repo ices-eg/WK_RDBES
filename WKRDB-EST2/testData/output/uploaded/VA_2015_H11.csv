@@ -1,0 +1,12 @@
+DE,ESP-AZTI_DCF_Onboard_Sampling,NatpilCF,2015,DE_stratum1,Y,11
+SD,VA,1
+LO,1,N,abc,VAVAT,U,N,U,,2,1,,,SRSWR,LO_unit_1,,,,,,Y,
+TE,1,N,Day,U,N,U,,2,1,,,SRSWR,TE_unit_1,,,,,,Y,
+FT,VDcode_5,1,N,U,N,U,Control,At-Sea,,VAVAT,2015-08-19,,VAVAT,2015-08-20,,2,1,,,SRSWR,FT_unit_1,,,,,,Y,
+DE,ESP-AZTI_DCF_Onboard_Sampling,NatpilCF,2015,DE_stratum2,Y,11
+SD,VA,1
+LO,1,N,abc,VAVAT,U,N,U,,2,1,,,SRSWR,LO_unit_1,,,,,,Y,
+TE,2,N,Day,U,N,U,,2,1,,,SRSWR,TE_unit_1,,,,,,Y,
+FT,VDcode_6,2,N,U,N,U,Control,At-Sea,,VAVAT,2015-08-29,,VAVAT,2015-09-08,,2,1,,,SRSWR,FT_unit_1,,,,,,Y,
+LE,VDcode_6,N,2,,U,N,U,,N,All,VAVAT,,VA,2015-05-23,,,27,,NotApplicable,,,,DRB_CRU_0_0_0,DRB,,,,,Funcping,,2,1,,,SRSWR,LE_unit_1,,,,,,Y,,
+SS,1,N,haul,Lan,vis,U,N,U,Control,VA_2015_SpeciesList,N,4,1,,,SRSWR,SS_unit_1,,,,,,Y,
