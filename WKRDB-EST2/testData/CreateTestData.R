@@ -13,7 +13,11 @@
 
 baseType_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
 hierarchies_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
+
 setwd("./WKRDB-EST2/testData")
+DBErawObj_path <- "./output/DBErawObj/"
+
+
 
 # Load our functions
 source("./RDBES_Functions.R")
@@ -131,4 +135,7 @@ for (i in 1:13){
     RequiredTables = allRequiredTables
   )
   
+  # Saving DBErawObj as rsd file
+  
+  saveRDS(myNewTestData, paste0(DBErawObj_path, myCountry, "_", myYear, "_", myHierarchyToGenerate, ".rsd"))
 }
