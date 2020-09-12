@@ -135,7 +135,7 @@ for (i in 1:13){
     RequiredTables = allRequiredTables
   )
   
-  # Saving DBErawObj as rsd file
+  # Saving DBErawObj as rds file
   
-  saveRDS(myNewTestData, paste0(DBErawObj_path, myCountry, "_", myYear, "_", myHierarchyToGenerate, ".rsd"))
+  saveRDS(myNewTestData, paste0(DBErawObj_path, "DBErawObj", "_", myCountry, "_", myYear, "_", myHierarchyToGenerate, ".rds"))
 }
