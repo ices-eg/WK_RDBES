@@ -19,7 +19,8 @@ hierarchies_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
 setwd("./WKRDB-EST2/testData")
 DBErawObj_path <- "./output/DBErawObj/"
 
-
+# Read in map between Field & R names
+mapColNamesFieldR <- readRDS("Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/testData/referenceData/mapColNamesFieldR.rds")
 
 # Load our functions
 source("./RDBES_Functions.R")
@@ -137,7 +138,23 @@ for (i in 1:13){
     RequiredTables = allRequiredTables
   )
   
-  # Saving DBErawObj as rds file
+  # Change col names from field to R 
+  
+  
+  for (i in names(myNewTestData)) {
+    eval(parse(
+      text = paste0(
+        "names(test_orgi$",
+        i,
+        ") <- mapColNamesFieldR$R.Name[match(names(myNewTestData$",
+        i,
+        "), mapColNamesFieldR$Field.Name)]"
+      )
+    ))
+    
+  }
+  
+  #Saving DBErawObj as rds file
   
   saveRDS(myNewTestData, paste0(DBErawObj_path, "DBErawObj", "_", myCountry, "_", myYear, "_", myHierarchyToGenerate, ".rds"))
 }
