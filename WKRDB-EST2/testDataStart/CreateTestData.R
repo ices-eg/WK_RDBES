@@ -64,7 +64,7 @@ for (i in 1:13){
   #myHierarchyToGenerate <- 'H1'
   print(myHierarchyToGenerate)
   myLowerHierarchyToGenerate <- 'A'
-  myYear <- 1965
+  myYear <- 1966
   myCountry <- 'DK'
   # Number of strata in different tables - if no value if given for a table then it is assumed to be unstratified
   myStrata <- list(DE = 2, VS = 2)
