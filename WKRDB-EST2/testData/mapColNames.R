@@ -7,6 +7,8 @@ library(openxlsx)
 
 data_model <- "Q:/mynd/RDB/RDBES/Documents/RDBES Data Model.xlsx"
 data_model_vd_sl <- "Q:/mynd/RDB/RDBES/Documents/RDBES Data Model VD SL.xlsx"
+
+
 out_path <- "./WKRDB-EST2/testData/referenceData/"
 
 mapColNames <- c()
