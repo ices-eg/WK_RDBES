@@ -23,7 +23,7 @@ DBErawObj_path <- "./output/DBErawObj/"
 
 mapColNamesFieldR <-
   readRDS(
-    "Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/testData/referenceData/mapColNamesFieldR.rds"
+    "./referenceData/mapColNamesFieldR.rds"
   )
 
 # Load our functions

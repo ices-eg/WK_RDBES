@@ -1,9 +1,13 @@
 
 library(openxlsx)
 
+
+# Local paths to .xsd files
+# kibi - pulled 20200911 19:15
+
 data_model <- "Q:/mynd/RDB/RDBES/Documents/RDBES Data Model.xlsx"
 data_model_vd_sl <- "Q:/mynd/RDB/RDBES/Documents/RDBES Data Model VD SL.xlsx"
-out_path <- "Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/testData/referenceData/"
+out_path <- "./WKRDB-EST2/testData/referenceData/"
 
 mapColNames <- c()
 
