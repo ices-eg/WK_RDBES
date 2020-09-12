@@ -16,7 +16,7 @@ set.seed(1234)
 baseType_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
 hierarchies_path <- "Q:/mynd/RDB/RDBES/XSD-files/"
 
-setwd("./WKRDB-EST2/testDataStart")
+setwd("./WKRDB-EST2/testData")
 DBErawObj_path <- "./output/DBErawObj/"
 
 
