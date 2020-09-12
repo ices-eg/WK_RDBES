@@ -20,7 +20,11 @@ setwd("./WKRDB-EST2/testData")
 DBErawObj_path <- "./output/DBErawObj/"
 
 # Read in map between Field & R names
-mapColNamesFieldR <- readRDS("Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/testData/referenceData/mapColNamesFieldR.rds")
+
+mapColNamesFieldR <-
+  readRDS(
+    "Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/testData/referenceData/mapColNamesFieldR.rds"
+  )
 
 # Load our functions
 source("./RDBES_Functions.R")
@@ -144,7 +148,7 @@ for (i in 1:13){
   for (i in names(myNewTestData)) {
     eval(parse(
       text = paste0(
-        "names(test_orgi$",
+        "names(myNewTestData$",
         i,
         ") <- mapColNamesFieldR$R.Name[match(names(myNewTestData$",
         i,
@@ -156,5 +160,7 @@ for (i in 1:13){
   
   #Saving DBErawObj as rds file
   
-  saveRDS(myNewTestData, paste0(DBErawObj_path, "DBErawObj", "_", myCountry, "_", myYear, "_", myHierarchyToGenerate, ".rds"))
+  saveRDS(myNewTestData, paste0(DBErawObj_path, "DBErawObj", "_", myCountry, 
+                                "_", myYear, "_", myHierarchyToGenerate, ".rds"))
 }
+
