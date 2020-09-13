@@ -1,4 +1,4 @@
-# subGroup4: working on RDBDES lower tables (FM, BV) and estimation objects
+# subGroup5: working on RDBDES lower tables (FM, BV) and estimation objects
 
 subGroup chair: Edvin
 
