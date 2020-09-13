@@ -1,4 +1,4 @@
-# subGroup2: working on RDBDES upper hierarchies and estimation objects
+# subGroup3: working on RDBDES upper hierarchies and estimation objects
 
 subGroup chair: Liz
 
