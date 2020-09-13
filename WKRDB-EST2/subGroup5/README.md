@@ -2,11 +2,10 @@
 
 subGroup chair: Edvin
 
-- Produce function that adds probabilities and weights to FM and BV tables and pass it to subGroup1  
-| make_DBEestimObjLow (input = DBEprepObj, output = DBEestimObjLow, ...)  
-- Produce function for univariate and multivariate point estimation to sample level  
-| make_tmp.DBEresPointLow (input = DBEestimObjLow, output = tmp.DBEresPointLow, ...)  
-- Trial estimation at sample level
+**SG ToRs**
+- [ ] Produce function for univariate or multivariate sample data and estimation 
+- [ ] Trial estimation at sample level
+- [ ] Document database and estimation issues: https://docs.google.com/document/d/1DKUQF9xAqdgXZoHi5sxG4VCDS1mRL8xu4KRsD8NeH7s/edit?usp=sharing
 
 
 
