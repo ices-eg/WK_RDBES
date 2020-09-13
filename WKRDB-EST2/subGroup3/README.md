@@ -2,9 +2,9 @@
 
 subGroup chair: Liz
 
-- Compile and identify RDBES variables needed for variance estimation
-- Code the variance for the univariate HH and HT estimator with the estimation object
-| make_DBEresVariance (input = DBEestimObj, output = DBEresVariance, ...)
-
+**SG ToRs**
+- [ ] Compile and identify variables for variance estimation
+- [ ] Code the variance for the univariate HH and HT estimator with the estimation object
+- [ ] Document database and estimation issues: https://docs.google.com/document/d/1DKUQF9xAqdgXZoHi5sxG4VCDS1mRL8xu4KRsD8NeH7s/edit?usp=sharing
 
 
