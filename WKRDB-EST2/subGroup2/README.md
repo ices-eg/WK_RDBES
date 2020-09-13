@@ -2,11 +2,10 @@
 
 subGroup chair: Kirsten
 
-
-- Produce function that picks up the prepared tables and creates an estimation object for upper hierarchies  
-| make_DBEestimObjUpp (input = DBEprepObj, output = DBEestimObjUpp, ...)
-- Start developing function that runs point estimation on estimation object 
-| make_tmp.DBEresPointUpp (input = DBEestimObj, output = tmp.DBEresPointUpp, ...)
+**SG ToRs**
+- [ ] Produce function that picks up the prepared tables and creates an estimation object (master table)	
+- [ ] Create functions that run point estimation on estimation object 
+- [ ] Document database and estimation issues: https://docs.google.com/document/d/1DKUQF9xAqdgXZoHi5sxG4VCDS1mRL8xu4KRsD8NeH7s/edit?usp=sharing
 
 
 
