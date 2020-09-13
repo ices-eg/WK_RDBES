@@ -2,7 +2,7 @@
 
 subGroup chair: Edvin
 
-- Produce function that adds probabilities and weights to FM and BV tables and pass to subgroup1  
+- Produce function that adds probabilities and weights to FM and BV tables and pass it to subGroup1  
 | make_DBEestimObjLow (input = DBEprepObj, output = DBEestimObjLow, ...)  
 - Produce function for univariate and multivariate point estimation to sample level  
 | make_tmp.DBEresPointLow (input = DBEestimObjLow, output = tmp.DBEresPointLow, ...)  
