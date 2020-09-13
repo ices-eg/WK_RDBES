@@ -4,9 +4,9 @@ subGroup chair: Kirsten
 
 
 - Produce function that picks up the prepared tables and creates an estimation object for upper hierarchies  
-&nbsp make_DBEestimObjUpp (input = DBEprepObj, output = DBEestimObjUpp, ...)
-- Create function that runs point estimation on estimation object 	
-&nbsp make_DBEestimRes (input = DBEestimObj, output = DBEestimRes, ...)
+| make_DBEestimObjUpp (input = DBEprepObj, output = DBEestimObjUpp, ...)
+- Create function that runs point estimation on estimation object  
+| make_DBEestimRes (input = DBEestimObj, output = DBEestimRes, ...)
 
 
 
