@@ -1,0 +1,10 @@
+DE,ESP-AZTI_DCF_Onboard_Sampling,NatpilCF,1966,DE_stratum1,Y,11
+SD,DK,1
+LO,1,N,abc,DKPRS,U,N,U,,2,1,,,SRSWR,LO_unit_1,,,,,,Y,
+TE,1,N,Day,U,N,U,,2,1,,,SRSWR,TE_unit_1,,,,,,Y,
+FT,VDcode_1,1,N,U,N,U,Control,At-Sea,,DKMOS,1966-04-09,,DKMOS,1966-05-06,,2,1,,,SRSWR,FT_unit_1,,,,,,Y,
+DE,ESP-AZTI_DCF_Onboard_Sampling,NatpilCF,1966,DE_stratum2,Y,11
+SD,DK,1
+LO,1,N,abc,DKNRE,U,N,U,,2,1,,,SRSWR,LO_unit_1,,,,,,Y,
+TE,2,N,Day,U,N,U,,2,1,,,SRSWR,TE_unit_1,,,,,,Y,
+FT,VDcode_6,2,N,U,N,U,Control,At-Sea,,DKKOL,1966-05-04,,DKKOL,1966-05-13,,2,1,,,SRSWR,FT_unit_1,,,,,,Y,

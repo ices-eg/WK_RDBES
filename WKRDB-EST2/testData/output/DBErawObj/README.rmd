@@ -1,0 +1,3 @@
+Folder for test data in the DBErawObj format - saved as rds files
+
+These should be nearly similar to the ones uploaded, but generateComplexExchangeFile() removes invalid data when generating the csv file - this is not done for the rds files
