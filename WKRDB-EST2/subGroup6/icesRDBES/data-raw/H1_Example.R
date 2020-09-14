@@ -1,5 +1,7 @@
 ## Load the csv files from our data-raw
 
+unzip(zipfile = "data-raw/exampleData.zip", exdir = "data-raw")
+
 H1_Example <- list()
 H1_Example[['DE']] <- read.csv('data-raw/H1_DE.csv',stringsAsFactors = FALSE)
 H1_Example[['SD']] <- read.csv('data-raw/H1_SD.csv',stringsAsFactors = FALSE)
