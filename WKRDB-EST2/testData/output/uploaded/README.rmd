@@ -1,0 +1,18 @@
+DK_1966_
+HSL: uploaded
+HVD: uploaded
+H1: uploaded
+H2: uploaded
+H3: uploaded
+H4: uploaded
+H5: uploaded
+H6: Not uploaded
+H7: uploaded
+H8: uploaded
+H9: uploaded
+H10: uploaded
+H11: uploaded
+H12: uploaded
+H13: uploaded
+
+(Data also uplaoded for 1965, but us 1966 - these are similar to the .rds files)
