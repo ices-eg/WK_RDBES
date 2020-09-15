@@ -1,0 +1,3 @@
+context("computeDBEresultsTotalPointLow")
+
+computeDBEresultsTotalPointLow(NULL)
