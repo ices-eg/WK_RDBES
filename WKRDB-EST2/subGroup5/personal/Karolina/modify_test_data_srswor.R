@@ -27,10 +27,11 @@ newBV1 <- merge(newBV1, age, by = "FMclass")
 FM1 <- FM1[, c(1:11)]
 
 BV1 <- newBV1 %>%
-  group_by(FMid) %>%
+  arrange(FMid) %>%
   mutate(BVid = row_number(),
-         BVrecType = "BV",
-         BVfishId = row_number(),
+         BVfishId = row_number()) %>%
+  group_by(FMid) %>%
+  mutate(BVrecType = "BV",
          BVstratification = "Y", 
          BVstratumname = "", # what is the code for length stratified ?
          BVtype = "Age",
@@ -45,8 +46,10 @@ BV1 <- newBV1 %>%
          BVselectMeth = "SRSWOR",
          BVunitName = paste0("BV_unit_", seq(1, unique(BioS))),
          BVsampler = NA,
-         FMid = FMid) %>%
-  select(BVid, BVrecType, BVfishId, BVstratification, BVstratumname, BVtype, BVvalue, BVvalTyp, BVmethod, BVmeasEquip, BVnumTotal, BVnumSamp, BVselProp, BVinclProp, BVselectMeth, BVunitName, BVsampler, FMid)
+         FMid = FMid,
+         SAid = NA) %>%
+  ungroup() %>%
+  select(BVid, BVrecType, BVfishId, BVstratification, BVstratumname, BVtype, BVvalue, BVvalTyp, BVmethod, BVmeasEquip, BVnumTotal, BVnumSamp, BVselProp, BVinclProp, BVselectMeth, BVunitName, BVsampler, FMid, SAid)
 
 myls1  <- list(
   "FM" = FM1,
@@ -65,10 +68,11 @@ newBV2 <- merge(newBV2, age, by = "FMclass")
 FM2 <- FM2[, c(1:11)]
 
 BV2 <- newBV2 %>%
-  group_by(FMid) %>%
+  arrange(FMid) %>%
   mutate(BVid = row_number(),
-         BVrecType = "BV",
-         BVfishId = row_number(),
+         BVfishId = row_number()) %>%
+  group_by(FMid) %>%
+  mutate(BVrecType = "BV",
          BVstratification = "Y", 
          BVstratumname = "", # what is the code for length stratified ?
          BVtype = "Age",
@@ -83,8 +87,10 @@ BV2 <- newBV2 %>%
          BVselectMeth = "SRSWOR",
          BVunitName = paste0("BV_unit_", seq(1, unique(BioS))),
          BVsampler = NA,
-         FMid = FMid) %>%
-  select(BVid, BVrecType, BVfishId, BVstratification, BVstratumname, BVtype, BVvalue, BVvalTyp, BVmethod, BVmeasEquip, BVnumTotal, BVnumSamp, BVselProp, BVinclProp, BVselectMeth, BVunitName, BVsampler, FMid)
+         FMid = FMid,
+         SAid = NA) %>%
+  ungroup() %>%
+  select(BVid, BVrecType, BVfishId, BVstratification, BVstratumname, BVtype, BVvalue, BVvalTyp, BVmethod, BVmeasEquip, BVnumTotal, BVnumSamp, BVselProp, BVinclProp, BVselectMeth, BVunitName, BVsampler, FMid, SAid)
 
 myls2  <- list(
   "FM" = FM2,
@@ -93,13 +99,14 @@ myls2  <- list(
 
 # TODO 
 # Estimate incl, selection prob from Dave's script
-# source("./WKRDB-EST/Personal_folders/dave/Lower/LowerScript.R")
+source("./WKRDB-EST2/subGroup5/personal/Karolina/LowerScript.R")
 
-
+myoutput1 <- getLowerProbs(table = myls1, hierarchyType = "A",  BVtype = "age", probType = "inclusion" )
+myoutput2 <- getLowerProbs(table = myls2, hierarchyType = "A",  BVtype = "age", probType = "inclusion" )
 
 # SAVE data
-
-
+saveRDS(myls1, file = "./WKRDB-EST2/subGroup5/inputs/modified_FMBV_list1.rds")
+saveRDS(myls2, file = "./WKRDB-EST2/subGroup5/inputs/modified_FMBV_list2.rds")
 
 
 # IGNORE - Test code not working
