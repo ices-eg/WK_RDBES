@@ -51,7 +51,7 @@ doDBErawObj = function(Year,
   
   for (i in list_files) {
     name =  gsub(".csv", "", i)
-    assign(name, read.csv(paste(data_dir, '/', i, sep = '')))
+    assign(name, read.csv(paste(data_dir, '/', i, sep = ''), stringsAsFactors = FALSE))
     
   }
   
