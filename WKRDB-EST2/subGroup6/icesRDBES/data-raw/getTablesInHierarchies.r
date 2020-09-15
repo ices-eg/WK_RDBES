@@ -48,7 +48,7 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE
                 , " files from GitHub", sep = ""))
 
     # Download our files
-    for (i in 1:nrow(myHierarchyFiles)) {
+    for (i in 1:seq_len(myHierarchyFiles)) {
       anHierarchyFile <- RCurl::getURL(myHierarchyFiles[i, "downloadURL"])
       # save the file locally
       writeLines(anHierarchyFile
@@ -68,7 +68,6 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE
   myHierarchyTables <- list()
   for (fileToParse in filesToRead) {
 
-    # fileToParse <-"H1.xsd"
     fileToParse <- paste(fileLocation, fileToParse, sep = "")
 
     # STEP 2) Parse the XML
@@ -86,7 +85,6 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE
         hierachyName <- myAttr
       }
       if (nchar(myAttr) == 2 & !grepl("^H.*", myAttr)) {
-        # print(myElement$.attrs)
         if (is.null(myResults)) {
           myResults <- c(myAttr)
         } else {
@@ -108,4 +106,3 @@ tablesInRDBESHierarchies <- getRDBESTablesInHierarchies(
   )
 
 usethis::use_data(tablesInRDBESHierarchies, overwrite = TRUE)
-
