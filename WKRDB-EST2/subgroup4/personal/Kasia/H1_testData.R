@@ -39,7 +39,7 @@ allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = TRUE, fileLocat
   myStrata <- list(DE = 2, VS = 2)
   # Number of things sampled in different tables - if no value is given for a table then it is assumed to be 1
   #mySampled <- list(VS=5,FO=3,SS=1,SA=2, FM=20,BV=2, VD=10, SL=20)
-   mySampled <- list(VS=1,FO=4,SS=2,SA=2, FM=0,BV=0, VD=1, SL=6)
+   mySampled <- list(VS=1,FO=2,SS=1,SA=2, FM=0,BV=0, VD=1, SL=6)
   # Total number of things in different tables - if no value is given for a table then it is assumed to be equal to the number sampled + 1
   #myTotal <- list(VS=30,FO=10,SS=4, FM=20, BV=2)
   myTotal <- list(VS=1,FO=4,SS=2, FM=0, BV=0)
@@ -64,4 +64,22 @@ allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = TRUE, fileLocat
   # Create a complex exchange file (Hx)
   generateComplexExchangeFile(typeOfFile = myHierarchyToGenerate, yearToUse = myYear, country = myCountry, RDBESdata = myNewTestData, cleanData = TRUE, RDBESvalidationdata = validationData, RDBEScodeLists = allowedValues, RequiredTables = allRequiredTables)
   
-  save(myNewTestData,file="D:/WK_RDBES/WKRDB-EST2/subgroup4/personal/Kasia/output/H1.Rdata")
+  save(myNewTestData,file="D:/WK_RDBES/WKRDB-EST2/subgroup4/personal/Kasia/output/H1_SRSWR.Rdata")
+  
+  #SRSWOR
+  myNewTestData$SA$SAselectionMethod <- 'SRSWOR'
+  # it works only when SS=2
+  SA_table <- split(myNewTestData$SA,myNewTestData$SA$SSid)
+  for (i in 1:nrow(myNewTestData$SS)){
+    
+    if (SA_table[[i]]$SAspeciesCode[1] == SA_table[[i]]$SAspeciesCode[2]) {
+    code_list <- subset(myNewTestData$SL, myNewTestData$SL$SLspeciesCode != SA_table[[i]]$SAspeciesCode[1])
+    SA_table[[i]]$SAspeciesCode[2] <- sample(code_list$SLspeciesCode,1,replace = F)
+    }
+  }
+
+  SA <- do.call(rbind.data.frame, SA_table)
+  SS <- myNewTestData$SS
+  SL <- myNewTestData$SL
+  
+  save(SA,file="D:/WK_RDBES/WKRDB-EST2/subgroup4/personal/Kasia/output/H1_SA_SRSWOR.Rdata")
