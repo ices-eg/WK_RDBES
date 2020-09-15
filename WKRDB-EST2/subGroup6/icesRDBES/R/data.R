@@ -1,5 +1,15 @@
-#' An example of H1 RDBES data using test data.
+#' The tables required for each RDBES hierarchy.
 #'
+#' A list containing the tables required for each RDBES hierachy
+#'
+#' @format A named list containing the tables required for each RDBES hierachy.
+#' Each entry in the list is a character vecor
+#' \describe{
+#'   \item{tablesInRDBESHierarchies}{named list of character vectors}
+#'   ...
+#' }
+#' @source \url{https://github.com/davidcurrie2001/MI_RDBES_ExchangeFiles}
+"tablesInRDBESHierarchies"
 #' A dataset containing test RDBES data for H1
 #'
 #' @format A list containing entries required for H1 RDBES data:
@@ -18,4 +28,4 @@
 #'   ...
 #' }
 #' @source \url{https://github.com/davidcurrie2001/MI_RDBES_ExchangeFiles}
-"H1_Example"
+"h1Example"
