@@ -58,6 +58,7 @@ hierachy = 1
       "probCluster"
     )
     
+    
     # createing a list with expected tables for each hierachy
     expected_tables <- list(
       H1 = data.frame(
