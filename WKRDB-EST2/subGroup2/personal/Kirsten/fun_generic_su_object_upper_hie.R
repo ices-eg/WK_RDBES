@@ -43,8 +43,8 @@ generic_su_object_upper_hie <-
     # createing a list with expected tables for each hierachy
     expected_tables <- list(
       H1 = data.frame(
-        table_names = c("DE", "SD", "VS", "FT", "FO", "SL", "SA"),
-        su_level = c("NA", "NA", "su1", "su2", "su3", "su4", "su5")
+        table_names = c("DE", "SD", "VS", "FT", "FO"),
+        su_level = c("NA", "NA", "su1", "su2", "su3")
       ),
       H2 = data.frame(
         table_names = c("DE", "SD", "FT", "FO"),
@@ -99,6 +99,24 @@ generic_su_object_upper_hie <-
     
     out <- list()
     
+    ### Some general info from the DE to go into a description - for now just a copy
+    # desc <- input_list$DE
+    
+    ### Need to include the DE - not as a SU, but I do have info about stratification
+    de <- input_list$DE
+    names(de) <-
+      sub("DE", "", names(de))
+    
+        ### Do we need to include the SD - that the link between the DE and PSU - rename DEid to idAbove
+    
+    sd <- input_list$SD
+    names(sd) <-
+      sub("SD", "", names(sd))
+    
+    out <- list(de = de, sd = sd)
+  
+    
+    ### Importing the SU tables
     
     expected_tables_here <-
       eval(parse(text = paste0("expected_tables$H", hierachy)))
@@ -141,7 +159,7 @@ generic_su_object_upper_hie <-
         )
       ))
       
-      # Create list with the dasign variables
+      # Create list with the design variables
       eval(parse(
         text = paste0(
           "out$",
@@ -158,6 +176,8 @@ generic_su_object_upper_hie <-
       # Create list with the selection probabilities
       
       # Create list with combined inclusion probabilities
+      
+      
     }
     
     return(out)
