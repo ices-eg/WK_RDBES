@@ -27,6 +27,7 @@ newBV1 <- merge(newBV1, age, by = "FMclass")
 FM1 <- FM1[, c(1:11)]
 
 BV1 <- newBV1 %>%
+  group_by(FMid) %>%
   mutate(BVid = row_number(),
          BVrecType = "BV",
          BVfishId = row_number(),
@@ -42,7 +43,7 @@ BV1 <- newBV1 %>%
          BVselProp = NA,
          BVinclProp = NA,
          BVselectMeth = "SRSWOR",
-         BVunitName = NA,
+         BVunitName = paste0("BV_unit_", seq(1, unique(BioS))),
          BVsampler = NA,
          FMid = FMid) %>%
   select(BVid, BVrecType, BVfishId, BVstratification, BVstratumname, BVtype, BVvalue, BVvalTyp, BVmethod, BVmeasEquip, BVnumTotal, BVnumSamp, BVselProp, BVinclProp, BVselectMeth, BVunitName, BVsampler, FMid)
@@ -55,7 +56,6 @@ myls1  <- list(
 
 # Make it a bit more realistic?
 # Sample up to 5 fish per LC and randomly select up to 2 number of fish for ageing from each LC
-
 FM2$FMnumAtUnit <- sample(seq(2, 5), nrow(FM2), replace = TRUE)
 FM2$BioS <- sample(c(1, 2), nrow(FM2), replace = TRUE)
 FM2$BioS <- ifelse(FM2$BioS == FM2$FMnumAtUnit, FM2$BioS-1 , FM2$BioS)
@@ -65,6 +65,7 @@ newBV2 <- merge(newBV2, age, by = "FMclass")
 FM2 <- FM2[, c(1:11)]
 
 BV2 <- newBV2 %>%
+  group_by(FMid) %>%
   mutate(BVid = row_number(),
          BVrecType = "BV",
          BVfishId = row_number(),
@@ -80,7 +81,7 @@ BV2 <- newBV2 %>%
          BVselProp = NA,
          BVinclProp = NA,
          BVselectMeth = "SRSWOR",
-         BVunitName = NA,
+         BVunitName = paste0("BV_unit_", seq(1, unique(BioS))),
          BVsampler = NA,
          FMid = FMid) %>%
   select(BVid, BVrecType, BVfishId, BVstratification, BVstratumname, BVtype, BVvalue, BVvalTyp, BVmethod, BVmeasEquip, BVnumTotal, BVnumSamp, BVselProp, BVinclProp, BVselectMeth, BVunitName, BVsampler, FMid)
@@ -97,6 +98,8 @@ myls2  <- list(
 
 
 # SAVE data
+
+
 
 
 # IGNORE - Test code not working
