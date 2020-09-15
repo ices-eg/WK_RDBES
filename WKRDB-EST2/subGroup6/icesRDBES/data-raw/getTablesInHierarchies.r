@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' getTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = "./tableDefs/")
+#' getRDBESTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = "./tableDefs/")
 #' }
 getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLocation = "https://api.github.com/repos/ices-tools-dev/RDBES/contents/XSD-files", fileLocation) {
 
@@ -91,3 +91,8 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLoc
 
   myHierarchyTables
 }
+
+tablesInRDBESHierarchies <- getRDBESTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = "data-raw/")
+
+usethis::use_data(tablesInRDBESHierarchies, overwrite = TRUE)
+
