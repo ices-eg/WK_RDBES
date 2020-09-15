@@ -13,7 +13,7 @@ options(scipen=500) # big number of digits
 ## STEP 1) LOAD OUR DATA
 
 # Load the validation data
-validationData <- getValidationData(downloadFromGitHub = FALSE, fileLocation = './tableDefs/BaseTypes.xsd')
+validationData <- getValidationData(downloadFromGitHub = FALSE, fileLocation = 'D:/MI_RDBES_ExchangeFiles/tableDefs/BaseTypes.xsd')
 #validationData <- getValidationData(downloadFromGitHub = TRUE, fileLocation = './tableDefs/BaseTypes.xsd')
 
 # 11/9/2020 Temp fix because the validation fields aren't up to date :-(
@@ -24,8 +24,8 @@ allowedValues <- loadReferenceData(downloadFromICES = FALSE)
 #allowedValues <- loadReferenceData(downloadFromICES = TRUE, validationData=validationData)
 
 # Load the lists of tables required for each hierarchy: either refresh from ICES or just use a local copy
-allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = FALSE, fileLocation = './tableDefs/')
-#allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = './tableDefs/')
+#allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = FALSE, fileLocation = 'D:/MI_RDBES_ExchangeFiles/tableDefs/')
+allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = 'D:/MI_RDBES_ExchangeFiles/tableDefs/')
 
 ## STEP 2) GENERATE TEST DATA
 
@@ -38,8 +38,10 @@ allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = FALSE, fileLoca
   # Number of strata in different tables - if no value if given for a table then it is assumed to be unstratified
   myStrata <- list(DE = 2, VS = 2)
   # Number of things sampled in different tables - if no value is given for a table then it is assumed to be 1
-  mySampled <- list(VS=1,FO=4,SS=2,SA=2, FM=0,BV=0, VD=1, SL=6)
+  #mySampled <- list(VS=5,FO=3,SS=1,SA=2, FM=20,BV=2, VD=10, SL=20)
+   mySampled <- list(VS=1,FO=4,SS=2,SA=2, FM=0,BV=0, VD=1, SL=6)
   # Total number of things in different tables - if no value is given for a table then it is assumed to be equal to the number sampled + 1
+  #myTotal <- list(VS=30,FO=10,SS=4, FM=20, BV=2)
   myTotal <- list(VS=1,FO=4,SS=2, FM=0, BV=0)
   # Select methods used in different tables - if no value is given for a table then it is assumed to be simple random sampling SRSWR
   myMethods <- list()
@@ -61,3 +63,5 @@ allRequiredTables <- getTablesInHierarchies(downloadFromGitHub = FALSE, fileLoca
   
   # Create a complex exchange file (Hx)
   generateComplexExchangeFile(typeOfFile = myHierarchyToGenerate, yearToUse = myYear, country = myCountry, RDBESdata = myNewTestData, cleanData = TRUE, RDBESvalidationdata = validationData, RDBEScodeLists = allowedValues, RequiredTables = allRequiredTables)
+  
+  save(myNewTestData,file="D:/WK_RDBES/WKRDB-EST2/subgroup4/personal/Kasia/output/H1.Rdata")
