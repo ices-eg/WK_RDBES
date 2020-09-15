@@ -6,10 +6,10 @@
 #' @return The strings \code{x} and \code{y} pasted together
 #' @export
 #'
-#' @examples stupidFunction("A","B")
-stupidFunction<-function(x,y){
-
-  returnString <- paste(x,y)
+#' @examples
+#' stupidFunction("A", "B")
+stupidFunction <- function(x, y) {
+  returnString <- paste(x, y)
 
 
   returnString

@@ -12,42 +12,43 @@
 #' for that hierarchy
 #' @export
 #'
-#' @examples \dontrun{getTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = './tableDefs/')}
-getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLocation = "https://api.github.com/repos/ices-tools-dev/RDBES/contents/XSD-files", fileLocation){
+#' @examples
+#' \dontrun{
+#' getTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = "./tableDefs/")
+#' }
+getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLocation = "https://api.github.com/repos/ices-tools-dev/RDBES/contents/XSD-files", fileLocation) {
 
 
   # For testing
-  #downloadFromGitHub = TRUE
-  #fileLocation <- "./data-raw/"
-  #gitHubFileLocation = "https://api.github.com/repos/ices-tools-dev/RDBES/contents/XSD-files"
+  # downloadFromGitHub = TRUE
+  # fileLocation <- "./data-raw/"
+  # gitHubFileLocation = "https://api.github.com/repos/ices-tools-dev/RDBES/contents/XSD-files"
 
   # STEP 1) Get the BaseTypes file (if required)
-  if (downloadFromGitHub){
-
+  if (downloadFromGitHub) {
     myHierarchyFiles <- NULL
     myResponse <- httr::GET(gitHubFileLocation)
     filesOnGitHub <- httr::content(myResponse)
 
-    for (myFile in filesOnGitHub){
+    for (myFile in filesOnGitHub) {
       myGitHubFile <- data.frame(fileName = myFile$name, downloadURL = myFile$download_url)
-      if (is.null(myHierarchyFiles)){
+      if (is.null(myHierarchyFiles)) {
         myHierarchyFiles <- myGitHubFile
       } else {
-        myHierarchyFiles <- rbind(myHierarchyFiles,myGitHubFile)
+        myHierarchyFiles <- rbind(myHierarchyFiles, myGitHubFile)
       }
     }
     # Sub-set to the files we are interested in
-    myHierarchyFiles <- myHierarchyFiles[grepl('^H.*xsd$',myHierarchyFiles$fileName),]
+    myHierarchyFiles <- myHierarchyFiles[grepl("^H.*xsd$", myHierarchyFiles$fileName), ]
 
-    print(paste("Downloading ",nrow(myHierarchyFiles), " files from GitHub", sep =""))
+    print(paste("Downloading ", nrow(myHierarchyFiles), " files from GitHub", sep = ""))
 
     # Download our files
-    for (i in 1:nrow(myHierarchyFiles)){
-      anHierarchyFile <- RCurl::getURL(myHierarchyFiles[i,'downloadURL'])
+    for (i in 1:nrow(myHierarchyFiles)) {
+      anHierarchyFile <- RCurl::getURL(myHierarchyFiles[i, "downloadURL"])
       # save the file locally
-      writeLines(anHierarchyFile, paste(fileLocation,myHierarchyFiles[i,'fileName'], sep = ""))
+      writeLines(anHierarchyFile, paste(fileLocation, myHierarchyFiles[i, "fileName"], sep = ""))
     }
-
   }
 
   # Read all the H.*xsd files
@@ -55,31 +56,31 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLoc
 
 
   myHierarchyTables <- list()
-  for(fileToParse in filesToRead){
+  for (fileToParse in filesToRead) {
 
-    #fileToParse <-"H1.xsd"
-    fileToParse <- paste(fileLocation,fileToParse,sep="")
+    # fileToParse <-"H1.xsd"
+    fileToParse <- paste(fileLocation, fileToParse, sep = "")
 
     # STEP 2) Parse the XML
-    doc <- XML::xmlTreeParse(fileToParse,useInternal= TRUE)
+    doc <- XML::xmlTreeParse(fileToParse, useInternal = TRUE)
     myXML <- XML::xmlToList(doc)
 
     myResults <- NULL
     hierachyName <- NULL
 
-    for (myElement in myXML[names(myXML) == "complexType"]){
+    for (myElement in myXML[names(myXML) == "complexType"]) {
       myAttr <- myElement$.attrs
       names(myAttr) <- NULL
 
-      if (grepl('^H.*',myAttr)){
+      if (grepl("^H.*", myAttr)) {
         hierachyName <- myAttr
       }
-      if (nchar(myAttr)==2 & !grepl('^H.*',myAttr)){
-        #print(myElement$.attrs)
-        if (is.null(myResults)){
+      if (nchar(myAttr) == 2 & !grepl("^H.*", myAttr)) {
+        # print(myElement$.attrs)
+        if (is.null(myResults)) {
           myResults <- c(myAttr)
         } else {
-          myResults <- c(myResults,myAttr)
+          myResults <- c(myResults, myAttr)
         }
       }
     }
@@ -89,7 +90,4 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLoc
   }
 
   myHierarchyTables
-
 }
-
-
