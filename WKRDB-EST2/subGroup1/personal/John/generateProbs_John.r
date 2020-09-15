@@ -1,21 +1,24 @@
 generateProbs <- function(x, probType){
-	
+
 	# generates selection and inclusion probs from RDBES N and n
 	# x is RDBES data.frame
 	# probType is string. Value == "selection" | "inclusion" , for selection or inclusion probabilities respectively
 	
 	
-	a <- as.character(unique(x$SSselectMeth))
+	a <- unique(x[grepl("selectMeth",names(x))==T])
+	a <- as.character(unique(a[grepl("selectMethCluster",names(a))==F]))
 	
 	if(sum(is.na(a))>0) stop ("cannot proceed: NAs in SSselectMeth")
 	if(length(a)>1) stop ("two different selection methods")
 	
-	vec_n <- x$SSnumSamp
-	vec_N <- x$SSnumTotal
-
+	vec_n <- x[grepl("numSamp",names(x))==T]
+	vec_n <- vec_n[grepl("SampCluster",names(vec_n))==F]     
+	vec_N <- x[grepl("numTotal",names(x))==T]
+	vec_N <- vec_N[grepl("TotalCluster",names(vec_N))==F]
+	
 	if (probType == "selection")
 		{
-		vec_prob <- x$selProbUnit # not defined
+		vec_prob <- a[grepl("selProbUnit",names(a))==T] # not defined
 		
 		print(a)
 		if( a %in% c("SRSWR" , "SRSWOR") )
@@ -33,8 +36,8 @@ generateProbs <- function(x, probType){
 	
 	if (probType == "inclusion")
 		{
-		vec_prob <- x$incProbUnit
-
+		vec_prob <- a[grepl("incProbUnit",names(a))==T]
+		
 		if(length(a)>1) { 
 				stop ("two different selection methods")
 				} else {
@@ -59,4 +62,4 @@ generateProbs <- function(x, probType){
 		
 	}
 	
-generate_probs(x=y, probType="inclusion")
+# generate_probs(x=y, probType="inclusion")
