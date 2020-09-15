@@ -18,5 +18,5 @@ The strings \code{x} and \code{y} pasted together
 This is a stupid test function
 }
 \examples{
-stupidFunction("A","B")
+stupidFunction("A", "B")
 }

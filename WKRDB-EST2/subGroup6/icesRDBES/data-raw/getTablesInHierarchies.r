@@ -14,15 +14,16 @@
 #'
 #' @examples
 #' \dontrun{
-#' getRDBESTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = "./tableDefs/")
+#' getRDBESTablesInHierarchies(
+#' downloadFromGitHub = TRUE
+#' , fileLocation = "./tableDefs/"
+#' )
 #' }
-getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLocation = "https://api.github.com/repos/ices-tools-dev/RDBES/contents/XSD-files", fileLocation) {
+getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE
+, gitHubFileLocation
+= "https://api.github.com/repos/ices-tools-dev/RDBES/contents/XSD-files"
+, fileLocation) {
 
-
-  # For testing
-  # downloadFromGitHub = TRUE
-  # fileLocation <- "./data-raw/"
-  # gitHubFileLocation = "https://api.github.com/repos/ices-tools-dev/RDBES/contents/XSD-files"
 
   # STEP 1) Get the BaseTypes file (if required)
   if (downloadFromGitHub) {
@@ -31,7 +32,8 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLoc
     filesOnGitHub <- httr::content(myResponse)
 
     for (myFile in filesOnGitHub) {
-      myGitHubFile <- data.frame(fileName = myFile$name, downloadURL = myFile$download_url)
+      myGitHubFile <- data.frame(fileName = myFile$name
+                                 , downloadURL = myFile$download_url)
       if (is.null(myHierarchyFiles)) {
         myHierarchyFiles <- myGitHubFile
       } else {
@@ -39,20 +41,28 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLoc
       }
     }
     # Sub-set to the files we are interested in
-    myHierarchyFiles <- myHierarchyFiles[grepl("^H.*xsd$", myHierarchyFiles$fileName), ]
+    myHierarchyFiles <- myHierarchyFiles[grepl("^H.*xsd$"
+                                               , myHierarchyFiles$fileName), ]
 
-    print(paste("Downloading ", nrow(myHierarchyFiles), " files from GitHub", sep = ""))
+    print(paste("Downloading ", nrow(myHierarchyFiles)
+                , " files from GitHub", sep = ""))
 
     # Download our files
     for (i in 1:nrow(myHierarchyFiles)) {
       anHierarchyFile <- RCurl::getURL(myHierarchyFiles[i, "downloadURL"])
       # save the file locally
-      writeLines(anHierarchyFile, paste(fileLocation, myHierarchyFiles[i, "fileName"], sep = ""))
+      writeLines(anHierarchyFile
+                 , paste(fileLocation,
+                         myHierarchyFiles[i, "fileName"], sep = "")
+                 )
     }
   }
 
   # Read all the H.*xsd files
-  filesToRead <- list.files(path = fileLocation, pattern = "^H.*xsd$", recursive = FALSE, full.names = FALSE)
+  filesToRead <- list.files(path = fileLocation
+                            , pattern = "^H.*xsd$"
+                            , recursive = FALSE
+                            , full.names = FALSE)
 
 
   myHierarchyTables <- list()
@@ -92,7 +102,10 @@ getRDBESTablesInHierarchies <- function(downloadFromGitHub = TRUE, gitHubFileLoc
   myHierarchyTables
 }
 
-tablesInRDBESHierarchies <- getRDBESTablesInHierarchies(downloadFromGitHub = TRUE, fileLocation = "data-raw/")
+tablesInRDBESHierarchies <- getRDBESTablesInHierarchies(
+  downloadFromGitHub = TRUE
+  , fileLocation = "data-raw/"
+  )
 
 usethis::use_data(tablesInRDBESHierarchies, overwrite = TRUE)
 
