@@ -3,27 +3,41 @@
 #
 
 
-#' Results from estimation
+#' Estimation result
 #' 
-#' @details results from restimation, list with members
+#' @details results from a set of sampling units, list of \code{\link{sampleUnitResult}} objects:
+#' 
+#' @rname DBEresultsTotalPointLow
+#' 
+"DBEresultsTotalPointLow"
+
+#' Estimation result
+#'
+#' @details 
+#'  Result for a single samping unit, list with members:
 #'  \describe{
 #'    \item{statistic}{character: description of statistic}
 #'    \item{unitId}{list: ids of unit the estimate is made for, e.g. SAid}
 #'    \item{totals}{list: estimate of total for statistic}
 #'    \item{variance}{list: estimate of variance for statistic}
 #'  }
-#' 
-#' @rname DBEresultsTotalPointLow
-#' 
-"DBEresultsTotalPointLow"
+#'
+#' @rname sampleUnitResult
+"sampleUnitResult"
 
 #' @param estimationObj \code{\link{DBEestimObjLow}}
 #' @return \code{\link{DBEresultsTotalPointLow}} with point estimate
 computeDBEresultsTotalPointLow <- function(estimationObj){
   stop("Not Implemented")
+  # for each sammple
+  #  extract sampUnitData from estimationObj
+  #  pass to computeDBEresultsTotalPointLowSingleSample
+  # collate results in DBEresultsTotalPointLow
 }
 
 #' Estimation for a single sample
+#' @param estimationObj \code{\link{sampUnitData}}
+#' @return \code{\link{sampleUnitResult}}
 computeDBEresultsTotalPointLowSingleSample <- function(estimationObj, unitId="Uknown"){
   
   if (any(estimationObj$StatisticTable$id != estimationObj$DesignTableTable$id)){
@@ -59,6 +73,7 @@ computeDBEresultsTotalPointLowSingleSample <- function(estimationObj, unitId="Uk
 
 #' extract number at class from raw FM samples for a single sample
 #' works for lower hiearchy A and B
+#' @return \code{\link{sampleUnitResult}}
 extractNumberAtClassSingleSample <- function(FMtable, unitId="Uknown"){
   
   if (length(unique(FMtable$SAid)) != 1){
