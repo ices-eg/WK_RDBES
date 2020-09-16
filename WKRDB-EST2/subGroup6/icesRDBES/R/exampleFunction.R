@@ -1,6 +1,6 @@
 #' Minimum Documentation Example
 #'
-#' See the file *"./tests/testthat/test-exampleFunction.R"*
+#' See the file "./tests/testthat/test-exampleFunction.R"
 #' for defining expected input and output
 #'
 #' @param stringX first string
