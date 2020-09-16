@@ -82,6 +82,7 @@ myfun <- function(param = "Haul duration",
   ## step 2: find the table (corresponds to level) where the estimation is up to
   ## translate level name into table name
   mylevel        <- switch(level, "vessel" = "VS", "trip" = "FT", "haul" = "FO")
+  mylevel        <- switch(level, "trip" = mytable$su_level[mytable$table_names == "FT"])
   
   ## step 3: find the table and variable name for parameter:  
   ## it is either observed in higher level tables or estimated from lower level tables
