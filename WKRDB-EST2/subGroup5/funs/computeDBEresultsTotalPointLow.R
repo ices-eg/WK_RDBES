@@ -92,3 +92,18 @@ extractNumberAtClassSingleSample <- function(FMtable, unitId="Uknown"){
   
   return(output)
 }
+
+#' Extract number at class for a set of samples
+extractNumberAtClass <- function(){
+  stop("Not implmented")
+  
+  # potential issue for further estimation.
+  
+  # if I extract the number at class using extractNumberAtClassSingleSample, 
+  # I get the information encoded in FMclass copied over to sampleUnitResult$statistic
+  # If I want to aggregate these furter I need to know that the FMclass variables mean the same thing
+  # If only classes sampled are recorded, and two samples have been sampled with coinciding lower limits
+  
+  # use FMaccuracy ... consider if the generic "statistic" is sufficient
+  
+}
