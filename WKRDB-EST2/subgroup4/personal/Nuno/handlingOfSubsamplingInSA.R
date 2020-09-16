@@ -9,9 +9,9 @@
         # remove for cycle
 
 # generate hypothetical SA with subsampling 
-    SA <- data.frame(id=c(1:5,6,7,8), sample1=c(NA, 1:4,NA,6,NA))
+    SA <- data.frame(SAseqNum=c(1:5,6,7,8), SAparSequNum=c(NA, 1:4,NA,6,NA))
 # handling of subsampling
-    df2 <- data.frame(id = SA$id, sample1 = SA[,2])
+    df2 <- data.frame(id = SA$SAseqNum, sample1 = SA$SAparSequNum)
     i=2
     while(sum(!is.na(df2[,ncol(df2)]))>0)
     {
