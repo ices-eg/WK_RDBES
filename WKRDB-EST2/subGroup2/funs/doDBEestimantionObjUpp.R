@@ -13,7 +13,7 @@
 #' 
 
 
-generic_su_object_upper_hie <-
+doDBEestimantionObjUpp <-
   function(input_list = H1_upper,
            hierachy = 1) {
     library(dplyr)
@@ -26,18 +26,21 @@ generic_su_object_upper_hie <-
       "hierachy",
       "su",
       "recType",
+      "unitName",
       "stratification",
-      "stratum",
+      "stratumName",
       "clustering",
       "clusterName",
-      "total",
-      "sampled",
-      "prob",
+      "numTotal",
+      "numSamp",
+      "selProb",
+      "incProb",
       "selectMeth",
       "selectMethCluster",
-      "totalClusters",
-      "sampledClusters",
-      "probCluster"
+      "numTotalClusters",
+      "numSampClusters",
+      "selProbCluster",
+      "incProbCluster"
     )
     
     # createing a list with expected tables for each hierachy
@@ -111,7 +114,7 @@ generic_su_object_upper_hie <-
     names(sd) <-
       sub("SD", "", names(sd))
     
-    out <- list(de = de, sd = sd)
+    out <- list(expected_tables = expected_tables, de = de, sd = sd)
   
     
     ### Importing the SU tables
