@@ -1,6 +1,5 @@
 library(testthat)
 for (f in list.files("funs", pattern="*.R")){
-  print(file.path("funs", f))
   source(file.path("funs", f))  
 }
 
