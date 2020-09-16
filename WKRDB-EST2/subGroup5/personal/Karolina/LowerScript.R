@@ -30,10 +30,10 @@
 getLowerProbs <- function(table, hierarchyType = "A", BVtype = "weight", probType = "inclusion") {
 
   # For testing
-  table <- myls1
-  hierarchyType <- 'A'
-  BVtype <- "age"
-  probType <- "inclusion"
+  # table <- myls1
+  # hierarchyType <- 'A'
+  # BVtype <- "age"
+  # probType <- "inclusion"
   
   if (hierarchyType != "A") stop ("This function is only implemented for lower hierarchy A at the moment")
   
