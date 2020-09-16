@@ -43,8 +43,8 @@ generic_su_object_upper_hie <-
     # createing a list with expected tables for each hierachy
     expected_tables <- list(
       H1 = data.frame(
-        table_names = c("DE", "SD", "VS", "FT", "FO", "SL", "SA"),
-        su_level = c("NA", "NA", "su1", "su2", "su3", "su4", "su5")
+        table_names = c("DE", "SD", "VS", "FT", "FO"),
+        su_level = c("NA", "NA", "su1", "su2", "su3")
       ),
       H2 = data.frame(
         table_names = c("DE", "SD", "FT", "FO"),
