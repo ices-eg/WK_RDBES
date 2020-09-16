@@ -1,90 +1,35 @@
 
-load("001_Inputs/H8/TE.RData")
-load("001_Inputs/H8/VS.RData")
-load("List_RDBES_Variables_v1.17.RData")
+dataset<-readRDS("Inputs/DBErawObj_DK_1966_H1.rds")
+dataset<-readRDS("Inputs/DBErawObj_DK_1966_H3.rds")
+load("Inputs/RDBES_DataModel.RData")
 
 # isolates columns for estimation (estimNames)
 
 # isolate DVs
-var_table<-list_RDBES_Variables[list_RDBES_Variables$Table=="TE",]
-
+target_table<-"VS"
+var_table<-dataModel[dataModel$Table==target_table,]
 dv_vars<-var_table[grepl(var_table$Required, pat="DV"),"R.Name"]
-
 id_vars<-var_table[grepl(var_table$Field.Name, pat="id"),"R.Name"]
-
 vars_keep<-c(id_vars, dv_vars)
 
-y<-TE
+y<-dataset$VS
 
-colnames(y)[colnames(y) %in% dv_vars]<-var_table$estimName[match(colnames(y)[colnames(y) %in% dv_vars], var_table$R.Name)]
+colnames(y)[colnames(y) %in% dv_vars]<-gsub(target_table, "", colnames(y)[colnames(y) %in% dv_vars])
 
-
-generate_probs <- function(x, type){
-	
-	a <- as.character(unique(x$selectMeth))
-	
-	if(sum(is.na(a))>0) stop ("cannot proceed: NAs in selectMeth")
-	if(length(a)>1) stop ("two different selection methods")
-	
-	vec_n <- x$sampledUnits
-	vec_N <- x$totalUnits
-
-	if (type == "selection")
-		{
-		vec_prob <- x$selProbUnit # not defined
-		
-		print(a)
-		if( a %in% c("SRSWR" , "SRSWOR") )
-			{
-			if( a == "SRSWR") vec_prob <-  1/vec_N
-			if( a == "SRSWOR") stop ("depends on order")
-			}
-		if( a %in% c("UPSWR" , "UPSWOR"))
-			{
-			if(sum(is.na(vec_prob))>0) stop ("cannot proceed: NAs in sampProb")
-			vec_prob <-  vec_prob
-			}
-		}
-
-	
-	if (type == "inclusion")
-		{
-		vec_prob <- x$incProbUnit
-
-		if(length(a)>1) { 
-				stop ("two different selection methods")
-				} else {
-					print(a)
-					if( a %in% c("SRSWR" , "SRSWOR") )
-						{
-						if(sum(is.na(vec_N))>0) stop ("cannot proceed: NAs in total")
-						if(sum(is.na(vec_n))>0) stop ("cannot proceed: NAs in sampled")
-						if( a == "SRSWR") vec_prob <-  1-(1-1/vec_N)^vec_n
-						if( a == "SRSWOR") vec_prob <-  vec_n/vec_N
-						}
-					if( a %in% c("UPSWR" , "UPSWOR"))
-						{
-						if(sum(is.na(vec_prob))>0) stop ("cannot proceed: NAs in sampProb")
-						vec_prob <-  vec_prob
-						}
-					}
-
-		}
-
-			vec_prob
-		
-	}
-	
-generate_probs(x=y, type="inclusion")
+source("funs/generateProbs.R")
+# example
+generateProbs (x=y, probType = "selection")
+generateProbs (x=y, probType = "inclusion")
 
 
 y$value<-rnorm(nrow(y))
+
+
 
 # HT estimation
 
 ls1<-split(y, y$SDid)
 ls2<-lapply(ls1, function(x) {
-
 a <- unique(x$stratification)
 
 # checks on stratification var
@@ -94,7 +39,7 @@ a <- unique(x$stratification)
 # procedure non-stratified
 	if( a == "N" )
 		{
-			wi <- 1/generate_probs(x, type="inclusion")
+			wi <- 1/generateProbs(x, probType="inclusion")
 			HTi <- wi*x$value
 			HTi
 		}
@@ -104,11 +49,11 @@ a <- unique(x$stratification)
 		{
 		ls1<-split(x, x$stratum)
 		ls2<-lapply(ls1, function(x) { 
-				wi <- 1/generate_probs(x, type="inclusion")
+				wi <- 1/generateProbs(x, probType="inclusion")
 				HTi <- wi*x$value
 				HTi
 				})
-		 do.call("rbind",ls2)		
+		 HTi<-do.call("rbind",ls2)		
 		}
 HTi	
 })
