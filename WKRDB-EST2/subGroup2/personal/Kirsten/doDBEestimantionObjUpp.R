@@ -103,24 +103,23 @@ doDBEestimantionObjUpp <-
     out <- list()
     
     ### Some general info from the DE to go into a description - for now just a copy
-    # desc <- input_list$DE
-    
     ### Need to include the DE - not as a SU, but I do have info about stratification
     de <- input_list$DE
     
-        ### Do we need to include the SD - that the link between the DE and PSU - rename DEid to idAbove
+    ### Do we need to include the SD - that the link between the DE and PSU - rename DEid to idAbove
     
     sd <- input_list$SD
     names(sd) <-
       sub("SD", "", names(sd))
     
-    out <- list(expected_tables = expected_tables, de = de, sd = sd)
+    expected_tables_here <-
+      eval(parse(text = paste0("expected_tables$H", hierachy)))  #Kibi - changed
+    
+    out <-
+      list(expected_tables = expected_tables_here, de = de, sd = sd) #Kibi - changed
   
     
     ### Importing the SU tables
-    
-    expected_tables_here <-
-      eval(parse(text = paste0("expected_tables$H", hierachy)))
     
     for (i in c(3:length(expected_tables_here$table_names))) {
       su <-
