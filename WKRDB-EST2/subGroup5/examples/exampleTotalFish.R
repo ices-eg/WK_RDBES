@@ -40,8 +40,12 @@ BVsa <- fixInclusionProbabilities(BVsa)
 
 #extract estimation objects
 estimationObjectNumber <- doDBEestimationObjLowSpecimenParams(FMsa, BVsa, lowerHiearchy = "A", stat="number")
-estimationObjectCountAtAge6 <- doDBEestimationObjLowSpecimenParams(FMsa, BVsa, lowerHiearchy = "A", stat="countAtAge6")
+estimationObjectCountAtAge6 <- doDBEestimationObjLowSpecimenParams(FMsa, BVsa, lowerHiearchy = "A", stat="numberAtAge6")
+estimationObjectCountAtAge <- doDBEestimationObjLowSpecimenParams(FMsa, BVsa, lowerHiearchy = "A", stat="numberAtAge")
 
 #estimation
 computeDBEresultsTotalPointLowSingleSample(estimationObjectCountAtAge6)
 computeDBEresultsTotalPointLowSingleSample(estimationObjectNumber)
+
+#mutlivariate estimation
+computeDBEresultsTotalPointLowSingleSample(estimationObjectCountAtAge)
