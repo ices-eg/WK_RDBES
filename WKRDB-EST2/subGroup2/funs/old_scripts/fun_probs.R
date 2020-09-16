@@ -30,7 +30,7 @@ correct_data <- function(input_list = H1_upper) {
 }
 
 
-fun_add_probs <- function(input_list = H1_upper, type_of_probs = "inclusion") {
+fun_add_probs <- function(input_list = test, type_of_probs = "inclusion") {
   
   for (i in c("VS", "FT", "FO", "SA")) {
     
