@@ -7,7 +7,36 @@
         # multi-species consultation
         # handling of the generated SAid (suggestion in "1" -> "1a"
         # handling of parentIds and stratification
-handleSSissues <- 
+
+################################################################################################
+##############################################
+##### WKRDB-EST2 14-18.Sept.2020
+##### ACF
+## Read data
+setwd('D:/Documents/PNAB/2020/006_WKRDBES/WKRDB-EST2/WK_RDBES-master/WKRDBEST2/
+testData/output/DBErawObj/')
+dataset<-readRDS("DBErawObj_DK_1966_H3.rds")
+str(dataset)
+SL<-dataset$SL
+SS<-dataset$SS
+SA<-dataset$SA
+# test data
+x <- data.frame(FOid=c(1,2,2,3,4,5,5,6),SSobsTyp=c('vis','vis','vol','vis','vol','vis','vol',NA))
+x1 <- data.frame(FOid=c(1,2,2,3,4,5,5),SSobsTyp=c('vis','vis','vol','vis','vol','vis','vol'))
+x2 <- data.frame(FOid=c(1,2,3,4,5,6),SSobsTyp=c('vis','vol','vis','vol','vis',NA))
+# function
+findDiffObsTyp<- function(FOid, x1 = x1){
+x <- x1
+for (i in 1:length(unique(x$FOid))) {
+a <- as.character(unique(x$SSobsTyp))
+if(sum(is.na(x$SSobsTyp))>0) stop ("cannot proceed: NAs in obsTyp")
+if(length(unique(x$SSobsTyp))>1) stop ("two different observation types in the same Fishing Operation")
+y=table(x$FOid,x$SSobsTyp)
+}
+print(y)
+}
+out <- findDiffObsTyp(FOid = x1$FOid, x1 = x1)
+
 
 generate_zeros_in_SA<-function(sppCodes, SA = SA, SS = SS, SL = SL){
 	
@@ -42,7 +71,15 @@ generate_zeros_in_SA<-function(sppCodes, SA = SA, SS = SS, SL = SL){
 			# {
 			# delete on BV
 			# }
-		
+	
+
+
+
+	
+		#findDiffObsTyp (x = SS)
+	
+	
+	
 	ls1 <- split(SA, SA$SSid)
     ls2 <- lapply(ls1, function(x) {
 		for (sppCode in sppCodes)
