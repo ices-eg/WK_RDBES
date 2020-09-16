@@ -9,7 +9,7 @@ data_path <- "./WKRDB-EST2/testData/output/DBErawObj/"
 
 h5 <- readRDS(paste0(data_path, "DBErawObj_DK_1966_H5.rds"))
 
-h5_test <- doDBEestimantionObjUpp(input_list = h5, hierachy = 5)
+h5_test <- doDBEestimantionObjUpp(input_list = h5)
 
 # Something wrong with isAbove - needs the FT
 
@@ -17,7 +17,7 @@ h5_test <- doDBEestimantionObjUpp(input_list = h5, hierachy = 5)
 
 h6 <- readRDS(paste0(data_path, "DBErawObj_DK_1966_H6.rds"))
 
-h6_test <- doDBEestimantionObjUpp(input_list = h6, hierachy = 6)
+h6_test <- doDBEestimantionObjUpp(input_list = h6)
 
 # Runs and correct SU's
 
@@ -25,7 +25,7 @@ h6_test <- doDBEestimantionObjUpp(input_list = h6, hierachy = 6)
 
 h7 <- readRDS(paste0(data_path, "DBErawObj_DK_1966_H7.rds"))
 
-h7_test <- doDBEestimantionObjUpp(input_list = h7, hierachy = 7)
+h7_test <- doDBEestimantionObjUpp(input_list = h7)
 
 # Runs, but how will this one link to a the SS - 
 # there is a LE (not part of estimation object) in-between
@@ -33,7 +33,7 @@ h7_test <- doDBEestimantionObjUpp(input_list = h7, hierachy = 7)
 # H8 ----
 h8 <- readRDS(paste0(data_path, "DBErawObj_DK_1966_H8.rds"))
 
-h8_test <- doDBEestimantionObjUpp(input_list = h8, hierachy = 8)
+h8_test <- doDBEestimantionObjUpp(input_list = h8)
 
 # Something wrong with isAbove - needs the FT
 
@@ -41,7 +41,7 @@ h8_test <- doDBEestimantionObjUpp(input_list = h8, hierachy = 8)
 
 h9 <- readRDS(paste0(data_path, "DBErawObj_DK_1966_H9.rds"))
 
-h9_test <- doDBEestimantionObjUpp(input_list = h9, hierachy = 9)
+h9_test <- doDBEestimantionObjUpp(input_list = h9)
 
 
 
@@ -49,6 +49,6 @@ h9_test <- doDBEestimantionObjUpp(input_list = h9, hierachy = 9)
 
 h10 <- readRDS(paste0(data_path, "DBErawObj_DK_1966_H10.rds"))
 
-h10_test <- doDBEestimantionObjUpp(input_list = h10, hierachy = 10)
+h10_test <- doDBEestimantionObjUpp(input_list = h10)
 
 # Runs and correct SU's
