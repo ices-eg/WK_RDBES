@@ -15,7 +15,7 @@ FM2 <- FM1 <- FM
 
 
 # MODIFY data
-# Sample up to 10 fish per LC and randomly select a X number of fish for ageing (always less than sampled per LC) from each LC
+# Sample up to 10 fish per LC and randomly select X number of fish for ageing (always less than sampled per LC) from each LC
 FM1$FMnumAtUnit <- sample(seq(2, 10), nrow(FM1), replace = TRUE)
 FM1$BioS <- sapply(FM1$FMnumAtUnit + 1, sample, 1) - 1
 FM1$BioS <- ifelse(FM1$BioS %in% 0, 1, 
@@ -33,7 +33,7 @@ BV1 <- newBV1 %>%
   group_by(FMid) %>%
   mutate(BVrecType = "BV",
          BVstratification = "Y", 
-         BVstratumname = "", # what is the code for length stratified ?
+         BVstratumname = "", # what is the code for length stratified 
          BVtype = "Age",
          BVvalue = BVvalue,
          BVvalTyp = "Year",
@@ -54,7 +54,6 @@ BV1 <- newBV1 %>%
 myls1  <- list(
   "FM" = FM1,
   "BV" = BV1
-
 )
 
 # Make it a bit more realistic?
@@ -97,17 +96,19 @@ myls2  <- list(
   "BV" = BV2
 )
 
-# TODO 
-# Estimate incl, selection prob from Dave's script
+# SAVE data
+# saveRDS(myls1, file = "./WKRDB-EST2/subGroup5/inputs/modified_FMBV_raw_list1.rds")
+# saveRDS(myls2, file = "./WKRDB-EST2/subGroup5/inputs/modified_FMBV_raw_list2.rds")
+
+# TODO change tibble to DF
+# Estimate incl prob + produce Design table from Dave's script
 source("./WKRDB-EST2/subGroup5/personal/Karolina/LowerScript.R")
 
 myoutput1 <- getLowerProbs(table = myls1, hierarchyType = "A",  BVtype = "age", probType = "inclusion" )
 myoutput2 <- getLowerProbs(table = myls2, hierarchyType = "A",  BVtype = "age", probType = "inclusion" )
 
-# SAVE data
-saveRDS(myls1, file = "./WKRDB-EST2/subGroup5/inputs/modified_FMBV_list1.rds")
-saveRDS(myls2, file = "./WKRDB-EST2/subGroup5/inputs/modified_FMBV_list2.rds")
-
+saveRDS(myoutput1, file = "./WKRDB-EST2/subGroup5/inputs/input_FMBV_1.rds")
+saveRDS(myoutput2, file = "./WKRDB-EST2/subGroup5/inputs/input_FMBV_2.rds")
 
 # IGNORE - Test code not working
 # SU <- merge(FM, BV , by = "FMid")
