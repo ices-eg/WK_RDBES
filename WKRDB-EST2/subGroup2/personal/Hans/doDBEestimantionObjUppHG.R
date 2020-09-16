@@ -16,18 +16,17 @@
 doDBEestimantionObjUpp <-
   function(input_list = H1_upper,
            hierachy = 1) { 
-    # hg
-    # hierachy=hierarchy typo, consistent
-    
+# hg
+# hierachy=hierarchy typo, consistent
     library(dplyr)
-    
-    # hg
-    # we dont have to specify the hierarchy in the function
-    # note: i kept the typo in here for now
-    hierachy <- unique(input_list$DE$DEhierarchy)
-    if(is.null(hierachy)) stop('Cannot identify the hierarchy from the DE table. Is it missing or empty?')
-    if(length(hierachy)>1) stop('There is more than one hierarchy in the DE table. I cant cope!')
-    
+
+# hg
+# we dont have to specify the hierarchy in the function
+# note: i kept the typo in here for now
+    hieracy <- unique(input_list$DE$DEhierarchy)
+    if(is.null(hieracy)) stop('Cannot identify the hierarchy from the DE table. Is it missing or empty?')
+    if(length(hieracy)>0) stop('There is more than one hierarchy in the DE table. I cant cope!')
+
     
     # Varibale names for the output
     var_names <- c(
@@ -53,20 +52,20 @@ doDBEestimantionObjUpp <-
       "incProbCluster"
     )
     
-    # hg
-    # check variable names
+# hg
+# check variable names
     a <- lapply(seq_along(input_list), function(i) data.frame(TableName=names(input_list)[i],FieldName=names(input_list[[i]])))
     a <- lapply(a,function(x) {x$FieldNameStripped <- sub(x$TableName[1],"",x$FieldName); return(x)})
     lut <- do.call('rbind',a)
     var_names_not_in_tables <- var_names[!var_names%in%lut$FieldNameStripped]
     
-    # idAbove and su are not in the tables, dont want to give a warning
+# idAbove and su are not in the tables, dont want to give a warning
     varnames_no_warning <- c('idAbove','su')
     var_names_not_in_tables <- var_names_not_in_tables[!var_names_not_in_tables%in%varnames_no_warning]
     if(length(var_names_not_in_tables)>0) warning(paste('Some unexpected var_names hardcoded in this function: ',
                                                         paste(var_names_not_in_tables,collapse=', '),
                                                         '\nMaybe wrong data model version or a bug.'))
-    
+        
     
     # createing a list with expected tables for each hierachy
     expected_tables <- list(
@@ -133,28 +132,28 @@ doDBEestimantionObjUpp <-
     ### Need to include the DE - not as a SU, but I do have info about stratification
     de <- input_list$DE
     
-    ### Do we need to include the SD - that the link between the DE and PSU - rename DEid to idAbove
+        ### Do we need to include the SD - that the link between the DE and PSU - rename DEid to idAbove
     
     sd <- input_list$SD
     names(sd) <-
       sub("SD", "", names(sd))
     
-    # hg   
+# hg   
     #out <- list(expected_tables = expected_tables, de = de, sd = sd)
-    out <- list(expected_tables = data.frame(hierarchy=hierachy,expected_tables_here), de = de, sd = sd)
-
+    out <- list(expected_tables = data.frame(hierarchy=hierachy,expected_tables[[hierachy]]), de = de, sd = sd)
+    
     ### Importing the SU tables
     
     expected_tables_here <-
       eval(parse(text = paste0("expected_tables$H", hierachy))) 
     
-    # hg
-    # check that the input_list has all the expected tables
+# hg
+# check that the input_list has all the expected tables
     missing_tables <- expected_tables_here$table_names[!expected_tables_here$table_names %in% names(input_list)]
     if(length(missing_tables)>0) stop(paste('Not all expected tables are in the input_list:',
                                             paste(missing_tables,collapse=' ,')))
     
-    # CC has some code to do this better, not assume to start at 3    
+    
     for (i in c(3:length(expected_tables_here$table_names))) {
       su <-
         eval(parse(text = paste0(

@@ -80,7 +80,7 @@ makeBVtable <- function(FMtable, BVtable, stratificationYes="Y"){
 #' @param lowerHierarchy character identifying the lower hierarchy to extract
 #' @param stat character identifying the statistic of interest, for now this supports the somewhat contrived options 'number' and 'countAtAge6'
 #' @return \code{\link{sampUnitData}} lower hiearchy data prepared for estimation
-doDBEestimationObjLowSpecimenParams <- function(FMtable=NULL, BVtable=NULL, lowerHiearchy=c("A","C"), stat=c("number", "countAtAge6")){
+doDBEestimationObjLowSpecimenParams <- function(FMtable=NULL, BVtable=NULL, lowerHiearchy=c("A","C"), stat=c("number", "numberAtAge6", "numberAtAge6"), ages=1:20){
   
   if (lowerHiearchy == "A"){
     if (any(is.na(FMtable$SAid)) | length(unique(FMtable$SAid))>1){
@@ -112,12 +112,26 @@ doDBEestimationObjLowSpecimenParams <- function(FMtable=NULL, BVtable=NULL, lowe
     BVtable$count <- 1
     var <- "count"
   }
-  else if (stat=="countAtAge6"){
+  else if (stat=="numberAtAge6"){
     BVtable <- BVtable[BVtable$BVtype=="Age",]
     stopifnot(!any(duplicated(BVtable$BVfishId)))
     BVtable$countAtAge6 <- as.numeric(BVtable$BVvalue == 6)
     var <- "countAtAge6"
   }
+  else if (stat=="numberAtAge"){
+    BVtable <- BVtable[BVtable$BVtype=="Age",]
+    stopifnot(!any(duplicated(BVtable$BVfishId)))
+    
+    catnames <- c()
+    for (cat in ages){
+      catn <- paste("Age", cat)
+      BVtable[,catn] <- as.numeric(BVtable$BVvalue == cat) 
+      catnames <- c(catnames, catn)
+    }
+    
+    var <- catnames
+  }
+  
   else{
     stop("Option ", stat, " is not supported for parameter 'stat'.")
   }
