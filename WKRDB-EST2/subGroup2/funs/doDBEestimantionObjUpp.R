@@ -1,15 +1,15 @@
-#' generic_su_object_upper_hie
+#' Generates the DBE estimation object for the upper hierarchy tables
 #'
 #' @param input_list All the data tables in a named list. Name should be equal 
 #' to the short table names e.g. DE, SD, TE, FO. An example can be found at the share point: 
 #' https://community.ices.dk/ExpertGroups/WKRDB/2019%20Meetings/WKRDB-EST%202019/06.%20Data/Kirsten/H1/H1_upper.RData
-#' @param hierarchy The number of the hierarchy you are inputting - 1 to 13
 #' 
 #'
-#' @return
+#' @return The upper hierarchy tables in the DBE estimation object (DBEestimantionObjUpp)
 #' @export
 #'
 #' @examples
+#' 
 #' 
 
 
@@ -24,8 +24,10 @@ doDBEestimantionObjUpp <-
     # we dont have to specify the hierarchy in the function
     # note: i kept the typo in here for now
     hierarchy <- unique(input_list$DE$DEhierarchy)
-    if(is.null(hierarchy)) stop('Cannot identify the hierarchy from the DE table. Is it missing or empty?')
-    if(length(hierarchy)>1) stop('There is more than one hierarchy in the DE table. I cant cope!')
+    if (is.null(hierarchy))
+      stop('Cannot identify the hierarchy from the DE table. Is it missing or empty?')
+    if (length(hierarchy) > 1)
+      stop('There is more than one hierarchy in the DE table. I cant cope!')
     
     # kibi - function stops when inputting these hierarchies
     if (hierarchy %in% c(5, 8, 12, 13))
@@ -61,17 +63,36 @@ doDBEestimantionObjUpp <-
     
     # hg
     # check variable names
-    a <- lapply(seq_along(input_list), function(i) data.frame(TableName=names(input_list)[i],FieldName=names(input_list[[i]])))
-    a <- lapply(a,function(x) {x$FieldNameStripped <- sub(x$TableName[1],"",x$FieldName); return(x)})
-    lut <- do.call('rbind',a)
-    var_names_not_in_tables <- var_names[!var_names%in%lut$FieldNameStripped]
+    
+    a <-
+      lapply(seq_along(input_list), function(i)
+        data.frame(
+          TableName = names(input_list)[i],
+          FieldName = names(input_list[[i]])
+        ))
+    a <-
+      lapply(a, function(x) {
+        x$FieldNameStripped <-
+          sub(x$TableName[1], "", x$FieldName)
+        return(x)
+      })
+    lut <- do.call('rbind', a)
+    var_names_not_in_tables <-
+      var_names[!var_names %in% lut$FieldNameStripped]
     
     # idAbove and su are not in the tables, dont want to give a warning
-    varnames_no_warning <- c('idAbove','su')
-    var_names_not_in_tables <- var_names_not_in_tables[!var_names_not_in_tables%in%varnames_no_warning]
-    if(length(var_names_not_in_tables)>0) warning(paste('Some unexpected var_names hardcoded in this function: ',
-                                                        paste(var_names_not_in_tables,collapse=', '),
-                                                        '\nMaybe wrong data model version or a bug.'))
+    varnames_no_warning <- c('idAbove', 'su')
+    var_names_not_in_tables <-
+      var_names_not_in_tables[!var_names_not_in_tables %in% varnames_no_warning]
+    if (length(var_names_not_in_tables) > 0)
+      warning(
+        paste(
+          'Some unexpected var_names hardcoded in this function: ',
+          paste(var_names_not_in_tables, collapse =
+                  ', '),
+          '\nMaybe wrong data model version or a bug.'
+        )
+      )
     
     
     # createing a list with expected tables for each hierarchy
@@ -151,16 +172,26 @@ doDBEestimantionObjUpp <-
     
     # hg   
     #out <- list(expected_tables = expected_tables, de = de, sd = sd)
-    out <- list(expected_tables = data.frame(hierarchy=hierarchy,expected_tables_here), de = de, sd = sd)
+    out <-
+      list(
+        expected_tables = data.frame(hierarchy = hierarchy, expected_tables_here),
+        de = de,
+        sd = sd
+      )
 
     ### Importing the SU tables
 
     
     # hg
     # check that the input_list has all the expected tables
-    missing_tables <- expected_tables_here$table_names[!expected_tables_here$table_names %in% names(input_list)]
-    if(length(missing_tables)>0) stop(paste('Not all expected tables are in the input_list:',
-                                            paste(missing_tables,collapse=' ,')))
+    missing_tables <-
+      expected_tables_here$table_names[!expected_tables_here$table_names %in% names(input_list)]
+    if (length(missing_tables) > 0)
+      stop(paste(
+        'Not all expected tables are in the input_list:',
+        paste(missing_tables, collapse =
+                ' ,')
+      ))
     
     # CC has some code to do this better, not assume to start at 3    
     for (i in c(3:length(expected_tables_here$table_names))) {
