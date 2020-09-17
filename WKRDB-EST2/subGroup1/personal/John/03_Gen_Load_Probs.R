@@ -133,17 +133,27 @@ for(i in InputFiles){
   gc()
   print(k)
   }
-  #####WORKING HERE
+  ###Assigns prepared object to GE not working
   # eval(
-  #   parse(text=paste0(
-  # assign(paste0("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_"),
-  #        paste("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_"),
-  #        envir=globalenv()) )))
+  #   parse(text=
+  #           paste0(assign(
+  #            get(paste0("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_")),
+  #            paste0("DBEpreparedObj_",
+  #            paste0(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_"),
+  #            envir=.GlobalEnv) )))
   # 
-  
   rm(table_names)
   gc()
 }
+# Asslist <- get(ls()[grepl("DBEpreparedObj_",x=ls())==T])
+Asslist <-list()
+for(i in ls()[grepl("DBEpreparedObj_",x=ls())==T]){
+  print(i)
+  Asslist[length(Asslist)+1] <- list(get(ls()[ls()==i]))
+}
+names(Asslist) <- ls()[grepl("DBEpreparedObj_",x=ls())==T]
+### get asslist back to ge
+list2env(Asslist,envir = .GlobalEnv)
 
 #wite out data
 for(i in InputFiles){
