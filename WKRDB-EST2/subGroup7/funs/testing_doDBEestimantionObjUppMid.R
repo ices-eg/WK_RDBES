@@ -1,7 +1,7 @@
 
 # Testing doDBEestimantionObjUpp
 
-source("./WKRDB-EST2/subGroup2/personal/Kirsten/doDBEestimantionObjUpp.R")
+source("./WKRDB-EST2/subGroup7/funs/doDBEestimantionObjUppMid.R")
 
 data_path <- "./WKRDB-EST2/testData/output/DBErawObj/"
 
