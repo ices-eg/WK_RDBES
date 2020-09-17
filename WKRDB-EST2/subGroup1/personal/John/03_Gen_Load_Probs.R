@@ -31,7 +31,7 @@ for(i in InputFiles){
 
 #function
 source("WKRDB-EST2/subGroup1/personal/John/generateProbs_John.r")
-
+source("WKRDB-EST2/subGroup1/personal/John/generateClusterProbs_John.r")
 #DBErawObj_DK_1966_H1$VS
 #runs function and assigns 
 for(i in InputFiles){
@@ -146,6 +146,106 @@ for(i in InputFiles){
   #Rbind data 
   a <- rbind(a,a_NA)
   ###
+  ###
+  
+  if(all(is.na(a[grepl("numTotalClusters|numTotalCluster",names(a))==T])==F)){
+  ###Now does Cluster seleciton
+  print("Cluster selection")
+  a_NA <- a[is.na(eval(parse(text = paste0("a$",names(a)[grepl("selProbCluster",names(a))==T]))))==T,]
+  a <- a[is.na(eval(parse(text = paste0("a$",names(a)[grepl("selProbCluster",names(a))==T] ))))==F,]
+  ###
+  ###
+  if(nrow(a)>0){  
+    #Check on number of methods
+    if( length( unique(eval(parse(text=paste0(paste("a"),"$",names(a)[grepl("selectMethCluster",names(a))==T],sep="")))))>=2){
+      stop("More than one selection method")
+      print(unique(eval(parse(text=paste0(paste("a"),"$",names(a)[grepl("selectMethCluster",names(a))==T],sep="")))))
+    }
+    
+    ## calculates values for a and checks agianst submitted in values
+    
+    CalcValues <- generateClusterProbs(a, "selection" )
+    names(CalcValues) <- "CalcValues"
+    if(all(a[grepl("selProbCluster",names(a))==T]==CalcValues$CalcValues)==T){
+      print("Submitted and calculated values match")
+    }else{
+      PrintOut<- cbind(a[grepl("id",names(a))==T],a[grepl("selProbCluster",names(a))==T],CalcValues$CalcValues,Equal=c((a[grepl("selProbCluster",names(a))==T]==CalcValues$CalcValues)==T))
+      print(PrintOut[PrintOut$Equal=="FALSE",])
+      rm(PrintOut)
+      switch(menu(c("Yes", "No"), title="Submitted values do not match calculated calculated do you want to overwrite submitted data?"),a[grepl("selProbCluster",names(a))==T] <- CalcValues$CalcValues,print("submitted values used"))  
+    }
+    rm(CalcValues)
+  }
+  ###
+  ###
+  if(nrow(a_NA)>0){
+    #Check on number of methods
+    if( length( unique(eval(parse(text=paste0(paste("a_NA"),"$",names(a_NA)[grepl("selectMethCluster",names(a_NA))==T ],sep="")))))>=2){
+      stop("More than one selection method")
+      print(unique(eval(parse(text=paste0(paste("a_NA"),"$",names(a_NA)[grepl("selectMethCluster",names(a_NA))==T ],sep="")))))
+    }
+    #applies function
+    CalcValues <- generateClusterProbs(a_NA, "selection" )
+    
+    a_NA[grepl("selProbCluster",names(a_NA))==T] <- CalcValues$CalcValues
+    #Rbind data 
+    a <- rbind(a,a_NA)
+    rm(a_NA,CalcValues)
+  }
+  ###
+  ###
+  #And again for inclusion
+  print("Cluster inclusion")
+  a_NA <- a[is.na(eval(parse(text = paste0("a$",names(a)[grepl("selProbCluster",names(a))==T]))))==T,]
+  a <- a[is.na(eval(parse(text = paste0("a$",names(a)[grepl("selProbCluster",names(a))==T] ))))==F,]
+  ###
+  ###
+  if(nrow(a)>0){  
+    #Check on number of methods
+    if( length( unique(eval(parse(text=paste0(paste("a"),"$",names(a)[grepl("selectMethCluster",names(a))==T],sep="")))))>=2){
+      stop("More than one selection method")
+      print(unique(eval(parse(text=paste0(paste("a"),"$",names(a)[grepl("selectMethCluster",names(a))==T],sep="")))))
+    }
+    
+    ## calculates values for a and checks agianst submitted in values
+    
+    CalcValues <- generateClusterProbs(a, "inclusion" )
+    names(CalcValues) <- "CalcValues"
+    if(all(a[grepl("selProbCluster",names(a))==T]==CalcValues$CalcValues)==T){
+      print("Submitted and calculated values match")
+    }else{
+      PrintOut<- cbind(a[grepl("id",names(a))==T],a[grepl("selProbCluster",names(a))==T],CalcValues$CalcValues,Equal=c((a[grepl("selProbCluster",names(a))==T]==CalcValues$CalcValues)==T))
+      print(PrintOut[PrintOut$Equal=="FALSE",])
+      rm(PrintOut)
+      switch(menu(c("Yes", "No"), title="Submitted values do not match calculated calculated do you want to overwrite submitted data?"),a[grepl("selProbCluster",names(a))==T] <- CalcValues$CalcValues,print("submitted values used"))  
+    }
+    rm(CalcValues)
+  }
+  ###
+  ###
+  if(nrow(a_NA)>0){
+    #Check on number of methods
+    if( length( unique(eval(parse(text=paste0(paste("a_NA"),"$",names(a_NA)[grepl("selectMethCluster",names(a_NA))==T ],sep="")))))>=2){
+      stop("More than one selection method")
+      print(unique(eval(parse(text=paste0(paste("a_NA"),"$",names(a_NA)[grepl("selectMethCluster",names(a_NA))==T ],sep="")))))
+    }
+    #applies function
+    CalcValues <- generateClusterProbs(a_NA, "inclusion" )
+    
+    a_NA[grepl("selProbCluster",names(a_NA))==T] <- CalcValues$CalcValues
+    #Rbind data 
+    a <- rbind(a,a_NA)
+    rm(a_NA,CalcValues)
+  }
+  ###
+  ###
+  }else{
+    print("No values in numTotalClusters")
+  }
+  
+  ###
+  ###
+  ### 
   ###
   
   #assigns the moddifed table back to the input object
