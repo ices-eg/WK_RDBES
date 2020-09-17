@@ -1,39 +1,46 @@
-#' generic_su_object_upper_hie
+#' Generates the DBE estimation object for the upper hierarchy tables
 #'
 #' @param input_list All the data tables in a named list. Name should be equal 
 #' to the short table names e.g. DE, SD, TE, FO. An example can be found at the share point: 
 #' https://community.ices.dk/ExpertGroups/WKRDB/2019%20Meetings/WKRDB-EST%202019/06.%20Data/Kirsten/H1/H1_upper.RData
-#' @param hierachy The number of the hierachy you are inputting - 1 to 13
 #' 
 #'
-#' @return
-#' @export
+#' @return The upper hierarchy tables in the DBE estimation object (DBEestimantionObjUpp)
 #'
 #' @examples
-#' 
+#' \dontrun{
+#' H1 <- readRDS('./WKRDB-EST2/testData/output/DBErawObj/DBErawObj_DK_1966_H1.rds')
+#' H1out <- doDBEestimantionObjUpp(H1)
+#' }
 
 
 doDBEestimantionObjUpp <-
-  function(input_list = H1_upper,
-           hierachy = 1) { 
-    # hg
-    # hierachy=hierarchy typo, consistent
-    
+  function(input_list) { 
+
     library(dplyr)
     
     # hg
     # we dont have to specify the hierarchy in the function
     # note: i kept the typo in here for now
-    hierachy <- unique(input_list$DE$DEhierarchy)
-    if(is.null(hierachy)) stop('Cannot identify the hierarchy from the DE table. Is it missing or empty?')
-    if(length(hierachy)>1) stop('There is more than one hierarchy in the DE table. I cant cope!')
+    hierarchy <- unique(input_list$DE$DEhierarchy)
+    if (is.null(hierarchy))
+      stop('Cannot identify the hierarchy from the DE table. Is it missing or empty?')
+    if (length(hierarchy) > 1)
+      stop('There is more than one hierarchy in the DE table. I cant cope!')
     
+    # kibi - function stops when inputting these hierarchies
+    if (hierarchy %in% c(5, 8, 12, 13))
+      stop(paste("Stop: The function can not handle hierarchy 5, 8, 12 & 13"))
     
-    # Varibale names for the output
+    # kibi - warnings for the ones where the link to the middle may be wrong
+    if (hierarchy %in% c(6, 7, 11))
+      warning(paste("Warning: The function may not handle the link to the middle hierarchies correctly"))
+    
+    # Variable names for the output
     var_names <- c(
       "idAbove",
       "id",
-      "hierachy", 
+      "hierarchy", # kibi - corrected spelling all over the script
       "su",
       "recType",
       "unitName",
@@ -55,20 +62,39 @@ doDBEestimantionObjUpp <-
     
     # hg
     # check variable names
-    a <- lapply(seq_along(input_list), function(i) data.frame(TableName=names(input_list)[i],FieldName=names(input_list[[i]])))
-    a <- lapply(a,function(x) {x$FieldNameStripped <- sub(x$TableName[1],"",x$FieldName); return(x)})
-    lut <- do.call('rbind',a)
-    var_names_not_in_tables <- var_names[!var_names%in%lut$FieldNameStripped]
+    
+    a <-
+      lapply(seq_along(input_list), function(i)
+        data.frame(
+          TableName = names(input_list)[i],
+          FieldName = names(input_list[[i]])
+        ))
+    a <-
+      lapply(a, function(x) {
+        x$FieldNameStripped <-
+          sub(x$TableName[1], "", x$FieldName)
+        return(x)
+      })
+    lut <- do.call('rbind', a)
+    var_names_not_in_tables <-
+      var_names[!var_names %in% lut$FieldNameStripped]
     
     # idAbove and su are not in the tables, dont want to give a warning
-    varnames_no_warning <- c('idAbove','su')
-    var_names_not_in_tables <- var_names_not_in_tables[!var_names_not_in_tables%in%varnames_no_warning]
-    if(length(var_names_not_in_tables)>0) warning(paste('Some unexpected var_names hardcoded in this function: ',
-                                                        paste(var_names_not_in_tables,collapse=', '),
-                                                        '\nMaybe wrong data model version or a bug.'))
+    varnames_no_warning <- c('idAbove', 'su')
+    var_names_not_in_tables <-
+      var_names_not_in_tables[!var_names_not_in_tables %in% varnames_no_warning]
+    if (length(var_names_not_in_tables) > 0)
+      warning(
+        paste(
+          'Some unexpected var_names hardcoded in this function: ',
+          paste(var_names_not_in_tables, collapse =
+                  ', '),
+          '\nMaybe wrong data model version or a bug.'
+        )
+      )
     
     
-    # createing a list with expected tables for each hierachy
+    # createing a list with expected tables for each hierarchy
     expected_tables <- list(
       H1 = data.frame(
         table_names = c("DE", "SD", "VS", "FT", "FO"),
@@ -139,20 +165,32 @@ doDBEestimantionObjUpp <-
     names(sd) <-
       sub("SD", "", names(sd))
     
+    # kibi - moved these lines up
+    expected_tables_here <-
+      eval(parse(text = paste0("expected_tables$H", hierarchy))) 
+    
     # hg   
     #out <- list(expected_tables = expected_tables, de = de, sd = sd)
-    out <- list(expected_tables = data.frame(hierarchy=hierachy,expected_tables_here), de = de, sd = sd)
+    out <-
+      list(
+        expected_tables = data.frame(hierarchy = hierarchy, expected_tables_here),
+        de = de,
+        sd = sd
+      )
 
     ### Importing the SU tables
-    
-    expected_tables_here <-
-      eval(parse(text = paste0("expected_tables$H", hierachy))) 
+
     
     # hg
     # check that the input_list has all the expected tables
-    missing_tables <- expected_tables_here$table_names[!expected_tables_here$table_names %in% names(input_list)]
-    if(length(missing_tables)>0) stop(paste('Not all expected tables are in the input_list:',
-                                            paste(missing_tables,collapse=' ,')))
+    missing_tables <-
+      expected_tables_here$table_names[!expected_tables_here$table_names %in% names(input_list)]
+    if (length(missing_tables) > 0)
+      stop(paste(
+        'Not all expected tables are in the input_list:',
+        paste(missing_tables, collapse =
+                ' ,')
+      ))
     
     # CC has some code to do this better, not assume to start at 3    
     for (i in c(3:length(expected_tables_here$table_names))) {
@@ -165,7 +203,7 @@ doDBEestimantionObjUpp <-
         sub(unique(expected_tables_here$table_names[[i]]), "", names(su))
       
       su$su <- expected_tables_here$su_level[[i]]
-      su$hierachy <- hierachy
+      su$hierarchy <- hierarchy
       h <- i - 1
       su$idAbove <-
         eval(parse(text = paste0(

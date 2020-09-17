@@ -1,70 +1,135 @@
-# Script that reads all the csv's per table and sets up DBErawObj
-# based on the scripts from the repo  https://raw.githubusercontent.com/davidcurrie2001/MI_RDBES_ExchangeFiles
-
-# to do:
-# all hierarchies
-
 library(devtools)
+
+
+
+#################################################################################################################
+# load all the functions and datasets that are needed
+#################################################################################################################
+
+# script with getTablesInHierarchies function among others
 source_url(
   "https://raw.githubusercontent.com/davidcurrie2001/MI_RDBES_ExchangeFiles/master/RDBES_Functions.R"
 )
+# and leave only the function that we need
+rm(list=setdiff(ls(), "getTablesInHierarchies"))
+
+# data model defined in the xsd files
 hierarchies_path <- "D:/Projekty/RDBES/RDBES/XSD-files/"
 allRequiredTables <-
   getTablesInHierarchies(downloadFromGitHub = FALSE, fileLocation = hierarchies_path)
 
+# mapping of Field Names to R names
 mapColNamesFieldR <- readRDS("D:/Projekty/RDBES/WK_RDBES/WKRDB-EST2/testData/referenceData/mapColNamesFieldR.rds")
+#################################################################################################################
+#################################################################################################################
 
-# temp variables
-# Year = 1966
-# Country = 'DK'
-# SamplingScheme = 'ESP-AZTI_DCF_Onboard_Sampling'
-# Hierarchy = 'H3'
-# RDBESextractPath = './WKRDB-EST2/subGroup1/personal/Marta/RDBESextract'
-# DBErawPath = './WKRDB-EST2/subGroup1/personal/Marta/DBEraw'
 
-doDBErawObj = function(Year,
-                       Country,
-                       SamplingScheme,
-                       Hierarchy,
-                       RDBESextractPath,
-                       DBErawPath) {
+
+
+#' doDBErawObj
+#' Function that reads all the csv's per table and sets up DBErawObj
+#' based on the scripts from the repo  https://raw.githubusercontent.com/davidcurrie2001/MI_RDBES_ExchangeFiles
+#' 
+#' @param RDBESextractPath Path where the folder with the csvs exported from the RDBES are being stored. If the user does not specify it,
+#' an interactive window will be launched, so that the user can choose the directory
+#' @param DBErawPath Path where the function is supposed to write the DBErawObjs in. If not defined, it will be stored in the parent 
+#' of RDBESextractPath
+#'
+#' @return DBErawObj - the list containing all the tables that create the given hierarchy
+#' @export
+#'
+#' @examples
+#' doDBErawObj()
+doDBErawObj = function(RDBESextractPath = NA,
+                       DBErawPath = NA) {
   
-  # set the directory folders
-  data_dir = paste(RDBESextractPath,
-                   '/',
-                   Country,
-                   Year,
-                   SamplingScheme,
-                   Hierarchy,
-                   sep = '')
-  DBErawPath_dir = paste(DBErawPath,
-                         '/',
-                         Country,
-                         Year,
-                         SamplingScheme,
-                         Hierarchy,
-                         sep = '')
+  #######################################################################################################################
+  # the directories
+  #######################################################################################################################
   
-  # to do: check if the proper tables are in the specified directory
-  list_files <- grep('csv', list.files(data_dir), value = TRUE)
-  allRequiredTables[[Hierarchy]]
+  # set the directory where the csv downloaded from the RDBES are being stored
+  # if it is not defined in the parameters, then open the interactive window to enable the user to choose the dir
+  RDBESextractPath = ifelse(is.na(RDBESextractPath), choose.dir(), RDBESextractPath)
+  ifelse(!dir.exists(RDBESextractPath), 'The directory not found', FALSE)
   
-  for (i in list_files) {
-    name =  gsub(".csv", "", i)
-    assign(name, read.csv(paste(data_dir, '/', i, sep = ''), stringsAsFactors = FALSE))
+  # set the directory for DBErawObj
+  # if it is nof defined in the parameters, save in the parent of the parent of the RDBESextractPath
+  # and print out the message on where the user can find the results
+  DBErawPath = ifelse(is.na(DBErawPath), paste(dirname(dirname(RDBESextractPath)), '/DBEraw', sep = ''), DBErawPath)
+  ifelse(!dir.exists(DBErawPath), dir.create(DBErawPath), FALSE)
+  
+  # check if the proper tables are in the specified directory
+  list_files <- grep('csv', list.files(RDBESextractPath), value = TRUE)
+  list_files_names = gsub(".csv", "", list_files)
+  
+  # DE and SD must be in the given directory
+  mustHaves = c('DE', 'SD', 'SL', 'VD')
+  
+  if(all(mustHaves %in% list_files_names)){
+    
+    DE = read.csv(paste(RDBESextractPath, '/DE.csv', sep = ''), stringsAsFactors = FALSE)
+    SD = read.csv(paste(RDBESextractPath, '/SD.csv', sep = ''), stringsAsFactors = FALSE)
+    Country = unique(SD$SDcountry)
+    Year = unique(DE$DEyear)
+    Hierarchy = unique(DE$DEhierarchy)
+    SamplingScheme = unique(DE$DEsamplingScheme)
+    
+    if(length(c(Country, Year, Hierarchy, SamplingScheme)) > 4){
+      stop('The function will not work yet, when in the DE, there are different Sampling designs or Years or Hierarchies or Countries defined.')
+    }
+    
+  } else{
+    
+    mustHavesMissing = setdiff(mustHaves, list_files_names)
+    stop(paste(paste0(mustHavesMissing, collapse = ' '),'missing from the directory: ', RDBESextractPath,'. Please check if the given directory is correct.', sep = ''))
     
   }
   
-  # to do: check all the columns
+  requiredTables = allRequiredTables[[paste('H',Hierarchy, sep = '')]]
+  
+  # TO DO:
+  # as required tables depend on the chosen lower hierarchy, the checks should be carried out only on the upper tables
+  # and then depending on the lower hierarchy defined - additional check if the proper tables are included
+  # requiredTablesUpp = setdiff(requiredTables, c('FM', 'BV')) 
+  
+  if(!all(requiredTables %in% list_files_names)){
+    
+    missings = setdiff(requiredTables, list_files_names)
+    stop(paste(
+      'For the hierarchy ', Hierarchy, ' which has beed specified in the DE.csv, teh following tables are required: ', paste0(requiredTables, collapse = ', '), '.\n',
+      'The following tables: ', missings, ' are missing from the directory: ', RDBESextractPath,'. Please check if the given directory is correct.', sep = ''))
+    
+  }
+  
+  #######################################################################################################################
+  # load the data
+  #######################################################################################################################  
+  
+  for (i in list_files_names) {
+    assign(i, read.csv(paste(RDBESextractPath, '/', i, '.csv', sep = ''), stringsAsFactors = FALSE))
+    
+  }
+  
+  #######################################################################################################################
+  # check the data
+  #######################################################################################################################  
+  
+  # TO DO
+  # check all the columns
   # mapColNames...
   
-  # to do: should we implement any other checks?
+  # TO DO:
+  # should we implement any other checks?
+  
+  #######################################################################################################################
+  # create the DBErawObj
+  #######################################################################################################################  
   
   # set up DBErawObj
   DBErawObj = list()
-  for (i in 1:length(allRequiredTables[[Hierarchy]])) {
-    name = allRequiredTables[[Hierarchy]][i]
-    DBErawObj[[name]] = eval(parse(text = allRequiredTables[[Hierarchy]][i]))
+  for (i in 1:length(requiredTables)) {
+    name = requiredTables[i]
+    DBErawObj[[name]] = eval(parse(text = requiredTables[i]))
   }
   
   # At the end add SL and VD
@@ -85,16 +150,11 @@ doDBErawObj = function(Year,
     
   }
   
-  
-  dir.create(file.path(DBErawPath_dir), showWarnings = FALSE)
-  saveRDS(DBErawObj, file = paste(DBErawPath_dir, '/DBErawObj.rds', sep = ''))
+  param_string = paste(Country, Year, SamplingScheme, Hierarchy, sep = '')
+  DBErawPathSubfolder = paste(DBErawPath, param_string, sep = '/')
+  ifelse(!dir.exists(DBErawPathSubfolder), dir.create(DBErawPathSubfolder), FALSE)
+  saveRDS(DBErawObj, file = paste(DBErawPathSubfolder, '/DBErawObj.rds', sep = ''))
+  print(paste('DBErawObj was saved here ->', DBErawPathSubfolder))
 }
 
-# doDBErawObj(
-#   1966,
-#   'DK',
-#   'ESP-AZTI_DCF_Onboard_Sampling',
-#   'H5',
-#   RDBESextractPath = './WKRDB-EST2/subGroup1/personal/Marta/RDBESextract',
-#   DBErawPath = './WKRDB-EST2/subGroup1/personal/Marta/DBEraw'
-# )
+#doDBErawObj()
