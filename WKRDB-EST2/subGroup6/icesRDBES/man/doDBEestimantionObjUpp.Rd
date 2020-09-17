@@ -10,7 +10,8 @@ doDBEestimantionObjUpp(inputList)
 \item{inputList}{All the data tables in a named list. Name should be equal
 to the short table names e.g. DE, SD, TE, FO. An example can be found at
 the share point:
-https://community.ices.dk/ExpertGroups/WKRDB/2019\%20Meetings/WKRDB-EST\%202019/06.\%20Data/Kirsten/H1/H1_upper.RData}
+https://community.ices.dk/ExpertGroups/WKRDB/2019\%20Meetings/
+WKRDB-EST\%202019/06.\%20Data/Kirsten/H1/H1_upper.RData}
 }
 \value{
 The upper hierarchy tables in the DBE estimation object

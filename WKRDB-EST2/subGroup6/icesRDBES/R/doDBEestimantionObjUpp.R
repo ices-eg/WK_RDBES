@@ -223,7 +223,7 @@ doDBEestimantionObjUpp <-
         text = paste0(
           expectedTablesHere$su_level[[i]],
           "_done",
-          "<- select(su, one_of(varNames))"
+          "<- dplyr::select(su, one_of(varNames))"
         )
       ))
 
