@@ -10,14 +10,14 @@ check <- read.csv("WKRDB-EST2/subGroup1/personal/John/DK_1965_ESP-AZTI_DCF_Onboa
 Output <- "WKRDB-EST2/subGroup1/personal/John/PreparedOutputs/"
 Input <- "WKRDB-EST2/testData/output/DBErawObj/"
 
-CreateDBEPrepObj(Input = Input,Output = Output)
+# CreateDBEPrepObj(Input = Input,Output = Output)
 
-CreateDBEPrepObj <- function(Input,Output){
+ CreateDBEPrepObj <- function(Input,Output){
   
 #get file list
 InputFiles <- list.files(Input, recursive = TRUE)
 #ignroe readme
-InputFiles <- InputFiles[!InputFiles == "README.rmd"]
+InputFiles <- InputFiles[!InputFiles == "README.rmd" &  grepl(".rds",InputFiles)==T]
   
 
 
@@ -35,7 +35,7 @@ source("WKRDB-EST2/subGroup1/personal/John/generateProbs_John.r")
 #DBErawObj_DK_1966_H1$VS
 #runs function and assigns 
 for(i in InputFiles){
-  print(i)
+    print(i)
   
   #should assign Raw to a prepaed DBE
   assign(paste("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_"),
@@ -64,7 +64,9 @@ for(i in InputFiles){
   print("Selection")
   a_NA <- a[is.na(eval(parse(text = paste0("a$",names(a)[grepl("selProb",names(a))==T & grepl("selProbCluster",names(a))==F] ,sep=""))))==T,]
   a <- a[is.na(eval(parse(text = paste0("a$",names(a)[grepl("selProb",names(a))==T & grepl("selProbCluster",names(a))==F] ,sep=""))))==F,] 
-  
+  ###
+  ###
+  if(nrow(a)>0){  
   #Check on number of methods
   if( length( unique(eval(parse(text=paste0(paste("a"),"$",names(a)[grepl("selectMeth",names(a))==T & grepl("selectMethCluster",names(a))==F],sep="")))))>=2){
     stop("More than one selection method")
@@ -72,8 +74,9 @@ for(i in InputFiles){
   }
   
   ## calculates values for a and checks agianst submitted in values
-  if(nrow(a)>0){
+  
   CalcValues <- generateProbs(a, "selection" )
+  names(CalcValues) <- "CalcValues"
   if(all(a[grepl("selProb",names(a))==T & grepl("selProbCluster",names(a))==F]==CalcValues)==T){
     print("Submitted and calculated values match")
   }else{
@@ -84,7 +87,9 @@ for(i in InputFiles){
   }
   rm(CalcValues)
   }
-  
+  ###
+  ###
+  if(nrow(a_NA)>0){
   #Check on number of methods
    if( length( unique(eval(parse(text=paste0(paste("a_NA"),"$",names(a_NA)[grepl("selectMeth",names(a_NA))==T & grepl("selectMethCluster",names(a_NA))==F],sep="")))))>=2){
   stop("More than one selection method")
@@ -95,13 +100,18 @@ for(i in InputFiles){
   #Rbind data 
   a <- rbind(a,a_NA)
   rm(a_NA)
+  }
+  
+  
   #Now for inclusion
   print("Inclusion")
   #Separate Na from non NA values 
   a_NA <- a[is.na(eval(parse(text = paste0("a$",names(a)[grepl("incProb",names(a))==T & grepl("incProbCluster",names(a))==F] ,sep=""))))==T,] 
   a <- a[is.na(eval(parse(text = paste0("a$",names(a)[grepl("incProb",names(a))==T & grepl("incProbCluster",names(a))==F] ,sep=""))))==F,] 
+  ###
+  ###
   
-  
+  if(nrow(a)>0){
   #Check on number of methods for inclusion
   if( length( unique(eval(parse(text=paste0(paste("a"),"$",names(a)[grepl("selectMeth",names(a))==T & grepl("selectMethCluster",names(a))==F],sep="")))))>=2){
     stop("More than one selection method")
@@ -109,8 +119,9 @@ for(i in InputFiles){
   }
   
   ## calculates values for a and checks agianst submitted in values
-  if(nrow(a)>0){
+  
   CalcValues <- generateProbs(a, "inclusion" )
+  names(CalcValues) <- "CalcValue"
   if(all(a[grepl("selProb",names(a))==T & grepl("selProbCluster",names(a))==F]==CalcValues)==T){
     print("Submitted and calculated values match")
   }else{
@@ -121,6 +132,10 @@ for(i in InputFiles){
   }
   rm(CalcValues)
   }
+  
+  ###
+  ###
+  if(nrow(a_NA)>0){
   #Check on number of methods
   if( length( unique(eval(parse(text=paste0(paste("a_NA"),"$",names(a_NA)[grepl("selectMeth",names(a_NA))==T & grepl("selectMethCluster",names(a_NA))==F],sep="")))))>=2){
     stop("More than one inclusion method")
@@ -130,6 +145,9 @@ for(i in InputFiles){
   a_NA[grepl("incProb",names(a_NA))==T & grepl("incProbCluster",names(a_NA))==F] <- generateProbs(a_NA, "inclusion" )
   #Rbind data 
   a <- rbind(a,a_NA)
+  ###
+  ###
+  
   #assigns the moddifed table back to the input object
   eval(parse(text=paste0(paste0(paste("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_"),"$",k,sep=""), "<-", "a")))
   
@@ -137,15 +155,8 @@ for(i in InputFiles){
   gc()
   print(k)
   }
-  ###Assigns prepared object to GE not working
-  # eval(
-  #   parse(text=
-  #           paste0(assign(
-  #            get(paste0("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_")),
-  #            paste0("DBEpreparedObj_",
-  #            paste0(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_"),
-  #            envir=.GlobalEnv) )))
-  # 
+  
+}
   rm(table_names)
   gc()
 }
@@ -160,8 +171,9 @@ names(Asslist) <- ls()[grepl("DBEpreparedObj_",x=ls())==T]
 list2env(Asslist,envir = .GlobalEnv)
 
 #wite out data
+
 for(i in InputFiles){
-saveRDS(get(paste("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_")),file=paste(Output,paste("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_"),".Rds",sep=""))
+  saveRDS(get(paste("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_")),file=paste(Output,paste("DBEpreparedObj_",paste(unlist(strsplit(InputFiles[InputFiles==i],"\\_|\\."))[c(2,3,4)],sep="",collapse = "_"),sep = "",collapse = "_"),".Rds",sep=""))
 }
 
 }
