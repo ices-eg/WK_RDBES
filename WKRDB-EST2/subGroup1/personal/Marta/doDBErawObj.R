@@ -142,9 +142,9 @@ doDBErawObj = function(RDBESextractPath = NA,
       text = paste0(
         "names(DBErawObj$",
         i,
-        ") <- mapColNamesFieldR$R.Name[match(names(DBErawObj$",
+        ") <- mapColNamesFieldR$R.Name[match(tolower(names(DBErawObj$",
         i,
-        "), mapColNamesFieldR$Field.Name)]"
+        ")), tolower(mapColNamesFieldR$Field.Name))]"
       )
     ))
     
