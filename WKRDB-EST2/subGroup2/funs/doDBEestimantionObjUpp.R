@@ -6,18 +6,17 @@
 #' 
 #'
 #' @return The upper hierarchy tables in the DBE estimation object (DBEestimantionObjUpp)
-#' @export
 #'
 #' @examples
-#' 
-#' 
+#' \dontrun{
+#' H1 <- readRDS('./WKRDB-EST2/testData/output/DBErawObj/DBErawObj_DK_1966_H1.rds')
+#' H1out <- doDBEestimantionObjUpp(H1)
+#' }
 
 
 doDBEestimantionObjUpp <-
-  function(input_list = h9) { 
-    # hg
-    # hierarchy=hierarchy typo, consistent
-    
+  function(input_list) { 
+
     library(dplyr)
     
     # hg
