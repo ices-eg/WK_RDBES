@@ -106,7 +106,7 @@ doDBErawObj = function(RDBESextractPath = NA,
   #######################################################################################################################  
   
   for (i in list_files_names) {
-    assign(i, read.csv(paste(RDBESextractPath, '/', i, '.csv', sep = ''), stringsAsFactors = FALSE, fileEncoding="UTF-8-BOM"))
+    assign(i, read.csv(paste(RDBESextractPath, '/', i, '.csv', sep = ''), stringsAsFactors = FALSE, fileEncoding="UTF-8-BOM", na.strings = "NULL"))
     
   }
   
@@ -149,6 +149,10 @@ doDBErawObj = function(RDBESextractPath = NA,
     ))
     
   }
+  
+  #######################################################################################################################
+  # save the data
+  #######################################################################################################################  
   
   param_string = paste(Country, Year, paste('H',Hierarchy, sep = ''), sep = '_')
   # save each file in a separate subfolder or keep all the files in a one folder calles DBEraw
