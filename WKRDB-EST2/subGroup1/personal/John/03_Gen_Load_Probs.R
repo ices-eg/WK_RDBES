@@ -72,6 +72,7 @@ for(i in InputFiles){
   }
   
   ## calculates values for a and checks agianst submitted in values
+  if(nrow(a)>0){
   CalcValues <- generateProbs(a, "selection" )
   if(all(a[grepl("selProb",names(a))==T & grepl("selProbCluster",names(a))==F]==CalcValues)==T){
     print("Submitted and calculated values match")
@@ -82,6 +83,8 @@ for(i in InputFiles){
     switch(menu(c("Yes", "No"), title="Submitted values do not match calculated calculated do you want to overwrite submitted data?"),a[grepl("selProb",names(a))==T & grepl("selProbCluster",names(a))==F] <- CalcValues,print("submitted values used"))  
   }
   rm(CalcValues)
+  }
+  
   #Check on number of methods
    if( length( unique(eval(parse(text=paste0(paste("a_NA"),"$",names(a_NA)[grepl("selectMeth",names(a_NA))==T & grepl("selectMethCluster",names(a_NA))==F],sep="")))))>=2){
   stop("More than one selection method")
@@ -106,6 +109,7 @@ for(i in InputFiles){
   }
   
   ## calculates values for a and checks agianst submitted in values
+  if(nrow(a)>0){
   CalcValues <- generateProbs(a, "inclusion" )
   if(all(a[grepl("selProb",names(a))==T & grepl("selProbCluster",names(a))==F]==CalcValues)==T){
     print("Submitted and calculated values match")
@@ -116,7 +120,7 @@ for(i in InputFiles){
     switch(menu(c("Yes", "No"), title="Submitted values do not match calculated calculated do you want to overwrite submitted data?"),a[grepl("selProb",names(a))==T & grepl("selProbCluster",names(a))==F] <- CalcValues,print("submitted values used"))  
   }
   rm(CalcValues)
-  
+  }
   #Check on number of methods
   if( length( unique(eval(parse(text=paste0(paste("a_NA"),"$",names(a_NA)[grepl("selectMeth",names(a_NA))==T & grepl("selectMethCluster",names(a_NA))==F],sep="")))))>=2){
     stop("More than one inclusion method")
