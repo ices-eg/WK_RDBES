@@ -49,7 +49,7 @@ doDBErawObj = function(RDBESextractPath = NA,
   
   # set the directory where the csv downloaded from the RDBES are being stored
   # if it is not defined in the parameters, then open the interactive window to enable the user to choose the dir
-  RDBESextractPath = ifelse(is.na(RDBESextractPath), choose.dir(), RDBESextractPath)
+  RDBESextractPath = ifelse(is.na(RDBESextractPath), choose.dir(caption = 'Select folder with the csv files' ), RDBESextractPath)
   ifelse(!dir.exists(RDBESextractPath), 'The directory not found', FALSE)
   
   # set the directory for DBErawObj
@@ -106,7 +106,7 @@ doDBErawObj = function(RDBESextractPath = NA,
   #######################################################################################################################  
   
   for (i in list_files_names) {
-    assign(i, read.csv(paste(RDBESextractPath, '/', i, '.csv', sep = ''), stringsAsFactors = FALSE))
+    assign(i, read.csv(paste(RDBESextractPath, '/', i, '.csv', sep = ''), stringsAsFactors = FALSE, fileEncoding="UTF-8-BOM"))
     
   }
   
@@ -150,11 +150,13 @@ doDBErawObj = function(RDBESextractPath = NA,
     
   }
   
-  param_string = paste(Country, Year, SamplingScheme, Hierarchy, sep = '')
-  DBErawPathSubfolder = paste(DBErawPath, param_string, sep = '/')
-  ifelse(!dir.exists(DBErawPathSubfolder), dir.create(DBErawPathSubfolder), FALSE)
-  saveRDS(DBErawObj, file = paste(DBErawPathSubfolder, '/DBErawObj.rds', sep = ''))
-  print(paste('DBErawObj was saved here ->', DBErawPathSubfolder))
+  param_string = paste(Country, Year, paste('H',Hierarchy, sep = ''), sep = '_')
+  # save each file in a separate subfolder or keep all the files in a one folder calles DBEraw
+  #DBErawPathSubfolder = paste(DBErawPath, param_string, sep = '/')
+  #ifelse(!dir.exists(DBErawPathSubfolder), dir.create(DBErawPathSubfolder), FALSE)
+  #saveRDS(DBErawObj, file = paste(DBErawPathSubfolder, '/DBErawObj_', param_string, '.rds', sep = ''))
+  saveRDS(DBErawObj, file = paste(DBErawPath, '/DBErawObj_', param_string, '.rds', sep = ''))
+  print(paste('DBErawObj was saved here ->', DBErawPath))
 }
 
-#doDBErawObj()
+doDBErawObj()
