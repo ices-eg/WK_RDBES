@@ -2,7 +2,7 @@
 for (f in list.files("./WKRDB-EST2/subGroup5/funs/", pattern="*.R")){
   source(file.path("./WKRDB-EST2/subGroup5/funs/", f))
 }
-
+source(file.path("./WKRDB-EST2/subGroup5/funs/", "doDBEestimationObjLow_List.R"))
 
 #' adapted from Davids script
 #' Hack for now.
@@ -43,7 +43,7 @@ estimationObjectNumber <- doDBEestimationObjLowSpecimenParams(FMsa, BVsa, lowerH
 estimationObjectCountAtAge6 <- doDBEestimationObjLowSpecimenParams(FMsa, BVsa, lowerHierarchy = "A", stat="numberAtAge6")
 
 # It should break
-estimationObjectCountAtAge <- doDBEestimationObjLowSpecimenParams(FMsa, BVsa, lowerHierarchy = "A", stat="numberAtAge")
+#estimationObjectCountAtAge <- doDBEestimationObjLowSpecimenParams(FMsa, BVsa, lowerHierarchy = "A", stat="numberAtAge")
 
 
 #estimation
