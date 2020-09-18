@@ -1,13 +1,12 @@
+# test data
 SL<-myNewTestData$SL
 SL$SLspeciesCode<-c('125802','126554','126555','125946','126822','126821','126820','126417','126425')
-SL$SLcommercialTaxon<-c('125802','125802','125802','125946','125946','125946','125946','','')
+SL$SLcommercialTaxon<-c('125802','125802','125802','125946','125946','125946','125946','126417','126425')
 SA<-myNewTestData$SA[myNewTestData$SA$SAid==1,]
 SA$SAspeciesCode <-'125802'
 SA$SAtotalWeightLive <- 400
 SA$SAsampleWeightLive <- 20
 SA$SAnumberTotal <- 20
-SL
-SA
 
 SA <- SA[, c("SAid","SAsequenceNumber","SAparentSequenceNumber","SAunitType","SAspeciesCode", "SAnumberSampled","SAnumberTotal",
              "SAsampleWeightLive","SAtotalWeightLive","SAstratification","SAstratumName")]
@@ -18,18 +17,18 @@ new_rows_EX2 <- data.frame(SAid = 2:3, SAsequenceNumber = 2:3, SAparentSequenceN
                        SAstratumName=c('within_box_strata1','within_box_strata2'))
 SA <- rbind(SA, new_rows_EX2)
 
-Commnew<-NULL
-Commnew2<-NULL
+Sample1<-NULL
+Sample2<-NULL
 sppcode <- 125802 #Lophiidae
-
 
 ###function
 CreateCommSpeciesTable <- function (sppcode, SA=SA, SL=SL){
+
 ###Example 1
 
 newSL <- SL[SL$SLcommercialTaxon == sppcode,c("SLcommercialTaxon","SLspeciesCode")]
 newSL <- newSL[newSL$SLspeciesCode != sppcode,]
-
+# add 0
   ls1 <- split(SA, SA$SAsequenceNumber)
   ls2 <- lapply(ls1, function(x) {
     for (i in 1:nrow(newSL))
@@ -55,14 +54,14 @@ newSL <- newSL[newSL$SLspeciesCode != sppcode,]
   newSA<-do.call("rbind", ls2)
   SA<-newSA
   newSA<-newSA[newSA$SAparentSequenceNumbe=='' | is.na(newSA$SAparentSequenceNumber),c("SAparentSequenceNumber","SAspeciesCode","SAtotalWeightLive")]
-  #
+
     new<-newSA[,c("SAspeciesCode","SAtotalWeightLive")]
     names(new) <- c("SAspeciesCode",sppcode)
-    Commnew<-rbind(Commnew,new)
+    Sample1<-rbind(Sample1,new)
   
 #Example 2
 #############
-
+# add 0
 ls1 <- split(SA, SA$SAsequenceNumber)
 ls2 <- lapply(ls1, function(x) {
   for (i in 1:nrow(SA[is.na(SA$SAparentSequenceNumber),]))
@@ -92,9 +91,9 @@ newSA<-newSA[!is.na(newSA$SAparentSequenceNumber) & newSA$SAparentSequenceNumber
 for (i in 1:length(unique(newSA$SAparentSequenceNumber))){
   new<-newSA[newSA$SAparentSequenceNumber == i ,c("SAspeciesCode","SAtotalWeightLive")]
   names(new) <- c("SAspeciesCode",sppcode)
-  Commnew2<-rbind(Commnew2,new)
+  Sample2<-rbind(Sample2,new)
 }
-CommercialNew<-merge(Commnew,Commnew2, by.x="SAspeciesCode", by.y="SAspeciesCode")
+CommercialSampleNew<-merge(Sample1,Sample2, by.x="SAspeciesCode", by.y="SAspeciesCode")
 }
 out<-CreateCommSpeciesTable(sppcode = 125802, SA=SA, SL=SL)
 out
