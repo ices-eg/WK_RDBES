@@ -164,6 +164,7 @@ h1LotteryPackage <- function(h1, lowerEst){
   
   # stratification should be easy to include in this case as well.
   warning("ignoring stratification and XXclustering")
+  warning("Not handling repeated selection of the same sampling units")
   
   sampstat <- function(x){return(x$total)}
   SAest <- function(x){hierarchicalHorvitzThompsonTotals(x, "SAid", subEstimator = sampstat, inclusionProbabilities = "SAincProb")}

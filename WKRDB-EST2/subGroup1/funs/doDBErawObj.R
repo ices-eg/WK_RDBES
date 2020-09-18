@@ -106,7 +106,7 @@ doDBErawObj = function(RDBESextractPath = NA,
   #######################################################################################################################  
   
   for (i in list_files_names) {
-    assign(i, read.csv(paste(RDBESextractPath, '/', i, '.csv', sep = ''), stringsAsFactors = FALSE, fileEncoding="UTF-8-BOM", na.strings = "NULL"))
+    assign(i, read.csv(paste(RDBESextractPath, '/', i, '.csv', sep = ''), stringsAsFactors = FALSE, fileEncoding="UTF-8-BOM", na.strings = c("NA","NULL")))
     
   }
   
@@ -163,4 +163,4 @@ doDBErawObj = function(RDBESextractPath = NA,
   print(paste('DBErawObj was saved here ->', DBErawPath))
 }
 
-doDBErawObj()
+#doDBErawObj()
