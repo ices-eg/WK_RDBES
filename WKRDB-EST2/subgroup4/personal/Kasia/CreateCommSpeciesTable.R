@@ -1,3 +1,4 @@
+# test data
 SL<-myNewTestData$SL
 SL$SLspeciesCode<-c('125802','126554','126555','125946','126822','126821','126820','126417','126425')
 SL$SLcommercialTaxon<-c('125802','125802','125802','125946','125946','125946','125946','126417','126425')
@@ -27,7 +28,7 @@ CreateCommSpeciesTable <- function (sppcode, SA=SA, SL=SL){
 
 newSL <- SL[SL$SLcommercialTaxon == sppcode,c("SLcommercialTaxon","SLspeciesCode")]
 newSL <- newSL[newSL$SLspeciesCode != sppcode,]
-
+# add 0
   ls1 <- split(SA, SA$SAsequenceNumber)
   ls2 <- lapply(ls1, function(x) {
     for (i in 1:nrow(newSL))
@@ -53,14 +54,14 @@ newSL <- newSL[newSL$SLspeciesCode != sppcode,]
   newSA<-do.call("rbind", ls2)
   SA<-newSA
   newSA<-newSA[newSA$SAparentSequenceNumbe=='' | is.na(newSA$SAparentSequenceNumber),c("SAparentSequenceNumber","SAspeciesCode","SAtotalWeightLive")]
-  #
+
     new<-newSA[,c("SAspeciesCode","SAtotalWeightLive")]
     names(new) <- c("SAspeciesCode",sppcode)
     Sample1<-rbind(Sample1,new)
   
 #Example 2
 #############
-
+# add 0
 ls1 <- split(SA, SA$SAsequenceNumber)
 ls2 <- lapply(ls1, function(x) {
   for (i in 1:nrow(SA[is.na(SA$SAparentSequenceNumber),]))
