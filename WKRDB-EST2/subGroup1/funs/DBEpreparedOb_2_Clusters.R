@@ -38,12 +38,17 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
     stop("Input folder does not exist")
   }
   ###
-  if (is.na(Output) == F & dir.exists(Output) == F & CreateDir == F) {
+  if(is.na(Output) == F ){
+  if ( dir.exists(Output) == F & CreateDir == F) {
     stop("Output directory does not exist")
   }
-  if (is.na(Output) == F & dir.exists(Output) == F & CreateDir == T) {
+  }
+  
+  if(is.na(Output)==F){
+  if (dir.exists(Output) == F & CreateDir == T) {
     warning("Output directory path created")
     dir.create(paste(Output), recursive = T)
+  }
   }
  ###
   # get file list
@@ -155,13 +160,13 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
 
         CalcValues <- generateProbs(a, "inclusion")
         names(CalcValues) <- "CalcValue"
-        if (all(a[grepl("selProb", names(a)) == T & grepl("selProbCluster", names(a)) == F] == CalcValues) == T) {
+        if (all(a[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F] == CalcValues) == T) {
           print("Submitted and calculated values match")
         } else {
-          PrintOut <- cbind(a[grepl("id", names(a)) == T], a[grepl("selProb", names(a)) == T & grepl("selProbCluster", names(a)) == F], CalcValues, Equal = c((a[grepl("selProb", names(a)) == T & grepl("selProbCluster", names(a)) == F] == CalcValues) == T))
+          PrintOut <- cbind(a[grepl("id", names(a)) == T], a[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F], CalcValues, Equal = c((a[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F] == CalcValues) == T))
           print(PrintOut[PrintOut$Equal == "FALSE", ])
           rm(PrintOut)
-          switch(menu(c("Yes", "No"), title = "Submitted values do not match calculated calculated do you want to overwrite submitted data?"), a[grepl("selProb", names(a)) == T & grepl("selProbCluster", names(a)) == F] <- CalcValues, print("submitted values used"))
+          switch(menu(c("Yes", "No"), title = "Submitted values do not match calculated calculated do you want to overwrite submitted data?"), a[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F] <- CalcValues, print("submitted values used"))
         }
         rm(CalcValues)
       }
@@ -181,6 +186,13 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
       a <- rbind(a, aNA)
       ###
       ###
+      
+      
+      ###CLUSTER SECTION 
+      
+      
+      
+      
       ### Now does Cluster seleciton
 
       if (any(grepl("numTotalClusters|numTotalCluster", names(a))) == T) {
@@ -246,13 +258,13 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
 
             CalcValues <- generateClusterProbs(a, "inclusion")
             names(CalcValues) <- "CalcValues"
-            if (all(a[grepl("selProbCluster", names(a)) == T] == CalcValues$CalcValues) == T) {
+            if (all(a[grepl("incProbCluster", names(a)) == T] == CalcValues$CalcValues) == T) {
               print("Submitted and calculated values match")
             } else {
-              PrintOut <- cbind(a[grepl("id", names(a)) == T], a[grepl("selProbCluster", names(a)) == T], CalcValues$CalcValues, Equal = c((a[grepl("selProbCluster", names(a)) == T] == CalcValues$CalcValues) == T))
+              PrintOut <- cbind(a[grepl("id", names(a)) == T], a[grepl("incProbCluster", names(a)) == T], CalcValues$CalcValues, Equal = c((a[grepl("incProbCluster", names(a)) == T] == CalcValues$CalcValues) == T))
               print(PrintOut[PrintOut$Equal == "FALSE", ])
               rm(PrintOut)
-              switch(menu(c("Yes", "No"), title = "Submitted values do not match calculated calculated do you want to overwrite submitted data?"), a[grepl("selProbCluster", names(a)) == T] <- CalcValues$CalcValues, print("submitted values used"))
+              switch(menu(c("Yes", "No"), title = "Submitted values do not match calculated calculated do you want to overwrite submitted data?"), a[grepl("incProbCluster", names(a)) == T] <- CalcValues$CalcValues, print("submitted values used"))
             }
             rm(CalcValues)
           }
@@ -267,7 +279,7 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
             # applies function
             CalcValues <- generateClusterProbs(aNA, "inclusion")
 
-            aNA[grepl("selProbCluster", names(aNA)) == T] <- CalcValues$CalcValues
+            aNA[grepl("incProbCluster", names(aNA)) == T] <- CalcValues$CalcValues
             # Rbind data
             a <- rbind(a, aNA)
             rm(aNA, CalcValues)
@@ -285,6 +297,8 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
       ###
       ###
 
+      
+      
       # assigns the moddifed table back to the input object
       eval(parse(text = paste0(paste0(paste("DBEpreparedObj_", paste(unlist(strsplit(InputFiles[InputFiles == i], "\\_|\\."))[c(2, 3, 4)], sep = "", collapse = "_"), sep = "", collapse = "_"), "$", k, sep = ""), "<-", "a")))
 
