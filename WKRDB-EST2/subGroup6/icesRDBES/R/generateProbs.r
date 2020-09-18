@@ -8,7 +8,10 @@
 #' @return A vector or probabilities
 #' @export
 #'
-#' @examples generate_probs(x=y, probType="inclusion")
+#' @examples
+#' \dontrun{
+#' generateProbs(x=y, probType="inclusion")
+#' }
 generateProbs <- function(x, probType) {
 
 
