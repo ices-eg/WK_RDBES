@@ -127,11 +127,14 @@ h1Lumley <- function(h1,lowerEst){
   }
   
   # stratification should be easy to include.
-  warning("ignoring stratification and XXclustering")
+  warning("ignoring XXclustering")
   
   design <- svydesign(ids=~flat1$VSid + flat1$FTid + flat1$FOid + flat1$SAid, 
-                      prob =~ flat1$VSincProb + flat1$FTincProb + flat1$FOincProb + flat1$SAincProb)
+                      prob =~ flat1$VSincProb + flat1$FTincProb + flat1$FOincProb + flat1$SAincProb,
+                      strata =~ flat1$VSstratumName + flat1$FTstratumName + flat1$FOstratumName + flat1$SAstratumName,
+                      nest=T)
   total <- svytotal(flat1$total, design)
+  
   return(total[1])
 }
 
@@ -163,7 +166,7 @@ h1LotteryPackage <- function(h1, lowerEst){
   #
   
   # stratification should be easy to include in this case as well.
-  warning("ignoring stratification and XXclustering")
+  warning("ignoring XXclustering stratification handled by setting incl. probabilities")
   warning("Not handling repeated selection of the same sampling units")
   
   sampstat <- function(x){return(x$total)}
