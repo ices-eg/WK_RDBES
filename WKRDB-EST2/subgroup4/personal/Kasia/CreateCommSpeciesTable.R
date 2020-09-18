@@ -16,8 +16,8 @@ new_rows_EX2 <- data.frame(SAid = 2:3, SAsequenceNumber = 2:3, SAparentSequenceN
                        SAstratumName=c('within_box_strata1','within_box_strata2'))
 SA <- rbind(SA, new_rows_EX2)
 
-Commnew<-NULL
-Sapmle2<-NULL
+Sample1<-NULL
+Sample2<-NULL
 sppcode <- 125802 #Lophiidae
 
 ###function
@@ -56,7 +56,7 @@ newSL <- newSL[newSL$SLspeciesCode != sppcode,]
   #
     new<-newSA[,c("SAspeciesCode","SAtotalWeightLive")]
     names(new) <- c("SAspeciesCode",sppcode)
-    Commnew<-rbind(Commnew,new)
+    Sample1<-rbind(Sample1,new)
   
 #Example 2
 #############
@@ -90,9 +90,9 @@ newSA<-newSA[!is.na(newSA$SAparentSequenceNumber) & newSA$SAparentSequenceNumber
 for (i in 1:length(unique(newSA$SAparentSequenceNumber))){
   new<-newSA[newSA$SAparentSequenceNumber == i ,c("SAspeciesCode","SAtotalWeightLive")]
   names(new) <- c("SAspeciesCode",sppcode)
-  Sapmle2<-rbind(Sapmle2,new)
+  Sample2<-rbind(Sample2,new)
 }
-CommercialNew<-merge(Commnew,Commnew2, by.x="SAspeciesCode", by.y="SAspeciesCode")
+CommercialSampleNew<-merge(Sample1,Sample2, by.x="SAspeciesCode", by.y="SAspeciesCode")
 }
 out<-CreateCommSpeciesTable(sppcode = 125802, SA=SA, SL=SL)
 out
