@@ -6,7 +6,7 @@
 #' https://community.ices.dk/ExpertGroups/WKRDB/2019\%20Meetings/
 #' WKRDB-EST\%202019/06.\%20Data/Kirsten/H1/H1_upper.RData
 #'
-#'
+#' @export
 #' @return The upper hierarchy tables in the DBE estimation object
 #' (DBEestimantionObjUpp)
 #'

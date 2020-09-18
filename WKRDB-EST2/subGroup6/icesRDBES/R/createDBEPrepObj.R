@@ -6,11 +6,12 @@
 #' @param output a string pointing towards the output folder
 #' @export .Rdata files
 #' @examples
-#'
+#' \dontrun{
 #' input <- "WKRDB-EST2/testData/output/DBErawObj/"
 #' output <- "WKRDB-EST2/subGroup1/personal/John/PreparedOutputs/"
 #'
-#' CreateDBEPrepObj(input = input, output = output)
+#' createDBEPrepObj(input = input, output = output)
+#' }
 createDBEPrepObj <- function(input, output) {
 
   # get file list
@@ -166,7 +167,7 @@ createDBEPrepObj <- function(input, output) {
             )
           print(printOut[printOut$Equal == "FALSE", ])
           rm(printOut)
-          switch(menu(c("Yes", "No")
+          switch(utils::menu(c("Yes", "No")
                       , title = "Submitted values do not match calculated
                       calculated do you want to overwrite submitted data?"),
                  a[grepl("selProb", names(a)) == T &
@@ -299,7 +300,7 @@ createDBEPrepObj <- function(input, output) {
               )
           print(printOut[printOut$Equal == "FALSE", ])
           rm(printOut)
-          switch(menu(c("Yes", "No"),
+          switch(utils::menu(c("Yes", "No"),
                   title = "Submitted values do not match calculated calculated
                   do you want to overwrite submitted data?"),
                     a[grepl("selProb", names(a)) == T &
