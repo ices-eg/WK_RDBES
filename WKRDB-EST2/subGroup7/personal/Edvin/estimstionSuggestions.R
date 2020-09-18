@@ -127,11 +127,14 @@ h1Lumley <- function(h1,lowerEst){
   }
   
   # stratification should be easy to include.
-  warning("ignoring stratification and XXclustering")
+  warning("ignoring XXclustering")
   
   design <- svydesign(ids=~flat1$VSid + flat1$FTid + flat1$FOid + flat1$SAid, 
-                      prob =~ flat1$VSincProb + flat1$FTincProb + flat1$FOincProb + flat1$SAincProb)
+                      prob =~ flat1$VSincProb + flat1$FTincProb + flat1$FOincProb + flat1$SAincProb,
+                      strata =~ flat1$VSstratumName + flat1$FTstratumName + flat1$FOstratumName + flat1$SAstratumName,
+                      nest=T)
   total <- svytotal(flat1$total, design)
+  
   return(total[1])
 }
 
@@ -162,17 +165,20 @@ h1LotteryPackage <- function(h1, lowerEst){
   # Estimate
   #
   
-  # stratification should be easy to include in this case as well.
-  warning("ignoring stratification and XXclustering")
+  warning("ignoring XXclustering")
+  warning("strata handling hard coded")
   warning("Not handling repeated selection of the same sampling units")
   
   sampstat <- function(x){return(x$total)}
-  SAest <- function(x){hierarchicalHorvitzThompsonTotals(x, "SAid", subEstimator = sampstat, inclusionProbabilities = "SAincProb")}
-  FOest <- function(x){hierarchicalHorvitzThompsonTotals(x, "FOid", subEstimator = SAest, inclusionProbabilities = "FOincProb")}
-  FTest <- function(x){hierarchicalHorvitzThompsonTotals(x, "FTid", subEstimator = FOest, inclusionProbabilities = "FTincProb")}
-  VSest <- function(x){hierarchicalHorvitzThompsonTotals(x, "VSid", subEstimator = FTest, inclusionProbabilities = "VSincProb")}
+  SAest <- function(x){lotteryEstimator::hierarchicalHorvitzThompsonTotals(x, "SAid", subEstimator = sampstat, inclusionProbabilities = "SAincProb")}
+  FOest <- function(x){lotteryEstimator::hierarchicalHorvitzThompsonTotals(x, "FOid", subEstimator = SAest, inclusionProbabilities = "FOincProb")}
+  FTest <- function(x){lotteryEstimator::hierarchicalHorvitzThompsonTotals(x, "FTid", subEstimator = FOest, inclusionProbabilities = "FTincProb")}
+  VSest <- function(x){lotteryEstimator::hierarchicalHorvitzThompsonTotals(x, "VSid", subEstimator = FTest, inclusionProbabilities = "VSincProb")}
+  # This step doesnt actually matter, since stratification is taken into account when computing inclusion probabilites
+  VSstrataEst <- function(x){lotteryEstimator::hierarchicalStratifiedTotals(x, "VSstratumName", subEstimator = VSest)}
   
-  return(VSest(flat1))
+  
+  return(VSstrataEst(flat1))
   
 }
 
