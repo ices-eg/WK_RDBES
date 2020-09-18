@@ -12,12 +12,21 @@
 #' Return <- T
 #' CreateDBEPrepObj(Input = Input, Output = Output)
 CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F) {
+  
+  options(error=NULL)
   if (is.na(Input) == T) {
     stop("Missing Input")
   }
+  
+  
   if (is.na(Output) == T) {
     warning("No output folder, objects will not be written out")
   }
+  
+  if (CreateDir == T & is.na(Output) == T) {
+    stop("No Output path given and cannot create path")
+  }
+  
   if (dir.exists(Input) == F) {
     stop("Input folder does not exist")
   }
@@ -34,8 +43,12 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
       dir.create(paste(Output), recursive = T)
     }
   }
+  
+  
+  
+  if (is.na(Input) == F) {
   # get file list
-  InputFiles <- list.files(Input, recursive = TRUE)
+  InputFiles <- list.files(Input)
   # ignroe readme
   InputFiles <- InputFiles[!InputFiles == "README.rmd" & grepl(".rds", InputFiles) == T]
 
@@ -197,4 +210,5 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
       saveRDS(get(paste("DBEpreparedObj_", paste(unlist(strsplit(InputFiles[InputFiles == i], "\\_|\\."))[c(2, 3, 4)], sep = "", collapse = "_"), sep = "", collapse = "_")), file = paste(Output, paste("DBEpreparedObj_", paste(unlist(strsplit(InputFiles[InputFiles == i], "\\_|\\."))[c(2, 3, 4)], sep = "", collapse = "_"), sep = "", collapse = "_"), ".Rds", sep = ""))
     }
   }
-}
+  }
+  }

@@ -12,9 +12,9 @@
 #'
 #' CreateDBEPrepObj(Input = Input, Output = Output, Return = T)
 CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F) {
-  
-  if(exists("Warning")==F){
-    Warning <- new.env()
+  options(error=NULL)
+  if(exists("Warning",envir = globalenv())==F){
+    Warning <<- new.env(parent = .GlobalEnv)
     Warning$Integer <- 0
   }
   ###
@@ -23,10 +23,14 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
   # }
   if(Warning$Integer < 3){
     if (is.na(Input) == T) {
+      Warning$Integer <<- get("Warning",envir = globalenv())$Integer+1
       stop("Missing Input")
+     
     }
   }else{
-    if(Warning$Integer >= 3){stop(paste("I am not mad, i am just disappointed you made the same error ",Warning$Integer," times",sep=""))
+    if(Warning$Integer >= 3){
+      Warning$Integer <<- get("Warning",envir = globalenv())$Integer+1
+      stop(paste("I am not mad, i am just disappointed you made the same error ",Warning$Integer," times",sep=""))
     }
   }
   ###
