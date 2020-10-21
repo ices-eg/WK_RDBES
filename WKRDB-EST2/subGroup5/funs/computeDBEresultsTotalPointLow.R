@@ -71,6 +71,48 @@ computeDBEresultsTotalPointLowSingleSample <- function(estimationObj, unitId="Uk
   return(output)
 }
 
+#' Estimation for multiple samples
+#' @param estimationObj \code{\link{sampUnitData}}
+#' @return \code{\link{sampleUnitResult}}
+computeDBEresultsTotalPointLowMultSample <- function(estimationObj, unitId="Uknown"){
+  
+  # Test
+  estimationObj <- estimationObjectCountAtAge
+  
+  if(any(sapply(1:length(estimationObj), function(x){
+    all.equal(estimationObj[[x]][["StatisticTable"]][["id"]], estimationObj[[x]][["DesignTable"]][["id"]])
+  })) %in% FALSE){
+    stop("Malformed estimationObj")
+  }
+
+  
+  stratas <- unique(estimationObj$DesignTable$stratumname)
+  statistic <- names(estimationObj$StatisticTable)[names(estimationObj$StatisticTable)!="id"]
+  stratatotals <- 0
+  for (s in stratas){
+    stratafilter <- estimationObj$DesignTable$stratumname == s
+    incProbs <- estimationObj$DesignTable[stratafilter, "inclProb"]
+    
+    if (length(statistic)>1){
+      stratatot <- colSums(estimationObj$StatisticTable[stratafilter,statistic]/incProbs)      
+    }
+    else{
+      stratatot <- sum(estimationObj$StatisticTable[stratafilter,statistic]/incProbs)      
+    }
+    
+    stratatotals <- stratatotals + stratatot
+  }
+  
+  
+  output <- list()
+  output$statistic <- statistic
+  output$unitId <- unitId
+  output$totals <- stratatotals
+  output$variance <- NA
+  
+  return(output)
+}
+
 #' extract number at class from raw FM samples for a single sample
 #' works for lower hiearchy A and B
 #' @return \code{\link{sampleUnitResult}}
