@@ -114,7 +114,7 @@ doDBEestimationObjLowSpecimenParamsMultSa <- function(FMtable=NULL, BVtable=NULL
     stop("No lower hierarchy estimation possible for lower hierarchy D.")
   }
   else{
-    stop("Lower hierarchy " + lowerHiearchy + " is not implemented.")
+    stop("Lower hierarchy " + lowerHierarchy + " is not implemented.")
   }
   
   if (stat=="number"){
