@@ -80,9 +80,9 @@ makeBVtable <- function(FMtable, BVtable, stratificationYes="Y"){
 #' @param lowerHierarchy character identifying the lower hierarchy to extract
 #' @param stat character identifying the statistic of interest, for now this supports the somewhat contrived options 'number' and 'countAtAge6'
 #' @return \code{\link{sampUnitData}} lower hiearchy data prepared for estimation
-doDBEestimationObjLowSpecimenParams <- function(FMtable=NULL, BVtable=NULL, lowerHiearchy=c("A","C"), stat=c("number", "numberAtAge6", "numberAtAge6"), ages=1:20){
+doDBEestimationObjLowSpecimenParams <- function(FMtable=NULL, BVtable=NULL, lowerHierarchy=c("A","C"), stat=c("number", "numberAtAge6", "numberAtAge6"), ages=1:20){
   
-  if (lowerHiearchy == "A"){
+  if (lowerHierarchy == "A"){
     if (any(is.na(FMtable$SAid)) | length(unique(FMtable$SAid))>1){
       stop("Need unique sample (SAid)")
     }
@@ -91,20 +91,20 @@ doDBEestimationObjLowSpecimenParams <- function(FMtable=NULL, BVtable=NULL, lowe
     }
     BVtable <- makeBVtable(FMtable, BVtable)
   }
-  else if (lowerHiearchy == "B"){
+  else if (lowerHierarchy == "B"){
     stop("No estimation from specimen parameters is possible for lower hierarchy B.")  }
-  else if (lowerHiearchy == "C"){
+  else if (lowerHierarchy == "C"){
     stopifnot(is.null(FMtable))
     if (any(is.na(BVtable$SAid)) | length(unique(BVtable$SAid))>1){
       stop("Need unique sample (SAid)")
     }
     BVtable <- BVtable
   }
-  else if (lowerHiearchy == "D"){
+  else if (lowerHierarchy == "D"){
     stop("No lower hierarchy estimation possible for lower hierarchy D.")
   }
   else{
-    stop("Lower hierarchy " + lowerHiearchy + " is not implemented.")
+    stop("Lower hierarchy " + lowerHierarchy + " is not implemented.")
   }
   
   if (stat=="number"){

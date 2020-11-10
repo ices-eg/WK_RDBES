@@ -33,7 +33,7 @@ BV1 <- newBV1 %>%
   group_by(FMid) %>%
   mutate(BVrecType = "BV",
          BVstratification = "Y", 
-         BVstratumname = "", # what is the code for length stratified 
+         BVstratumname = "", 
          BVtype = "Age",
          BVvalue = BVvalue,
          BVvalTyp = "Year",
@@ -73,7 +73,7 @@ BV2 <- newBV2 %>%
   group_by(FMid) %>%
   mutate(BVrecType = "BV",
          BVstratification = "Y", 
-         BVstratumname = "", # what is the code for length stratified ?
+         BVstratumname = "",
          BVtype = "Age",
          BVvalue = BVvalue,
          BVvalTyp = "Year",
@@ -101,22 +101,25 @@ myls2  <- list(
 # saveRDS(myls2, file = "./WKRDB-EST2/subGroup5/inputs/modified_FMBV_raw_list2.rds")
 
 # TODO change tibble to DF
-# Estimate incl prob + produce Design table from Dave's script
+# Estimate incl prob + produce Design table from Dave's script (slightly modified)
 source("./WKRDB-EST2/subGroup5/personal/Karolina/LowerScript.R")
 
 myoutput1 <- getLowerProbs(table = myls1, hierarchyType = "A",  BVtype = "age", probType = "inclusion" )
 myoutput2 <- getLowerProbs(table = myls2, hierarchyType = "A",  BVtype = "age", probType = "inclusion" )
 
-saveRDS(myoutput1, file = "./WKRDB-EST2/subGroup5/inputs/input_FMBV_1.rds")
-saveRDS(myoutput2, file = "./WKRDB-EST2/subGroup5/inputs/input_FMBV_2.rds")
+# saveRDS(myoutput1, file = "./WKRDB-EST2/subGroup5/inputs/input_FMBV_1.rds")
+# saveRDS(myoutput2, file = "./WKRDB-EST2/subGroup5/inputs/input_FMBV_2.rds")
 
 # IGNORE - Test code not working
 # SU <- merge(FM, BV , by = "FMid")
 # newBV <-  SU[rep(seq(nrow(SU)), SU$BioS), ]
-# SU$from <- 1
+# SU$from <- 1  
 # SU$to <- sample(seq(2, 50), nrow(SU), replace = TRUE)
 
 # bb <- SU %>% 
 #   rowwise() %>% 
 #   do(merge(as_tibble(.), tibble(z=.$from:.$to), by = NULL)) %>%
 #   select( -from, -to )  
+
+
+

@@ -40,9 +40,6 @@ getLowerProbs <- function(table, hierarchyType = "A", BVtype = "weight", probTyp
   BV <- table[["BV"]]
   FM <- table[["FM"]]
   
-  #head(FM)
-  #BVtype <- "weight"
-  
   # subset BV to the type we are interested in (e.g. weight)
   myBV <- BV[tolower(BV$BVtype)==tolower(BVtype),]
   
