@@ -13,7 +13,7 @@
 #' @examples
 #' \dontrun{
 #' H1 <-
-#' readRDS('./WKRDB-EST2/testData/output/DBErawObj/DBErawObj_DK_1966_H1.rds')
+#' readRDS("./WKRDB-EST2/testData/output/DBErawObj/DBErawObj_DK_1966_H1.rds")
 #' H1out <- doDBEestimantionObjUpp(H1)
 #' }
 
@@ -21,9 +21,6 @@
 doDBEestimantionObjUpp <-
   function(inputList) {
 
-    # hg
-    # we dont have to specify the hierarchy in the function
-    # note: i kept the typo in here for now
     hierarchy <- unique(inputList$DE$DEhierarchy)
     if (is.null(hierarchy))
       stop("Cannot identify the hierarchy from the DE table.
@@ -65,9 +62,7 @@ doDBEestimantionObjUpp <-
       "incProbCluster"
     )
 
-    # hg
-    # check variable names
-
+    # check variable names against the input
     a <-
       lapply(seq_along(inputList), function(i)
         data.frame(
@@ -156,28 +151,19 @@ doDBEestimantionObjUpp <-
     )
 
 
-    out <- list()
-
-    ### Some general info from the DE to go into a description -
-    # for now just a copy
-
-
     ### Need to include the DE - not as a SU, but I do have
     # info about stratification
     de <- inputList$DE
 
     ### Do we need to include the SD - that the link between the DE and PSU
     # - rename DEid to idAbove
-
     sd <- inputList$SD
     names(sd) <-
       sub("SD", "", names(sd))
 
-    # kibi - moved these lines up
     expectedTablesHere <-
       eval(parse(text = paste0("expectedTables$H", hierarchy)))
 
-    # hg
     out <-
       list(
         expectedTables = data.frame(hierarchy = hierarchy, expectedTablesHere),
@@ -187,8 +173,6 @@ doDBEestimantionObjUpp <-
 
     ### Importing the SU tables
 
-
-    # hg
     # check that the inputList has all the expected tables
     missingTables <-
       expectedTablesHere$table_names[
@@ -219,30 +203,17 @@ doDBEestimantionObjUpp <-
           "su$", expectedTablesHere$table_names[[h]], "id"
         )))
 
+      # select relevant columns
+      j <- which(names(su) %in% varNames)
+      
       eval(parse(
         text = paste0(
           expectedTablesHere$su_level[[i]],
           "_done",
-          "<- dplyr::select(su, one_of(varNames))"
+          "<- su[,j]"
         )
       ))
 
-      # names(su1_done) <-
-      # c(c(paste0(unique(su1_done$recType), "id")),
-      #     c(names(su1_done[, c(3:ncol(su1_done))])))
-      #
-      # # Create list with the table name
-      # eval(parse(
-      #   text = paste0(
-      #     "out$",
-      #     expectedTablesHere$su_level[[i]],
-      #     "$name",
-      #     " = ",
-      #     """,
-      #     unique(su$recType),
-      #     """
-      #   )
-      # ))
 
       # Create list with the design variables
       eval(parse(
