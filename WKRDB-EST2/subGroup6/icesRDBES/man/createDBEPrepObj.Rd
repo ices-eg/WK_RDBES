@@ -13,6 +13,9 @@ createDBEPrepObj(input, output)
 
 \item{output}{a string pointing towards the output folder}
 }
+\value{
+.Rdata files
+}
 \description{
 Load raw object and create prepared object
 Function relies on the data being

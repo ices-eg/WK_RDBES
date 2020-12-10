@@ -4,7 +4,10 @@
 #'
 #' @param input a string pointing towards the input folder
 #' @param output a string pointing towards the output folder
-#' @export .Rdata files
+#'
+#' @return .Rdata files
+#' @export
+#'
 #' @examples
 #' \dontrun{
 #' input <- "WKRDB-EST2/testData/output/DBErawObj/"
