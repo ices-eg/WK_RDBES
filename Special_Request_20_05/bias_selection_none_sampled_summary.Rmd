@@ -22,11 +22,11 @@ output: html_document
 ```{r setup, include = F}
 
 # Where to find data and name thereof
-data_path <- "./WKRDB-EST2/testData/output/DBErawObj/"
+data_path <- "Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/testData/output/DBErawObj/"
 
 file_name <- "DBErawObj_DK_1966_H1.rds"
 
-source("./WKRDB-EST2/subGroup7/funs/doDBEestimantionObjUppMid.R")
+source("Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/subGroup7/funs/doDBEestimantionObjUppMid.R")
 
 library(dplyr)
 library(knitr)
