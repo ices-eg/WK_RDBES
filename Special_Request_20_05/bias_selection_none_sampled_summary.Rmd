@@ -1,5 +1,4 @@
 ---
-title: "Bias - Summary of selection methods used and none sampled for;"
 date: \today
 output: html_document
 ---
@@ -93,12 +92,9 @@ h1$SA$SAselectMeth <- "SRSWOR"
 h1_test <- doDBEestimantionObjUpp(input_list = h1)
 ```
 
-```{r sub_title, results="asis"}
-
-cat("  \n#",  unique(h1_test$de$DEsampScheme), ", ", unique(h1_test$de$DEyear), " \n")
-cat("  \n")
-```
-
+---
+title: `r paste("Bias - Summary of selection methods and declaration of none sampled,", unique(h1_test$de$DEsampScheme), unique(h1_test$de$DEyear), sep = " ")`
+---
 
 ## Selection methods
 
@@ -362,7 +358,7 @@ if (nrow(subset(summary_select, samp =="N")) >1) {
 
 ### Detailed summary per sampling level
 
-Number of none-samples per reason for not sampling. 
+Number of none sampled per reason for not sampling. 
 
 In each table the stratum from the level above is stated to make identification easier.
 
@@ -420,3 +416,57 @@ if (nrow(subset(dat_11, samp =="N")) >1) {
 
 ```
 
+
+```{r, results = "asis"}
+
+for (j in c(5:(length(h1_test)-1))) {
+  
+  dat_12 <- left_join(h1_test[[j-1]], h1_test[[j]], by = c("id" = "idAbove"))
+  
+  cat("  \n#### ", gsub("su", "", unique(dat_12$su.y)), ". sampling unit \n", sep = "")
+  
+  
+dat_12 <- left_join(dat_12, recType_ref, by = c("recType.y" = "recType"))
+dat_12 <- mutate(dat_12, noSampReason.y = ifelse(is.na(noSampReason.y) & samp.y == "No", "No reason given", noSampReason.y))
+dat_11 <- summarise(group_by(dat_12, recType_name, stratumName.x, stratumName.y, samp.y, noSampReason.y), no = length(id))
+
+
+  dat_11 <- filter(dat_11, !is.na(noSampReason.y))
+
+
+p <- dat_11 %>%
+  # mutate(
+  #   selectMeth = cell_spec(
+  #     selectMeth,
+  #     color = "white",
+  #     background  = ifelse(selectMeth %in% c("NPAH", "NPEJ", "NPQS"), "red", "green"),
+  #     bold = T
+  #   )
+  # )  %>%
+  kable(
+    booktabs = T,
+    col.names = c(
+      "Sampling unit type",
+      "Stratum above",
+      "Stratum here",
+      "Sampled or not",
+      "Reason for not sampling",
+      "Number of samples"
+    ),
+    escape = FALSE
+  ) %>%
+  kable_styling()
+
+if (nrow(subset(dat_11, samp.y =="N")) >1) {
+  
+  cat(p)
+  
+} else {
+  
+  cat("**Only sampled data declared**")
+  
+  cat(p)
+}
+}
+
+```
