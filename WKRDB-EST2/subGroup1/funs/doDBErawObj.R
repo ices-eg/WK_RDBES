@@ -74,7 +74,7 @@ doDBErawObj = function(RDBESextractPath = NA,
     Hierarchy = unique(DE$DEhierarchy)
     SamplingScheme = unique(DE$DEsamplingScheme)
     
-    if(length(c(Country, Year, Hierarchy, SamplingScheme)) > 4){
+    if(length(c( Year, Hierarchy, SamplingScheme)) > 4){
       stop('The function will not work yet, when in the DE, there are different Sampling designs or Years or Hierarchies or Countries defined.')
     }
     
@@ -154,7 +154,7 @@ doDBErawObj = function(RDBESextractPath = NA,
   # save the data
   #######################################################################################################################  
   
-  param_string = paste(Country, Year, paste('H',Hierarchy, sep = ''), sep = '_')
+  param_string = paste(Year, paste('H',Hierarchy, sep = ''), sep = '_')
   # save each file in a separate subfolder or keep all the files in a one folder calles DBEraw
   #DBErawPathSubfolder = paste(DBErawPath, param_string, sep = '/')
   #ifelse(!dir.exists(DBErawPathSubfolder), dir.create(DBErawPathSubfolder), FALSE)
