@@ -7,10 +7,10 @@
 #' @export .Rdata files
 #' @examples
 #'
-#' Input <- "WKRDB-EST2/testData/output/DBErawObj/"
-#' Output <- "WKRDB-EST2/subGroup1/personal/John/PreparedOutputs/"
-#' Return <- T
-#' CreateDBEPrepObj(Input = Input, Output = Output)
+# Input <- "D:/Projekty/RDBES/WK_RDBES/WKRDB-EST2/subGroup1/inputs/DBEraw/"
+# Output <- "D:/Projekty/RDBES/WK_RDBES/WKRDB-EST2/subGroup1/outputs/"
+# Return <- T
+# CreateDBEPrepObj(Input = Input, Output = Output)
 CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F) {
   
   options(error=NULL)
@@ -101,98 +101,241 @@ CreateDBEPrepObj <- function(Input = NA, Output = NA, Return = T, CreateDir = F)
       ###
       ###
       if (nrow(a) > 0) {
+        
         # Check on number of methods
-        if (length(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = ""))))) >= 2) {
-          stop("More than one selection method")
-          print(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = "")))))
+        # if (length(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = ""))))) >= 2) {
+        #   stop("More than one selection method")
+        #   print(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = "")))))
+        # }
+        listSelectMeth = split(a, a[grepl("selectMeth", names(a)) == T& grepl("selectMethCluster", names(a)) == F])
+        for(j in listSelectMeth){
+          
+          if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) == 'CENSUS'){
+            
+            CalcValues = data.frame(CalcValue = rep(1, nrow(j)))
+            j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F] <- CalcValues
+           
+            rm(CalcValues)
+            
+          }else if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) %in% c('SRSWR', 'UPSWR')){
+            
+            CalcValues <- generateProbs(j, "selection")
+            names(CalcValues) <- "CalcValues"
+            ## calculates values for a and checks agianst submitted in values
+            
+            if (all(j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F] == CalcValues) == T) {
+              print("Submitted and calculated values match")
+            } else {
+              PrintOut <- cbind(j[grepl("id", names(j)) == T], j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F], CalcValues, Equal = c((j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F] == CalcValues) == T))
+              print(PrintOut[PrintOut$Equal == "FALSE", ])
+              rm(PrintOut)
+              switch(menu(c("Yes", "No"), title = "Submitted values do not match calculated calculated do you want to overwrite submitted data?"), j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F] <- CalcValues, print("submitted values used"))
+            }
+            rm(CalcValues)
+            
+          }else if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) %in% c('NotSam','NPEJ', 'NPAH')){
+            print('Probabilites not calculated because the selection method is not probabilistic')
+          }else{
+            
+            # CalcValues = data.frame(CalcValue = rep(0, nrow(j)))
+            # j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F] <- CalcValues
+            # 
+            # rm(CalcValues)
+            print('This selection method is not ready yet. Original values left')
+          }
+          
+          
+          
+
+         
+          if(names(listSelectMeth)[1]==unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F])) {
+            aProb = j
+          }else{
+            aProb = rbind(aProb, j)
+          }
         }
 
-        ## calculates values for a and checks agianst submitted in values
-
-        CalcValues <- generateProbs(a, "selection")
-        names(CalcValues) <- "CalcValues"
-        if (all(a[grepl("selProb", names(a)) == T & grepl("selProbCluster", names(a)) == F] == CalcValues) == T) {
-          print("Submitted and calculated values match")
-        } else {
-          PrintOut <- cbind(a[grepl("id", names(a)) == T], a[grepl("selProb", names(a)) == T & grepl("selProbCluster", names(a)) == F], CalcValues, Equal = c((a[grepl("selProb", names(a)) == T & grepl("selProbCluster", names(a)) == F] == CalcValues) == T))
-          print(PrintOut[PrintOut$Equal == "FALSE", ])
-          rm(PrintOut)
-          switch(menu(c("Yes", "No"), title = "Submitted values do not match calculated calculated do you want to overwrite submitted data?"), a[grepl("selProb", names(a)) == T & grepl("selProbCluster", names(a)) == F] <- CalcValues, print("submitted values used"))
-        }
-        rm(CalcValues)
+      }else{
+        aProb = data.frame()
       }
       ###
       ###
       if (nrow(aNA) > 0) {
+        
         # Check on number of methods
-        if (length(unique(eval(parse(text = paste0(paste("aNA"), "$", names(aNA)[grepl("selectMeth", names(aNA)) == T & grepl("selectMethCluster", names(aNA)) == F], sep = ""))))) >= 2) {
-          stop("More than one selection method")
-          print(unique(eval(parse(text = paste0(paste("aNA"), "$", names(aNA)[grepl("selectMeth", names(aNA)) == T & grepl("selectMethCluster", names(aNA)) == F], sep = "")))))
+        # if (length(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = ""))))) >= 2) {
+        #   stop("More than one selection method")
+        #   print(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = "")))))
+        # }
+        listSelectMeth = split(aNA, aNA[grepl("selectMeth", names(aNA)) == T& grepl("selectMethCluster", names(aNA)) == F])
+        for(j in listSelectMeth){
+          
+          if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) == 'CENSUS'){
+            
+            CalcValues = data.frame(CalcValue = rep(1, nrow(j)))
+            j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F] <- CalcValues
+            
+            rm(CalcValues)
+            
+          }else if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) %in% c('SRSWR', 'UPSWR')){
+            
+            j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F] <- generateProbs(j, "selection")
+            
+            
+          }else if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) %in% c('NotSam','NPEJ', 'NPAH')){
+            print('Probabilites not calculated because the selection method is not probabilistic') #SYSS, SRSWOR, UPSWOR
+          }else{
+            
+            # CalcValues = data.frame(CalcValue = rep(0, nrow(j)))
+            # j[grepl("selProb", names(j)) == T & grepl("selProbCluster", names(j)) == F] <- CalcValues
+            # 
+            # rm(CalcValues)
+            print('This selection method is not ready yet. Original values left')
+          }
+          
+          
+          
+          if(names(listSelectMeth)[1]==unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F])) {
+            aNAProb = j
+          }else{
+            aNAProb = rbind(aNAProb, j)
+          }
         }
-        # applies function
-        aNA[grepl("selProb", names(aNA)) == T & grepl("selProbCluster", names(aNA)) == F] <- generateProbs(aNA, "selection")
-        # Rbind data
-        a <- rbind(a, aNA)
-        rm(aNA)
+        
+        
+      }else{
+        aNAProb = data.frame()
+      }
+      
+      if(nrow(aProb)>0 & nrow(aNAProb)>0){
+      a=rbind(aProb, aNAProb)
+      }else if(nrow(aProb)>0){
+        a = aProb
+      }else{
+        a = aNAProb
       }
 
-
-      # Now for inclusion
       print("Inclusion")
-      # Separate Na from non NA values
       aNA <- a[is.na(eval(parse(text = paste0("a$", names(a)[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F], sep = "")))) == T, ]
       a <- a[is.na(eval(parse(text = paste0("a$", names(a)[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F], sep = "")))) == F, ]
       ###
       ###
-
       if (nrow(a) > 0) {
-        # Check on number of methods for inclusion
-        if (length(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = ""))))) >= 2) {
-          stop("More than one selection method")
-          print(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = "")))))
+        
+        listSelectMeth = split(a, a[grepl("selectMeth", names(a)) == T& grepl("selectMethCluster", names(a)) == F])
+        for(j in listSelectMeth){
+          
+          if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) == 'CENSUS'){
+            
+            CalcValues = data.frame(CalcValue = rep(1, nrow(j)))
+            j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F] <- CalcValues
+            
+            rm(CalcValues)
+            
+          }else if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) %in% c('SRSWR', 'UPSWR')){
+            
+            CalcValues <- generateProbs(j, "inclusion")
+            names(CalcValues) <- "CalcValues"
+            ## calculates values for a and checks agianst submitted in values
+            
+            if (all(j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F] == CalcValues) == T) {
+              print("Submitted and calculated values match")
+            } else {
+              PrintOut <- cbind(j[grepl("id", names(j)) == T], j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F], CalcValues, Equal = c((j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F] == CalcValues) == T))
+              print(PrintOut[PrintOut$Equal == "FALSE", ])
+              rm(PrintOut)
+              switch(menu(c("Yes", "No"), title = "Submitted values do not match calculated calculated do you want to overwrite submitted data?"), j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F] <- CalcValues, print("submitted values used"))
+            }
+            rm(CalcValues)
+            
+          }else if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) %in% c('NotSam','NPEJ', 'NPAH')){
+            print('Probabilites not calculated because the selection method is not probabilistic')
+          }else{
+            
+            # CalcValues = data.frame(CalcValue = rep(0, nrow(j)))
+            # j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F] <- CalcValues
+            # 
+            # rm(CalcValues)
+            print('This selection method is not ready yet. Original values left')
+          }
+          
+          
+          
+          
+          
+          if(names(listSelectMeth)[1]==unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F])) {
+            aProb = j
+          }else{
+            aProb = rbind(aProb, j)
+          }
         }
-
-        ## calculates values for a and checks agianst submitted in values
-
-        CalcValues <- generateProbs(a, "inclusion")
-        names(CalcValues) <- "CalcValue"
-        if (all(a[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F] == CalcValues) == T) {
-          print("Submitted and calculated values match")
-        } else {
-          PrintOut <- cbind(a[grepl("id", names(a)) == T], a[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F], CalcValues, Equal = c((a[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F] == CalcValues) == T))
-          print(PrintOut[PrintOut$Equal == "FALSE", ])
-          rm(PrintOut)
-          switch(menu(c("Yes", "No"), title = "Submitted values do not match calculated calculated do you want to overwrite submitted data?"), a[grepl("incProb", names(a)) == T & grepl("incProbCluster", names(a)) == F] <- CalcValues, print("submitted values used"))
-        }
-        rm(CalcValues)
+        
+      }else{
+        aProb = data.frame()
       }
-
       ###
       ###
       if (nrow(aNA) > 0) {
+        
         # Check on number of methods
-        if (length(unique(eval(parse(text = paste0(paste("aNA"), "$", names(aNA)[grepl("selectMeth", names(aNA)) == T & grepl("selectMethCluster", names(aNA)) == F], sep = ""))))) >= 2) {
-          stop("More than one inclusion method")
-          print(unique(eval(parse(text = paste0(paste("aNA"), "$", names(aNA)[grepl("selectMeth", names(aNA)) == T & grepl("selectMethCluster", names(aNA)) == F], sep = "")))))
+        # if (length(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = ""))))) >= 2) {
+        #   stop("More than one selection method")
+        #   print(unique(eval(parse(text = paste0(paste("a"), "$", names(a)[grepl("selectMeth", names(a)) == T & grepl("selectMethCluster", names(a)) == F], sep = "")))))
+        # }
+        listSelectMeth = split(aNA, aNA[grepl("selectMeth", names(aNA)) == T& grepl("selectMethCluster", names(aNA)) == F])
+        for(j in listSelectMeth){
+          
+          if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) == 'CENSUS'){
+            
+            CalcValues = data.frame(CalcValue = rep(1, nrow(j)))
+            j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F] <- CalcValues
+            
+            rm(CalcValues)
+            
+          }else if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) %in% c('SRSWR', 'UPSWR')){
+            
+            j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F] <- generateProbs(j, "inclusion")
+            
+            
+          }else if(unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F]) %in% c('NotSam','NPEJ', 'NPAH')){
+            print('Probabilites not calculated because the selection method is not probabilistic') #SYSS, SRSWOR, UPSWOR
+          }else{
+            
+            # CalcValues = data.frame(CalcValue = rep(0, nrow(j)))
+            # j[grepl("incProb", names(j)) == T & grepl("incProbCluster", names(j)) == F] <- CalcValues
+            # 
+            # rm(CalcValues)
+            print('This selection method is not ready yet. Original values left')
+          }
+          
+          
+          
+          if(names(listSelectMeth)[1]==unique(j[grepl("selectMeth", names(j)) == T & grepl("selectMethCluster", names(j)) == F])) {
+            aNAProb = j
+          }else{
+            aNAProb = rbind(aNAProb, j)
+          }
         }
-        # applies function
-        aNA[grepl("incProb", names(aNA)) == T & grepl("incProbCluster", names(aNA)) == F] <- generateProbs(aNA, "inclusion")
-        # Rbind data
-        a <- rbind(a, aNA)
-        ###
-        ###
-
-        # assigns the moddifed table back to the input object
-        eval(parse(text = paste0(paste0(paste("DBEpreparedObj_", paste(unlist(strsplit(InputFiles[InputFiles == i], "\\_|\\."))[c(2, 3, 4)], sep = "", collapse = "_"), sep = "", collapse = "_"), "$", k, sep = ""), "<-", "a")))
-
-        rm(a, aNA)
-        gc()
-        print(k)
+        
+        
+      }else{
+        aNAProb = data.frame()
       }
+      
+      if(nrow(aProb)>0 & nrow(aNAProb)>0){
+        a=rbind(aProb, aNAProb)
+      }else if(nrow(aProb)>0){
+        a = aProb
+      }else{
+        a = aNAProb
+      }
+      eval(parse(text = paste0(paste0(paste("DBEpreparedObj_", paste(unlist(strsplit(InputFiles[InputFiles == i], "\\_|\\."))[c(2, 3, 4)], sep = "", collapse = "_"), sep = "", collapse = "_"), "$", k, sep = ""), "<-", "a")))
+      
     }
     rm(tableNames)
     gc()
   }
+  
   # Asslist <- get(ls()[grepl("DBEpreparedObj_",x=ls())==T])
   Asslist <- list()
   for (i in ls()[grepl("DBEpreparedObj_", x = ls()) == T]) {
