@@ -1,6 +1,6 @@
 # ===================
-# Demonstration of approach to the handling of subsampling in SA table of RDBES
-# Nuno @ ICES WKRDB-EST, 10/2019
+# Demonstration of approach to the handling of subsampling and stratification in SA table of RDBES
+# Nuno @ ICES WKRDB-EST & ICES WKRDB-EST2
 # ===================
 
     # wishlist
@@ -8,8 +8,15 @@
         # check the handling of stratification
         # remove for cycle
 
+# generate hypothetical SA 
+    SAsub <- data.frame(SAseqNum=c(1:5,6,7,8), SAparSequNum=c(NA, 1:4,NA,6,NA), stratification="N")
+    SAstrat <- data.frame(SAseqNum=c(9:14), SAparSequNum=c(NA, rep(9,5)), stratification="Y")
+	SAboth<-rbind(SAsub,SAstrat);
+	
+	SAboth$probs<-runif(14,0,1)
+
 # generate hypothetical SA with subsampling 
-    SA <- data.frame(SAseqNum=c(1:5,6,7,8), SAparSequNum=c(NA, 1:4,NA,6,NA))
+    SA <- SAboth
 # handling of subsampling
     df2 <- data.frame(id = SA$SAseqNum, sample1 = SA$SAparSequNum)
     i=2
@@ -24,6 +31,6 @@
     for(i in 1:nrow(df2)) {df2[i,min(which(is.na(df2[i,2:ncol(df2)])))+1]<-df2[i,"id"]}
 
 # example of matching of inclusionProbs
-    df_probs<-data.frame(id=c(1:8),probs=runif(8,0,1))
-    for(i in 2:ncol(df2)) df2[,i]<-df_probs$probs[match(df2[,i], probs$id)] 
+    df_probs<-data.frame(id=c(1:14),probs=runif(14,0,1))
+    for(i in 1:nrow(df2)) df2[i,2:ncol(df2)]<-df_probs$probs[match(df2[i,2:ncol(df2)], df_probs$id)] 
     df2
