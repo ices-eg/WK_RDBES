@@ -72,10 +72,6 @@ generate_zeros_in_SA<-function(sppCodes, SA = SA, SS = SS, SL = SL){
 			# delete on BV
 			# }
 	
-
-
-
-	
 		#findDiffObsTyp (x = SS)
 	
 	
