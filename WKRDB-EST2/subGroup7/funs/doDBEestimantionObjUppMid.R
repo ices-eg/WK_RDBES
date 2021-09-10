@@ -17,7 +17,7 @@
 doDBEestimantionObjUpp <-
   function(input_list) { 
 
-    library(dplyr)
+    #library(dplyr)
     
     # hg
     # we dont have to specify the hierarchy in the function
@@ -57,7 +57,9 @@ doDBEestimantionObjUpp <-
       "numTotalClusters",
       "numSampClusters",
       "selProbCluster",
-      "incProbCluster"
+      "incProbCluster",
+      "samp",
+      "noSampReason"
     )
     
     # hg
