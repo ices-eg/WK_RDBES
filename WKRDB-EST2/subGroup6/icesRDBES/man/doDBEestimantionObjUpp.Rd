@@ -23,7 +23,7 @@ Generates the DBE estimation object for the upper hierarchy tables
 \examples{
 \dontrun{
 H1 <-
-readRDS('./WKRDB-EST2/testData/output/DBErawObj/DBErawObj_DK_1966_H1.rds')
+readRDS("./WKRDB-EST2/testData/output/DBErawObj/DBErawObj_DK_1966_H1.rds")
 H1out <- doDBEestimantionObjUpp(H1)
 }
 }

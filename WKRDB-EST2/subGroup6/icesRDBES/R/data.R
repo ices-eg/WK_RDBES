@@ -48,3 +48,15 @@
 #' }
 #' @source \url{https://github.com/davidcurrie2001/MI_RDBES_ExchangeFiles}
 "h1Example"
+#' A dataset containing the mapping from database column names
+#' to R field names
+#'
+#' @format A data frame containing database field names and their equivalent
+#' R field name:
+#' \describe{
+#'   \item{Field.Name}{The database field names}
+#'   \item{R.Name}{The equivalent R field name}
+#'   ...
+#' }
+#' @source \url{https://github.com/davidcurrie2001/MI_RDBES_ExchangeFiles}
+"mapColNamesFieldR"

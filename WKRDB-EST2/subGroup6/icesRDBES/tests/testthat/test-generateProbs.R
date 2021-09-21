@@ -1,8 +1,3 @@
-test_that("Test generateProbs works for H1", {
-
-
-
-})
 test_that("Test generateProbs fails for incorrect input", {
 
   # We might want to be more specific about the error messages we test for here
