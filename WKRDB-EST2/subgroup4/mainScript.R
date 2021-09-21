@@ -35,13 +35,14 @@ newSA
 
 source("funs/newSAquery.R")
 
-out<-newSAquery(sppCode = "9999", SA = newSA, SL = SL)
+out<-newSAquery(sppCode = c("9999"), SA = newSA, SL = SL)
 newSA<-do.call("rbind", out)
 
 
   # example test: spp queried is not in the list
 	SA$SAspeciesCode[1]<-"-9"
-	out<-generate_zeros_in_SA(sppCode = 100685, SA = SA, SS = SS, SL = SL)
+	out<-generateZerosInSA(sppCode = 100685, SA = SA, SS = SS, SL = SL)
 	SA$SAspeciesCode[1]<-"100684"
 	newSA<-do.call("rbind", out)
+
 
