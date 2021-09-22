@@ -1,0 +1,3 @@
+DEid,DErecordType,DEsamplingScheme,DEsamplingSchemeType,DEyear,DEstratumName,DEhierarchyCorrect,DEhierarchy
+1,DE,ESP-AZTI_DCF_Onboard_Sampling,NatpilCF,2015,DE_stratum1,Y,1
+2,DE,ESP-AZTI_DCF_Onboard_Sampling,NatpilCF,2015,DE_stratum2,Y,1
