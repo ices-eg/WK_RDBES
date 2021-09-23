@@ -1,4 +1,4 @@
-checkSampMeth <- function(x=x3){
+checkSampMeth <- function(x=SS){
 # Ana Fernandes
 # makes a check for Selection methods other than 'CENSUS'
 for (i in 1:length(x$SSid)){
