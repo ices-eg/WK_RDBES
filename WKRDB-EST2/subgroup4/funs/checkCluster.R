@@ -1,4 +1,4 @@
-checkCluster <- function(x=x3){
+checkCluster <- function(x=SS){
 # Ana Fernandes
 # makes a check for presence of clustering in SS
 for (i in 1:length(x$SSid)){
