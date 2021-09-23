@@ -1,4 +1,4 @@
-checkStratif <- function(x=x3){
+checkStratif <- function(x=SS){
 # Ana Fernandes
 # makes a check for presence of stratification in SS
 for (i in 1:length(x$SSid)){
