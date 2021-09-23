@@ -1,8 +1,11 @@
+## Updated to have the short column names in the code
 
+## data with the long column names is replaced by a dataset with the R names (short ones) 
+# load("Inputs/H1_SRSWR.Rdata")
+# load("Inputs/H1_SA_SRSWOR.Rdata")
 
+myNewTestData<-readRDS("inputs/DBErawObj_DK_1966_H3.rds")
 
-load("Inputs/H1_SRSWR.Rdata")
-load("Inputs/H1_SA_SRSWOR.Rdata")
 source("Funs/generateZerosInSA.R")
 
 SL <- myNewTestData$SL
@@ -14,19 +17,19 @@ source("funs/checkSampMeth.R")
 source("funs/checkStratif.R")
 source("funs/checkCluster.R")
 source("funs/findDiffObsTyp.R")
-	# x3 is data with issues
+	# x3 is data with issues for testing the functions
 	x3 <- data.frame(SSid=c('11','21','31','41','51','61'), FOid=c(1,2,3,4,5,6),SSobsTyp=c('vis','vol','vis','vol','vis',NA),
 	SSselectMeth=c('SRSWR','CENSUS','SRSWR','CENSUS','CENSUS','CENSUS'),
 	SSstratification=c('Y','N','N','N','N','N'),SSclustering=c('N','N','Y','N','N','N'))
 
-	findDiffObsTyp(x=x3)
-	checkCluster(x=x3)
-	checkSampMeth(x=x3)
-	checkStratif(x=x3)
+findDiffObsTyp(x=SS)
+checkCluster(x=SS)
+checkSampMeth(x=SS)
+checkStratif(x=SS)
 
 # demonstrates use of generateZerosInSA in adding zeros and missing values to SA table based on SL information
 
-out<-generateZerosInSA(sppCode = SL$SLspeciesCode, SA = SA, SS = SS, SL = SL)
+out<-generateZerosInSA(sppCode = SL$SLspeCode, SA = SA, SS = SS, SL = SL)
 newSA<-do.call("rbind", out)
 newSA
 
@@ -40,9 +43,9 @@ newSA<-do.call("rbind", out)
 
 
   # example test: spp queried is not in the list
-	SA$SAspeciesCode[1]<-"-9"
+	SA$SAspeCode[1]<-"-9"
 	out<-generateZerosInSA(sppCode = 100685, SA = SA, SS = SS, SL = SL)
-	SA$SAspeciesCode[1]<-"100684"
+	SA$SAspeCode[1]<-"100684"
 	newSA<-do.call("rbind", out)
 
 
