@@ -5,19 +5,19 @@ newSAquery<-function(sppCodes, SA = SA, SS = SS, SL = SL){
     ls2 <- lapply(ls1, function(x) {
 		for (sppCode in sppCodes)
 		{
-			if(!sppCode %in% SL$SLspeciesCode){
+			if(!sppCode %in% SL$SLspeCode){
 				y<-x[1,]
-				y$SAspeciesCode<-sppCode
-				y$SAnumberTotal<-NA
-				y$SAnumberSampled<-NA
-				y$SAtotalWeightLive<-NA
-				y$SAsampleWeightLive<-NA
+				y$SAspeCode<-sppCode
+				y$SAnumTotal<-NA
+				y$SAnumSamp<-NA
+				y$SAtotalWtLive<-NA
+				y$SAsampWtLive<-NA
 				y$SAid<-min(x$SAid)-0.001 # maintain a count
-				y$SAsequenceNumber<-min(x$SAsequenceNumber)-0.001 # maintain a count
+				y$SAseqNum<-min(x$SAseqNum)-0.001 # maintain a count
 				y$SAunitName<-min(x$SAid)-0.001 # maintain a count
 				y$SAsex<-NA
-				y$SAlowerHierarchy<-"D"
-				y$SAsampled<-"N" 
+				y$SAlowHierarchy<-"D"
+				y$SAsamp<-"N" 
 				x <- rbind(y, x); x} else x
 		}			
         x<-x[order(x$SAid, decreasing=F),]
