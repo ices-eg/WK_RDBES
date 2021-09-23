@@ -54,9 +54,10 @@
 #' @format A data frame containing database field names and their equivalent
 #' R field name:
 #' \describe{
+#'   \item{Table.Prefix}{The two letter prefix of the relevent RDBES table}
 #'   \item{Field.Name}{The database field names}
 #'   \item{R.Name}{The equivalent R field name}
 #'   ...
 #' }
-#' @source \url{https://github.com/davidcurrie2001/MI_RDBES_ExchangeFiles}
+#' @source \url{https://sboxrdbes.ices.dk}
 "mapColNamesFieldR"
