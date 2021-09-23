@@ -1,0 +1,76 @@
+---
+title: "icesrdbes::estimationScript"
+date: \today
+output:
+  html_document: default
+---
+
+```{r setup,include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+# Load and prepare RawObj
+```{r}
+
+# icesRDBES::createRawObj
+
+
+```
+
+
+# Create PrepObj
+
+```{r}
+
+# icesRDBES::createPrepObj (species = "All" | a list) 
+# - wrap(generateCheckProp (overwrite = Y/N) & GenerateZero) - Changed from addCheckProp to generateCheckProp
+# 
+# We can't subset on stock, since we can't generate zeroes for areas and 
+# therefore we mess up the probs. If we declare area outside sampling frames, 
+# then we could handle it.
+
+```
+
+
+## Changes to data
+
+- Small fixes and tweaks
+- Changes to selection method
+- Handling of outliers (we need to include how this should be done)
+
+### GenerateZero - Nuno - why did we include this?
+
+### Subsetting (use with caution)
+ Add why
+
+# Estimation
+
+```{r}
+
+# icesRDBES::createDbeEstimates (
+#   x,
+#   variable,
+#   target_level,
+#   levels = list (
+#     VS = HH,
+#     FT = HT,
+#     FO = HT,
+#     SA = HT
+#   ),
+#   type of estimate = c(“mean”,  “total”)
+# )
+
+```
+
+
+# Outputs
+
+```{r}
+
+
+
+```
+
