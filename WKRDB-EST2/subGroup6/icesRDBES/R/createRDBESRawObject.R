@@ -33,32 +33,54 @@ createRDBESRawObject <- function(rdbesExtractPath = NA){
                     ,"FM"="FrequencyMeasure"
                     ,"BV"="BiologicalVariable"
                     ,"VD"="VesselDetails"
-                    ,"SL"="SpeciesList")
+                    ,"SL"="SpeciesList"
+                    ,"CL"="CommercialLanding"
+                    ,"CE"="CommercialEffort")
 
   # Create a named list using the short names - set all values to NULL
-  myRDBESRawObject <- setNames(as.list(replicate(length(fileNames),NULL)), names(fileNames))
+  myRDBESRawObject <- setNames(as.list(replicate(length(fileNames),NULL)),
+                               names(fileNames))
 
   # If we have been supplied with a path to files we will try and read them
   # otherwise we'll just return an empty rdbesRawBoject
   if (!is.na(rdbesExtractPath)){
 
     # Determine the files which actually exist
-    filesWhichExist <- names(fileNames[file.exists(paste(rdbesExtractPath,"\\",fileNames,".csv",sep=""))])
+    filesWhichExist <- names(
+      fileNames[file.exists(
+        paste(rdbesExtractPath,"\\",fileNames,".csv",sep="")
+        )]
+      )
 
     # Read the files which exist
     for (myFile in filesWhichExist){
       #myFile <- "SA"
       # Read the file
-      myRDBESRawObject[[myFile]] <- read.csv(paste(rdbesExtractPath,"\\",fileNames[myFile],".csv",sep=""),header=TRUE,sep=",",stringsAsFactors=FALSE)
+      myRDBESRawObject[[myFile]] <-
+        read.csv(paste(rdbesExtractPath,"\\",fileNames[myFile],".csv",sep=""),
+                 header=TRUE,sep=",",stringsAsFactors=FALSE)
+
+      # Change each entry to a data table
+      myRDBESRawObject[[myFile]] <-
+        data.table::setDT(myRDBESRawObject[[myFile]])
 
       # Change database field names to R names where we can
       myNames <- mapColNamesFieldR[mapColNamesFieldR$Table.Prefix == myFile,]
-      myNameMatches <- match(tolower(names(myRDBESRawObject[[myFile]])),tolower(myNames$Field.Name))
+      myNameMatches <- match(
+              trimws(tolower(names(myRDBESRawObject[[myFile]]))),
+                             trimws(tolower(myNames$Field.Name))
+                        )
       myNameMatchesNotNA <- myNameMatches[!is.na(myNameMatches)]
-      names(myRDBESRawObject[[myFile]])[!is.na(myNameMatches)] <- myNames[myNameMatchesNotNA,"R.Name"]
+      names(myRDBESRawObject[[myFile]])[!is.na(myNameMatches)] <-
+        myNames[myNameMatchesNotNA,"R.Name"]
 
     }
 
+  }
+
+  ## DATA FIX - spelling mistake in 1 download file format ...
+  if ("CLincidentialByCatchMitigationDevice" %in% names(myRDBESRawObject[['CL']])){
+      data.table::setnames(myRDBESRawObject[['CL']],"CLincidentialByCatchMitigationDevice","CLIBmitiDev")
   }
 
   # Return the object
