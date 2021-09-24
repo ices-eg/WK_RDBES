@@ -15,14 +15,8 @@ The goal of icesRDBES is to …
 
 ## Installation
 
-You can install the released version of icesRDBES from
-[CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("icesRDBES")
-```
-
-And the development version from [GitHub](https://github.com/) with:
+You can't currently install the  icesRDBES from CRAN as it is not yet released.
+However you can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
