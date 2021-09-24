@@ -1,6 +1,6 @@
 # WGRDBES-EST the last day
 
-## Move relevant functions out of personal folder
+## Move relevant functions out of personal / subgroup folders 
 1. Move to WK_RDBES/WKRDB-EST2/subGroup6/icesRDBES/R/
 
 ## Add Roxygen documentation to function
