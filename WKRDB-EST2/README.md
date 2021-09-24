@@ -6,9 +6,7 @@
 ## Add Roxygen documentation to function
 Ctrl+Alt+Shift+R
 1. Add a small decription to the documentation
-2. ...
-
- (Add example)
+2. (add link to example)
 
 ## Functions added to 'funs' in subgroup folders
 1. Include an example on how to use the function in mainScript.R at WK_RDBES/WKRDB-EST2/subGroup6/icesRDBES/R/
