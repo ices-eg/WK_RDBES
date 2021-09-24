@@ -5,8 +5,8 @@
 
 ## Add Roxygen documentation to function
 Ctrl+Alt+Shift+R
-
-fill input / output 
+1. Add a small decription to the documentation
+2. ...
 
 ## Functions added to 'funs' in subgroup folders
 1. Include an example on how to use the function in mainScript.R at WK_RDBES/WKRDB-EST2/subGroup6/icesRDBES/R/
