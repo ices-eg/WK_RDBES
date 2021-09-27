@@ -73,4 +73,12 @@ test_that("checkRDBESRawObject returns F for object with duplicate rows",  {
   expect_false(myReturn)
 
 })
+test_that("checkRDBESRawObject returns F for object with duplicate DEid values",  {
+
+  myObject <- createRDBESRawObject(rdbesExtractPath = ".\\h1_v_1_19")
+  myObject[['DE']][,"DEid"]  <- replicate(nrow(myObject[['DE']]),1)
+  myReturn <- checkRDBESRawObject(objectToCheck = myObject)
+  expect_false(myReturn)
+
+})
 

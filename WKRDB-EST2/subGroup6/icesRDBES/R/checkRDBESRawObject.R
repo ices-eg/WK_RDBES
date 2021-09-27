@@ -68,58 +68,16 @@ checkRDBESRawObject <- function(objectToCheck) {
         )
     } else { #2
 
-      #objectToCheck<-createRDBESRawObject(NA)
-
       # Just check non-NULL entries
       nonNullEntries <- objectToCheck[sapply(objectToCheck, Negate(is.null))]
 
-      # The following checks are only relevent if we don't have an empty object
-      if (length(nonNullEntries)>0) { #3
+      # The next checks are only relevent if we don't have an empty object
+      if (length(nonNullEntries) > 0) { #3
 
-        # For each non-null entry see if there have the required field names
-        badEntries <- nonNullEntries[!
-          sapply(nonNullEntries, function(x) {
-            returnValue <- F
-            # Assume the first field name accurately gives us the table name
-            tableName <- substring(names(x)[1], 1, 2)
-            requiredColumnNames <-
-              mapColNamesFieldR[mapColNamesFieldR$Table.Prefix == tableName, ]
-            requiredColumnNames[is.na(requiredColumnNames$R.Name), "R.Name"] <-
-              requiredColumnNames[is.na(requiredColumnNames$R.Name), "Field.Name"]
-            requiredColumnNames <- requiredColumnNames$R.Name
-            # Are all the required names present?
-            if (all(requiredColumnNames %in% names(x))) {
-              returnValue <- T
-            }
-            returnValue
-        })]
+        myReturnValue <- checkRDBESRawObjectContent(nonNullEntries)
+        warningText <- myReturnValue[["warningText"]]
+        validRDBESRawObject <- myReturnValue[["validRDBESRawObject"]]
 
-        # CHECK 6 Check if there are any entries which have invalid field names
-        if (length(badEntries) > 0) {
-          validRDBESRawObject <- F
-          warningText <-
-            paste("objectToCheck contains the following tables which don't ",
-              "contain all required fields: ",
-              paste(names(badEntries), collapse = ","),
-              sep = ""
-            )
-        }
-         else { #4
-
-          # CHECK 7 Check if any tables have duplicate rows
-          tablesWithDupes <- nonNullEntries[
-            sapply(nonNullEntries,function(x){any(duplicated(x))})]
-
-          if (length(tablesWithDupes)>0){
-            validRDBESRawObject <- F
-            warningText <-
-              paste("objectToCheck contains the following tables which have ",
-                    "duplicate rows: ",
-                    paste(names(tablesWithDupes), collapse = ","),
-                    sep = ""
-              )
-          }
-        } #4
       } #3
     } #2
   } #1
