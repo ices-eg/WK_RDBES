@@ -19,3 +19,5 @@ In order to run lintr and styler (etc) before committing code, follow the instru
    precommit::use_precommit()
    ```
 5. Running git commit should run the various checks automatically. See [the config file](.pre-commit-config.yaml) for all the checks.
+=======
+

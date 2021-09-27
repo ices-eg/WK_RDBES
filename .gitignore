@@ -5,3 +5,7 @@
 *.csv
 .Rproj.user
 WKRDB-EST2/subGroup2/personal/Chun/testdata
+*.Rds
+*.rds
+!H1_SA_SRSWOR.Rdata
+!H1_SRSWR.Rdata

@@ -1,0 +1,472 @@
+---
+date: \today
+output: html_document
+---
+
+```{r READ_ME, include = F}
+
+# Change data_path and file_name in beginning of setup chunk
+
+# Note:
+# This report only handles one sampling scheme at a time
+# Data need to be in the same format as the
+
+# TODO:
+# 1. Include all types of tables in the recType reference
+# 2. 
+
+```
+
+
+```{r setup, include = F}
+
+# Where to find data and name thereof
+data_path <- "Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/testData/output/DBErawObj/"
+
+file_name <- "DBErawObj_DK_1966_H1.rds"
+
+source("Q:/mynd/RDB/WKRDB-EST/WK_RDBES/WKRDB-EST2/subGroup7/funs/doDBEestimantionObjUppMid.R")
+
+library(dplyr)
+library(knitr)
+library(devtools)
+install_github("ices-tools-prod/icesVocab")
+library(icesVocab)
+library(tidyr)
+library(kableExtra)
+
+knitr::opts_chunk$set(echo = F, message = F, warning = F)
+
+```
+
+```{r ref, include = F}
+
+
+# Translate recType to understandable language
+
+recType <- c("DE", "SD", "VS", "FT", "FO", "SS", "SA")
+
+recType_name <-
+  c(
+    "Design",
+    "Sampling details",
+    "Vessel",
+    "Fishing trip",
+    "Fishing operation",
+    "Species selection",
+    "Sample"
+  )
+
+recType_ref <- data.frame(recType, recType_name)
+
+# Ref from probabilistic and ....
+
+selectMethod_ref <- getCodeList("RS_SelectionMethod")
+selectMethod_ref <- mutate(selectMethod_ref, selectMethod_group = ifelse(Key %in% c("NPAH",
+    "NPEJ",
+    "NPQS"), "None_prob", 
+              ifelse(Key %in% c("CENSUS",
+    "SRSWOR",
+    "SRSWR",
+    "SYSS",
+    "UPSWOR",
+    "UPSWR"), "Prob", NA))) 
+
+# RS_ReasonForNotSampling
+
+noSampReason <- getCodeList("RS_ReasonForNotSampling")
+
+```
+
+
+```{r get_data}
+
+h1 <- readRDS(paste0(data_path, file_name))
+
+h1$VS$VSselectMeth[h1$VS$VSstratumName == "VS_stratum1"] <- "NPEJ"
+h1$FT$FTselectMeth[h1$FT$FTid %in% sample(h1$FT$FTid, 8)] <- "NPAH"
+h1$FO$FOselectMeth <- "SRSWOR"
+h1$SS$SSselectMeth <- "CENSUS"
+h1$SA$SAselectMeth <- "SRSWOR"
+
+h1_test <- doDBEestimantionObjUpp(input_list = h1)
+```
+
+---
+title: `r paste("Bias - Summary of selection methods and declaration of none sampled,", unique(h1_test$de$DEsampScheme), unique(h1_test$de$DEyear), sep = " ")`
+---
+
+## Selection methods
+
+The selection methods are grouped the following way
+
+```{r, results = "asis"}
+
+selectMethod_ref <-
+  mutate(
+    selectMethod_ref,
+    selectMethod_group_name = ifelse(
+      selectMethod_group == "Prob",
+      "Probabilistic",
+      ifelse(selectMethod_group == "None_prob", "None-probabilistic", NA)
+    )
+  )
+
+kable_styling(kable(
+  select(selectMethod_ref, Key, Description, selectMethod_group_name),
+  col.names = c("Code", "Description", "Selection method type")
+))
+
+cat("  \n")
+```
+
+NotApp and NotSam are not considered in these overviews.
+
+### Overall - summary
+
+Number of samples selected in a probabilistic and none-probabilistic way per sampling level.
+
+The use of probabilist selection is highlighted in green and number of none-probabilistic selections are highlighted in red.
+
+
+
+```{r, echo = F}
+
+dat <- data.frame(matrix(ncol = 4 , nrow = 0))
+colnames(dat) <- c("su", "recType_name", "Prob", "None_prob")
+
+dat$su <- as.character(dat$su)
+dat$recType_name <- as.character(dat$recType_name)
+dat$Prob <- as.integer(dat$Prob)
+dat$None_prob <- as.integer(dat$None_prob)
+
+for (i in c(4:length(h1_test))) {
+  
+  dat_0 <- left_join(h1_test[[i]], recType_ref)
+  dat_0 <- left_join(dat_0, selectMethod_ref, by = c("selectMeth" = "Key"))
+  dat_0 <- subset(dat_0, !selectMeth %in% c("NotApp", "NotSam"))
+  dat_0$su <- gsub("su", "", dat_0$su)
+  
+  dat_01 <- summarise(group_by(dat_0, su, recType_name, selectMethod_group), no = length(selectMeth))
+  dat_01 <- spread(dat_01, key = selectMethod_group, value = no, fill = 0)
+  dat <- bind_rows(dat, dat_01)
+}
+
+heading <- distinct(left_join(h1_test$de, h1_test$sd, by = c("DEid" = "DEid")), ctry, DEyear, DEsampScheme)
+
+summary_select <- bind_cols(heading, dat)
+
+summary_select$None_prob[is.na(summary_select$None_prob)] <- 0
+summary_select$Prob[is.na(summary_select$Prob)] <- 0
+
+summary_select %>%
+  mutate(
+    Prob = cell_spec(
+      Prob,
+      color = ifelse(Prob > 0, "white", "white"),
+      background  = ifelse(Prob > 0, "green", "red"),
+      bold = ifelse(Prob > 0, T, T)
+    ),
+    None_prob = cell_spec(
+      None_prob,
+      color = ifelse(None_prob > 0, "white", "white"),
+      background  = ifelse(None_prob > 0, "red", "green"),
+      bold = ifelse(None_prob > 0, T, T)
+    )
+  )  %>%
+  kable(
+    booktabs = T,
+    col.names = c(
+      "Sampling scheme",
+      "Year",
+      "Country",
+      "Sampling unit level",
+      "Sampling unit type",
+      "Number of probabilistic selections",
+      "Number of none-probabilistic selections"
+    ),
+    escape = FALSE
+  ) %>%
+  kable_styling()
+```
+
+### Detailed summary per sampling level
+
+Number per selection methods used per sampling level. 
+
+In each table the stratum from the level above is stated to make identification easier.
+
+#### 1. sampling unit
+
+```{r, }
+
+dat_1 <- left_join(left_join(h1_test$de, h1_test$sd, by = c("DEid" = "DEid")), h1_test$su1, by = c("id" = "idAbove"))
+
+dat_1 <- left_join(dat_1, recType_ref, by = c("recType.y" = "recType"))
+dat_1 <- subset(dat_1, !selectMeth %in% c("NotApp", "NotSam"))
+dat_11 <- summarise(group_by(dat_1, recType_name, DEsampScheme, DEyear, ctry, DEstratumName, stratumName, selectMeth), no = length(selectMeth))
+
+
+dat_11 %>%
+  mutate(
+    selectMeth = cell_spec(
+      selectMeth,
+      color = "white",
+      background  = ifelse(selectMeth %in% c("NPAH", "NPEJ", "NPQS"), "red", "green"),
+      bold = T
+    )
+  )  %>%
+  kable(
+    booktabs = T,
+    col.names = c(
+      "Sampling unit type",
+      "Sampling scheme",
+      "Year",
+      "Country",
+      "Stratum above",
+      "Stratum here",
+      "Selection method",
+      "Number of samples"
+    ),
+    escape = FALSE
+  ) %>%
+  kable_styling()
+
+```
+
+```{r, results = "asis"}
+
+for (j in c(5:length(h1_test))) {
+  
+  dat_2 <- left_join(h1_test[[j-1]], h1_test[[j]], by = c("id" = "idAbove"))
+  
+  cat("  \n#### ", gsub("su", "", unique(dat_2$su.y)), ". sampling unit \n", sep = "")
+  
+  dat_2 <- left_join(dat_2, recType_ref, by = c("recType.y" = "recType"))
+  dat_2 <- subset(dat_2, !selectMeth.y %in% c("NotApp", "NotSam"))
+  dat_21 <- summarise(group_by(dat_2, recType_name, stratumName.x, stratumName.y, selectMeth.y), no = length(selectMeth.y))
+  
+p <-  dat_21 %>%
+  mutate(
+    selectMeth.y = cell_spec(
+      selectMeth.y,
+      color = "white",
+      background  = ifelse(selectMeth.y %in% c("NPAH", "NPEJ", "NPQS"), "red", "green"),
+      bold = T
+    )
+  )  %>%
+  kable(
+    booktabs = T,
+    col.names = c(
+      "Sampling unit type",
+      "Stratum above",
+      "Stratum here",
+      "Selection method",
+      "Number of samples"
+    ),
+    escape = FALSE
+  ) %>%
+  kable_styling()
+
+cat(p)
+cat("  \n")
+}
+
+```
+
+
+## None sampled
+### Overall - summary
+
+
+```{r, results = "asis"}
+
+dat_3 <- data.frame(matrix(ncol = length(noSampReason$Key)+4 , nrow = 0))
+colnames(dat_3) <- c(c("su","recType_name", "samp"), noSampReason$Key, c("No reason given"))
+
+dat_3$su <- as.character(dat_3$su)
+dat_3$recType_name <- as.character(dat_3$recType_name)
+dat_3$samp <- as.character(dat_3$samp)
+dat_3$`Industrial Decline` <- as.integer(dat_3$`Industrial Decline`)
+dat_3$`No Answer` <- as.integer(dat_3$`No Answer`)
+dat_3$`No Contact Details` <- as.integer(dat_3$`No Contact Details`)
+dat_3$`Not Avalible` <- as.integer(dat_3$`Not Avalible`)
+dat_3$`Observer Decline` <- as.integer(dat_3$`Observer Decline`)
+dat_3$Other <- as.integer(dat_3$Other)
+dat_3$`Quota Reached` <- as.integer(dat_3$`Quota Reached`)
+dat_3$`No reason given` <- as.integer(dat_3$`No reason given`)
+
+
+for (i in c(4:(length(h1_test)-1))) {
+  
+  dat_03 <- left_join(h1_test[[i]], recType_ref)
+  dat_03$su <- gsub("su", "", dat_03$su)
+  
+  dat_03 <- mutate(dat_03, noSampReason = ifelse(is.na(noSampReason) & samp == "N", "No reason given", noSampReason))
+  
+  dat_031 <- summarise(group_by(dat_03, su, recType_name, samp, noSampReason), no = length(id))
+  dat_031 <- filter(dat_031, !is.na(noSampReason))
+  dat_031 <- spread(dat_031, key = noSampReason, value = no, fill = 0)
+  dat_3 <- bind_rows(dat_3, dat_031)
+}
+
+heading <- distinct(left_join(h1_test$de, h1_test$sd, by = c("DEid" = "DEid")), ctry, DEyear, DEsampScheme)
+
+summary_select <- bind_cols(heading, dat_3)
+
+p <- summary_select %>%
+  # mutate(
+  #   Prob = cell_spec(
+  #     Prob,
+  #     color = ifelse(Prob > 0, "white", "white"),
+  #     background  = ifelse(Prob > 0, "green", "red"),
+  #     bold = ifelse(Prob > 0, T, T)
+  #   ),
+  #   None_prob = cell_spec(
+  #     None_prob,
+  #     color = ifelse(None_prob > 0, "white", "white"),
+  #     background  = ifelse(None_prob > 0, "red", "green"),
+  #     bold = ifelse(None_prob > 0, T, T)
+  #   )
+  # )  %>%
+  kable(
+    booktabs = T,
+    col.names = c(c(
+      "Sampling scheme",
+      "Year",
+      "Country",
+      "Sampling unit level",
+      "Sampling unit type",
+      "Sampled or not"
+    ), names(summary_select[,c(7:14)])),
+    escape = FALSE
+  ) %>%
+  kable_styling()
+
+if (nrow(subset(summary_select, samp =="N")) >1) {
+  
+  cat(p)
+  
+} else {
+  
+  cat("**Only sampled data declared**")
+  
+  cat(p)
+}
+
+```
+
+### Detailed summary per sampling level
+
+Number of none sampled per reason for not sampling. 
+
+In each table the stratum from the level above is stated to make identification easier.
+
+#### 1. sampling unit
+
+```{r, results = "asis"}
+
+dat_1 <- left_join(left_join(h1_test$de, h1_test$sd, by = c("DEid" = "DEid")), h1_test$su1, by = c("id" = "idAbove"))
+
+dat_1 <- left_join(dat_1, recType_ref, by = c("recType.y" = "recType"))
+dat_1 <- mutate(dat_1, noSampReason = ifelse(is.na(noSampReason) & samp == "No", "No reason given", noSampReason))
+dat_11 <- summarise(group_by(dat_1, recType_name, DEsampScheme, DEyear, ctry, DEstratumName, stratumName, samp, noSampReason), no = length(selectMeth))
+
+
+  dat_11 <- filter(dat_11, !is.na(noSampReason))
+
+
+p <- dat_11 %>%
+  # mutate(
+  #   selectMeth = cell_spec(
+  #     selectMeth,
+  #     color = "white",
+  #     background  = ifelse(selectMeth %in% c("NPAH", "NPEJ", "NPQS"), "red", "green"),
+  #     bold = T
+  #   )
+  # )  %>%
+  kable(
+    booktabs = T,
+    col.names = c(
+      "Sampling unit type",
+      "Sampling scheme",
+      "Year",
+      "Country",
+      "Stratum above",
+      "Stratum here",
+      "Sampled or not",
+      "Reason for not sampling",
+      "Number of samples"
+    ),
+    escape = FALSE
+  ) %>%
+  kable_styling()
+
+if (nrow(subset(dat_11, samp =="N")) >1) {
+  
+  cat(p)
+  
+} else {
+  
+  cat("**Only sampled data declared**")
+  
+  cat(p)
+}
+
+
+```
+
+
+```{r, results = "asis"}
+
+for (j in c(5:(length(h1_test)-1))) {
+  
+  dat_12 <- left_join(h1_test[[j-1]], h1_test[[j]], by = c("id" = "idAbove"))
+  
+  cat("  \n#### ", gsub("su", "", unique(dat_12$su.y)), ". sampling unit \n", sep = "")
+  
+  
+dat_12 <- left_join(dat_12, recType_ref, by = c("recType.y" = "recType"))
+dat_12 <- mutate(dat_12, noSampReason.y = ifelse(is.na(noSampReason.y) & samp.y == "No", "No reason given", noSampReason.y))
+dat_11 <- summarise(group_by(dat_12, recType_name, stratumName.x, stratumName.y, samp.y, noSampReason.y), no = length(id))
+
+
+  dat_11 <- filter(dat_11, !is.na(noSampReason.y))
+
+
+p <- dat_11 %>%
+  # mutate(
+  #   selectMeth = cell_spec(
+  #     selectMeth,
+  #     color = "white",
+  #     background  = ifelse(selectMeth %in% c("NPAH", "NPEJ", "NPQS"), "red", "green"),
+  #     bold = T
+  #   )
+  # )  %>%
+  kable(
+    booktabs = T,
+    col.names = c(
+      "Sampling unit type",
+      "Stratum above",
+      "Stratum here",
+      "Sampled or not",
+      "Reason for not sampling",
+      "Number of samples"
+    ),
+    escape = FALSE
+  ) %>%
+  kable_styling()
+
+if (nrow(subset(dat_11, samp.y =="N")) >1) {
+  
+  cat(p)
+  
+} else {
+  
+  cat("**Only sampled data declared**")
+  
+  cat(p)
+}
+}
+
+```

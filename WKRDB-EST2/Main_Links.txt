@@ -1,0 +1,52 @@
+Main Links:
+
+#===================
+# RDBES Data Model
+#===================
+
+https://github.com/ices-tools-dev/RDBES
+
+#===================
+# GitHub
+#===================
+
+GitHub WK_RDBES/WKRDB-EST2
+https://github.com/ices-eg/WK_RDBES/tree/master/WKRDB-EST2
+
+#===================
+# R-code developed
+#===================
+
+https://docs.google.com/document/d/1gC6tFb2YN0krYahSab3uiWXGPcNO-D8GxZAYhbGS0iQ/edit?usp=sharing
+
+#=====================
+# ToRb estimation issues
+# ====================
+
+https://docs.google.com/document/d/1i6btEpzu0A7GT0fgF0IMRhl8FJ2KBWd4BT2AuPEvSyQ/edit?usp=sharing
+
+#===================
+# ROOMS
+#===================
+
+Plenary Room
+https://teams.microsoft.com/l/meetup-join/19%3ameeting_YjhjMTczMjEtYjY0Ni00MDI3LWIyY2UtNWU0YjZiZGQ0NzQx%40thread.v2/0?context=%7b%22Tid%22%3a%22a3b5f071-0e49-47a0-a40e-9b7c9c4d647e%22%2c%22Oid%22%3a%229d36336b-daf3-488d-9d13-831562fb1e6e%22%7d
+
+Room A:
+https://teams.microsoft.com/l/meetup-join/19%3ameeting_YmYwYjNmMTUtY2Q1NC00Y2YwLTg1NWEtYTY3MzhkNDBkN2Rm%40thread.v2/0?context=%7b%22Tid%22%3a%22a3b5f071-0e49-47a0-a40e-9b7c9c4d647e%22%2c%22Oid%22%3a%229d36336b-daf3-488d-9d13-831562fb1e6e%22%7d
+
+Room B:
+https://teams.microsoft.com/l/meetup-join/19%3ameeting_MzRmMmZkMDktNDY2Ny00ZTM2LTkxYjUtOGU3YmE4MGRiM2Qw%40thread.v2/0?context=%7b%22Tid%22%3a%22a3b5f071-0e49-47a0-a40e-9b7c9c4d647e%22%2c%22Oid%22%3a%229d36336b-daf3-488d-9d13-831562fb1e6e%22%7d
+
+Room C:
+https://teams.microsoft.com/l/meetup-join/19%3ameeting_NTM2NmJiNTEtMmVjMi00YmZlLTg5ODYtYzJjMTNkNjUwZGFk%40thread.v2/0?context=%7b%22Tid%22%3a%22a3b5f071-0e49-47a0-a40e-9b7c9c4d647e%22%2c%22Oid%22%3a%229d36336b-daf3-488d-9d13-831562fb1e6e%22%7d
+
+Room D
+https://teams.microsoft.com/l/meetup-join/19%3ameeting_MjM2NmFiYTgtOGNkOS00Y2JkLTljNTAtZTVkODExODFmZDcw%40thread.v2/0?context=%7b%22Tid%22%3a%22a3b5f071-0e49-47a0-a40e-9b7c9c4d647e%22%2c%22Oid%22%3a%229d36336b-daf3-488d-9d13-831562fb1e6e%22%7d
+
+Room E
+https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZGNiZjQ2MDgtMmVkOC00ZmYwLTk1NWQtY2JjOTFmZGMzMThk%40thread.v2/0?context=%7b%22Tid%22%3a%22a3b5f071-0e49-47a0-a40e-9b7c9c4d647e%22%2c%22Oid%22%3a%229d36336b-daf3-488d-9d13-831562fb1e6e%22%7d
+
+Room F
+https://teams.microsoft.com/l/meetup-join/19%3ameeting_MDdjN2FkMTktZThlMS00YzhmLTg1ZTMtZjcxNDJjNjJkOGYy%40thread.v2/0?context=%7b%22Tid%22%3a%22a3b5f071-0e49-47a0-a40e-9b7c9c4d647e%22%2c%22Oid%22%3a%229d36336b-daf3-488d-9d13-831562fb1e6e%22%7d
+

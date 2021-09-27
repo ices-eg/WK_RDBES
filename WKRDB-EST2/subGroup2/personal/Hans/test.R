@@ -1,6 +1,12 @@
 
 load('./WKRDB-EST2/subGroup2/personal/Hans/private/H1_upper.RData')
 
+H1_upper$VS$VSprob <- 1-(1-1/H1_upper$VS$VStotal)^H1_upper$VS$VSsampled
+H1_upper$FT$FTprob <- 1-(1-1/H1_upper$FT$FTtotal)^H1_upper$FT$FTsampled
+H1_upper$FO$FOprob <- 1-(1-1/H1_upper$FO$FOtotal)^H1_upper$FO$FOsampled
+
+
+
 
 # copy of KBH's function
 
@@ -27,6 +33,11 @@ load('./WKRDB-EST2/subGroup2/personal/Hans/private/H1_upper.RData')
 input_list = H1_upper
 hierachy = 1
    
+## HG - can use helper function below for this
+parameter <- 'FOdur' # what do you want to estimate (e.g. mean or total effort)
+paraTable <- 'FO' # where is the parameter you want to estimate
+levelTable <- 'VS'# at what level, e.g. mean or total effort per vessel
+###
     
     library(dplyr)
     
@@ -52,11 +63,12 @@ hierachy = 1
       "probCluster"
     )
     
+    
     # createing a list with expected tables for each hierachy
     expected_tables <- list(
       H1 = data.frame(
-        table_names = c("DE", "SD", "VS",  "FT",  "FO",  "SL",  "SA"),
-        su_level =    c("NA", "NA", "su1", "su2", "su3", "su4", "su5")
+        table_names = c("DE", "SD", "VS",  "FT",  "FO"),
+        su_level =    c("NA", "NA", "su1", "su2", "su3")
 ## also need info on stratification, where does that go in the output?
 ## what about mandatory tables not in hierarchy?
 ## why do we include SL and SA here and not for the other hierarchies?
@@ -121,11 +133,18 @@ hierachy = 1
     )
     
     
-    out <- list()
+    out <- list(de=input_list$DE, sd=input_list$SD) # temporary quick job
     
     
     expected_tables_here <-
       eval(parse(text = paste0("expected_tables$H", hierachy)))
+    
+## HG make it stop at the correct level        
+    i <- which(expected_tables_here$table_names==paraTable)
+    expected_tables_here <- expected_tables_here[1:i,]
+###    
+    
+        
     
     for (i in c(3:length(expected_tables_here$table_names))) {
       su <-
@@ -134,7 +153,7 @@ hierachy = 1
         )))
       
       names(su) <-
-        sub(unique(expected_tables_here$table_names[[i]]), "", names(su))
+        sub(unique(expected_tables_here$table_names[[i]]), paste0("SU",i-2), names(su))
       
       su$su <- expected_tables_here$su_level[[i]]
       su$hierachy <- hierachy
@@ -148,34 +167,38 @@ hierachy = 1
         text = paste0(
           expected_tables_here$su_level[[i]],
           "_done",
-          "<- select(su, one_of(var_names))"
+          "<- select(su, any_of(c(var_names,paste0('SU',i-2,var_names))))" #hack
         )
       ))
       
-      # Create list with the table name
+      # # Create list with the table name
+      # eval(parse(
+      #   text = paste0(
+      #     "out$",
+      #     expected_tables_here$su_level[[i]],
+      #     "$name",
+      #     " = ",
+      #     "'",
+      #     unique(su$recType),
+      #     "'"
+      #   )
+      # ))
+      
+
+      
+      # Create list with the design variables
       eval(parse(
         text = paste0(
           "out$",
           expected_tables_here$su_level[[i]],
-          "$name",
-          " = ",
-          "'",
-          unique(su$recType),
-          "'"
-        )
-      ))
-      
-      # Create list with the dasign variables
-      eval(parse(
-        text = paste0(
-          "out$",
-          expected_tables_here$su_level[[i]],
-          "$designTable",
+#          "$designTable",
           " = ",
           expected_tables_here$su_level[[i]],
           "_done"
         )
       ))
+      
+      
       
       # Create list with the inclusion probabilities
       
@@ -186,4 +209,70 @@ hierachy = 1
     
     return(out)
   }
+
+
+test <- out
+
+# make this general for n SU's
+a <- merge(test$su1,test$su2,by.x='SU1id',by.y='idAbove')
+a <- merge(a,test$su3,by.x='SU2id',by.y='idAbove')
+
+#a <- test$su1
+a$superProb <- a$SU1prob# * a$SU2prob * a$SU3prob
+sum(1/a$superProb,na.rm=T) / 4#quarters - should be the number of hauls
+
+a$SU1total * a$superProb
+
+a %>% group_by(SU1stratum) %>% 
+  summarise(total=sum(SU3total * superProb,na.rm=T),
+            mean=mean(SU3total * superProb,na.rm=T))
+a %>% group_by() %>% summarise(total=sum(SU1total * superProb,na.rm=T),mean=mean(SU1total * superProb,na.rm=T))
+
+head(subset(a,is.na(superProb)))
+subset(H1_upper$VS,VSid==10)
+
+
+
+
+
+####
+
+
+#' helper function for Kirstens upper hierarchy generic su object function. It asks which parameter you want to estimate and to what level
+#' @export
+#' @param input_list inherited from Kirstens function (not sure how to do this)
+#' @param parameter what you want to estimate (e.g. 'SAtotalWtLive', has to be a valid fieldname (R name i think)
+#' @param level at what level do you want to estimate it (e.g. average and total live weight by trip ('TR') by main strata ('DE') etc)
+#' 
+#' @return a list with two objects, firstly the table where the parameter is, secondly the table corresponding to 'level'
+#'
+#' @examples
+#'
+
+whowhat <- function(input_list, parameter, level) {
+  
+  ## first generate a lookup table, which parameters are in which tables?
+  a <- lapply(seq_along(input_list), function(i) data.frame(TableName=names(input_list)[i],FieldName=names(input_list[[i]])))
+  lut <- do.call('rbind',a)
+
+  paraTable <- lut$TableName[which(lut$FieldName==parameter)]
+  paraTable <- as.character(paraTable)
+  if(length(paraTable)==0) stop('parameter is not a valid field name; it has to be a name in one of the tables of the input_list')
+  if(length(paraTable)>1) stop('parameter is not a unique field name, it occurs in: ',paste(paraTable, collapse=' and '))
+  
+  out <- list(paraTable=paraTable,levelTable=level)
+
+  return(out)
+  }
+
+
+input_list <- H1_upper
+parameter <- 'SAtotalWtLive'
+level <- 'DE'
+whowhat(input_list, parameter, level)
+
+parameter <- 'FOdur'
+level <- 'VS'
+whowhat(input_list, parameter, level)
+
 
