@@ -1,0 +1,4 @@
+DEid,DErecordType,DEsamplingScheme,DEsamplingSchemeType,DEyear,DEstratumName,DEhierarchyCorrect,DEhierarchy,DEsampled,DEreasonNotSampled
+426,DE,WGRDBES-EST TEST 1,NatPilCF,1965,DE_stratum1,Y,5,Y,
+427,DE,WGRDBES-EST TEST 1,NatPilCF,1965,DE_stratum2,Y,5,Y,
+428,DE,WGRDBES-EST TEST 1,NatPilCF,1965,DE_stratum3,Y,5,Y,
