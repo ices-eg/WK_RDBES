@@ -60,7 +60,7 @@ importRDBESDownloadData <- function(filenames) {
 
   # the files are not used currently but can be if we want to
   files <- unique(unlist(sapply(filenames, unzipFile, tmp)))
-  res <- createRDBESRawObject(tmp)
+  res <- icesRDBES::createRDBESRawObject(tmp)
   unlink(tmp, recursive = T)
   res
 }
