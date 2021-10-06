@@ -3,11 +3,10 @@
 #' present).  Function is only used by checkRDBESRawObject and should only
 #' be passed a list of non-null objects
 #'
-#' @param objectToCheck
+#' @param objectToCheck - rdbesRawObject i.e. a list of data.tables
 #'
 #' @return
 #'
-#' @examples
 checkRDBESRawObjectContent <- function(objectToCheck) {
   validRDBESRawObject <- T
   warningText <- NA

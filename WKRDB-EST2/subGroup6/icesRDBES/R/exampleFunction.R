@@ -8,6 +8,7 @@
 #'
 #' @return The  stringX and stringY pasted together
 #'
+#' @export
 #' @examples
 #' exampleFunction("A", "B")
 exampleFunction <- function(stringX, stringY) {

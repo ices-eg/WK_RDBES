@@ -1,11 +1,10 @@
 #' Check whether an rdbesRawObject is in a valid format
 #'
-#' @param objectToCheck
+#' @param objectToCheck rdbesRawObject i.e. a list of data.tables
 #'
 #' @return T if object is valid, F is object is not valid
 #' @export
 #'
-#' @examples
 checkRDBESRawObject <- function(objectToCheck) {
   validRDBESRawObject <- T
   warningText <- NA
