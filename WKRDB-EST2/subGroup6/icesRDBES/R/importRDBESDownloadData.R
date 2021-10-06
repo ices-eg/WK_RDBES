@@ -1,3 +1,20 @@
+#' Import RDBES Downloaded Data
+#'
+#' Read the .zip files and/or .csv files downloadable from the ICES RDBES
+#' web page. The function accepts a list of paths to csv and zip files. Unzips
+#' an then uses \code{\link{createRDBESRawObject}}
+#'
+#' @param filenames - vector of paths pointing to files that should be imported
+#'
+#' @return a list of all the RDBES data tables
+#' The table that are not in input data are NULL
+#' @export
+#'
+#' @seealso \code{\link{createRDBESRawObject}}
+#'
+#' @examples
+#' files <- c("./tests/testthat/h1_v_1_19/H1_2021_000_example.zip")
+#' obj <- importRDBESDownloadData(files)
 importRDBESDownloadData <- function(filenames){
   randInt <- paste0(sample(1:100, 3), collapse = "")
   tmp <- paste0(tempdir(), "/downloadImport", randInt)
@@ -5,7 +22,7 @@ importRDBESDownloadData <- function(filenames){
 
   unzipFile <- function(x,tmp){
     if(!file.exists(x)) {return()}
-    if(is.zip(x)){return(unzip(x, exdir = tmp))}
+    if(is.zip(x)){return(utils::unzip(x, exdir = tmp))}
     if(fileExt(x) == "csv"){
       newName <- paste0(tmp, "/", basename(x))
       if(file.exists(newName)){
