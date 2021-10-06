@@ -1,0 +1,90 @@
+---
+title: "Raw Data  Import"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{raw-data-import}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction 
+
+The aim of this document is to outline a basic workflow of importing data downloaded from the ICES Regional Database & Estimation System (RDBES) for using this package.
+
+```{r setup}
+library(icesRDBES)
+```
+
+## Importing zipped files
+
+```{r}
+#directory holding the files
+ddir <- "./tests/testthat/h1_v_1_19/"
+
+#the files to import
+zipFiles <- c("H1_2021_000_example.zip",
+             "HSL_2021_002_example.zip",
+             "HVD_2021_001_example.zip",
+             "VesselSelection.csv")
+
+#adding full path
+zipFiles <- paste0(ddir, zipFiles)
+```
+
+
+It can import both zipped files from the RDBES download
+```{r}
+importedTables <- importRDBESDownloadData(zipFiles[2])
+#print the not NULL table names
+names(importedTables[!unlist(lapply(importedTables, is.null))])
+```
+or unpacked .csv files
+
+```{r}
+importedTables <- importRDBESDownloadData(zipFiles[4])
+#print the not NULL table names
+names(importedTables[!unlist(lapply(importedTables, is.null))])
+```
+or a combination of both
+
+```{r}
+importedTables <- importRDBESDownloadData(zipFiles[3:4])
+#print the not NULL table names
+names(importedTables[!unlist(lapply(importedTables, is.null))])
+```
+
+It can also handle overwriting zip file original files with files apearing later in the list. However each overvrite results in a warning!
+
+
+```{r}
+importedTables <- importRDBESDownloadData(zipFiles)
+#print the not NULL table names
+names(importedTables[!unlist(lapply(importedTables, is.null))])
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+#END
+```
+
+
