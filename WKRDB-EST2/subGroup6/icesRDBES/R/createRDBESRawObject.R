@@ -55,7 +55,7 @@ createRDBESRawObject <- function(rdbesExtractPath = NA, listOfFileNames = NA) {
   }
 
   # Create a named list using the short names - set all values to NULL
-  myRDBESRawObject <- setNames(
+  myRDBESRawObject <- stats::setNames(
     as.list(replicate(length(fileNames), NULL)),
     names(fileNames)
   )
@@ -81,7 +81,7 @@ createRDBESRawObject <- function(rdbesExtractPath = NA, listOfFileNames = NA) {
       for (myFile in filesWhichExist) {
         # Read the file
         myRDBESRawObject[[myFile]] <-
-          read.csv(
+          utils::read.csv(
             paste(rdbesExtractPath, "\\", fileNames[myFile],  sep = ""),
             header = TRUE, sep = ",", stringsAsFactors = FALSE
           )
