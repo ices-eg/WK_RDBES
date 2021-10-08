@@ -8,13 +8,13 @@
 #' @return
 #'
 checkRDBESRawObjectContent <- function(objectToCheck) {
-  validRDBESRawObject <- T
+  validRDBESRawObject <- TRUE
   warningText <- NA
 
   # For each entry see if they have the required field names
   badEntries <- objectToCheck[!
   sapply(objectToCheck, function(x) {
-    returnValue <- F
+    returnValue <- FALSE
     # Assume the first field name accurately gives us the table name
     tableName <- substring(names(x)[1], 1, 2)
     requiredColumnNames <-
@@ -24,14 +24,14 @@ checkRDBESRawObjectContent <- function(objectToCheck) {
     requiredColumnNames <- requiredColumnNames$R.Name
     # Are all the required names present?
     if (all(requiredColumnNames %in% names(x))) {
-      returnValue <- T
+      returnValue <- TRUE
     }
     returnValue
   })]
 
   # CHECK 6 Check if there are any entries which have invalid field names
   if (length(badEntries) > 0) {
-    validRDBESRawObject <- F
+    validRDBESRawObject <- FALSE
     warningText <-
       paste("objectToCheck contains the following tables which don't ",
         "contain all required fields: ",
@@ -48,7 +48,7 @@ checkRDBESRawObjectContent <- function(objectToCheck) {
     ]
 
     if (length(tablesWithDupes) > 0) {
-      validRDBESRawObject <- F
+      validRDBESRawObject <- FALSE
       warningText <-
         paste("objectToCheck contains the following tables which have ",
           "duplicate rows: ",
@@ -59,7 +59,7 @@ checkRDBESRawObjectContent <- function(objectToCheck) {
 
       badEntries <- objectToCheck[
         sapply(objectToCheck, function(x) {
-          returnValue <- F
+          returnValue <- FALSE
           # Assume the first field name accurately gives us the table name
           tableName <- substring(names(x)[1], 1, 2)
           idFieldName <- paste0(tableName, "id")
@@ -70,7 +70,7 @@ checkRDBESRawObjectContent <- function(objectToCheck) {
 
       # CHECK 8 See if the XXid fields contain duplicates
       if (length(badEntries) > 0) {
-        validRDBESRawObject <- F
+        validRDBESRawObject <- FALSE
         warningText <-
           paste("objectToCheck contains the following tables which have ",
             "duplicated values in their XXid field: ",

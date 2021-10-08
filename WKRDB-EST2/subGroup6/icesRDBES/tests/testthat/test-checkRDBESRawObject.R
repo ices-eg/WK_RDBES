@@ -19,10 +19,24 @@ test_that("checkRDBESRawObject returns T for valid object from H1 data",  {
   expect_true(myReturn)
 
 })
+test_that("checkRDBESRawObject returns T for valid object from H1 data (also checking data types)",  {
+
+  myObject <- createRDBESRawObject(rdbesExtractPath = ".\\h1_v_1_19")
+  myReturn <- checkRDBESRawObject(objectToCheck = myObject, checkDataTypes = TRUE)
+  expect_true(myReturn)
+
+})
 test_that("checkRDBESRawObject returns T for valid object from H5 data",  {
 
   myObject <- createRDBESRawObject(rdbesExtractPath = ".\\h5_v_1_19")
   myReturn <- checkRDBESRawObject(objectToCheck = myObject)
+  expect_true(myReturn)
+
+})
+test_that("checkRDBESRawObject returns T for valid object from H5 data (also checking data types)",  {
+
+  myObject <- createRDBESRawObject(rdbesExtractPath = ".\\h5_v_1_19")
+  myReturn <- checkRDBESRawObject(objectToCheck = myObject, checkDataTypes = TRUE)
   expect_true(myReturn)
 
 })
@@ -81,4 +95,22 @@ test_that("checkRDBESRawObject returns F for object with duplicate DEid values",
   expect_false(myReturn)
 
 })
+test_that("checkRDBESRawObject returns F for object with invalid data types (when checking data types)",  {
 
+  myObject <- createRDBESRawObject(rdbesExtractPath = ".\\h1_v_1_19")
+  myObject[["DE"]]$DEid <- as.character(myObject[["DE"]]$DEid)
+  myObject[["SD"]]$SDid <- as.character(myObject[["SD"]]$SDid)
+  myReturn <- checkRDBESRawObject(objectToCheck = myObject, checkDataTypes = TRUE)
+  expect_false(myReturn)
+
+})
+test_that("checkRDBESRawObject returns F for object with with duplicate DEid values and invalid data types (when checking data types)",  {
+
+  myObject <- createRDBESRawObject(rdbesExtractPath = ".\\h1_v_1_19")
+  myObject[['DE']][,"DEid"]  <- replicate(nrow(myObject[['DE']]),1)
+  myObject[["DE"]]$DEid <- as.character(myObject[["DE"]]$DEid)
+  myObject[["SD"]]$SDid <- as.character(myObject[["SD"]]$SDid)
+  myReturn <- checkRDBESRawObject(objectToCheck = myObject, checkDataTypes = TRUE)
+  expect_false(myReturn)
+
+})

@@ -57,3 +57,16 @@ test_that("createRDBESRawObject will give a warning if given a dir with no relev
   myPath <- "."
   myObject <- expect_warning(createRDBESRawObject(rdbesExtractPath = myPath),"No relevent files found in given directory - an empty object will be created")
 })
+test_that("createRDBESRawObject creates an object with the correct data types",  {
+
+  myPath <- ".\\h1_v_1_19"
+
+  myRDBESRawObject <- createRDBESRawObject(rdbesExtractPath = myPath,
+                         castToCorrectDataTypes = TRUE)
+
+  myDiffs <- checkRDBESRawObjectDataTypes(myRDBESRawObject)
+  numberOfDifferences <- nrow(myDiffs)
+  expect_equal(numberOfDifferences,0)
+
+
+})
