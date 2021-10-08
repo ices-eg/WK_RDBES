@@ -5,6 +5,10 @@
 #' an then uses \code{\link{createRDBESRawObject}}
 #'
 #' @param filenames - vector of paths pointing to files that should be imported
+#' @param castToCorrectDataTypes (Optional) If TRUE then the function
+#' will attempt to cast the required columns to the correct data type.  If
+#' FALSE then the column data types will be determined by how the csv files
+#' are read in.  The default is TRUE.
 #'
 #' @return a list of all the RDBES data tables
 #' The table that are not in input data are NULL
@@ -15,7 +19,8 @@
 #' @examples
 #' files <- c("./tests/testthat/h1_v_1_19/H1_2021_000_example.zip")
 #' obj <- importRDBESDownloadData(files)
-importRDBESDownloadData <- function(filenames) {
+importRDBESDownloadData <- function(filenames,
+                                    castToCorrectDataTypes = TRUE) {
   randInt <- paste0(sample(1:100, 3), collapse = "")
   tmp <- paste0(tempdir(), "/downloadImport", randInt)
   dir.create(tmp)
@@ -60,7 +65,8 @@ importRDBESDownloadData <- function(filenames) {
 
   # the files are not used currently but can be if we want to
   files <- unique(unlist(sapply(filenames, unzipFile, tmp)))
-  res <- icesRDBES::createRDBESRawObject(tmp)
+  res <- icesRDBES::createRDBESRawObject(tmp,
+                              castToCorrectDataTypes = castToCorrectDataTypes)
   unlink(tmp, recursive = T)
   res
 }

@@ -10,7 +10,8 @@ test_that("importing zipped H1 example data works", {
     "HVD_2021_001_example.zip"
   )
 
-  genObj <- importRDBESDownloadData(paste0(ddir, zipFiles))
+  genObj <- importRDBESDownloadData(paste0(ddir, zipFiles),
+                                    castToCorrectDataTypes = FALSE)
   expect_equal(genObj, expObj)
 })
 
@@ -21,7 +22,8 @@ test_that("importing some data that is not zipped H1 example data works", {
     "VesselDetails.csv"
   )
 
-  genObj <- importRDBESDownloadData(paste0(ddir, zipFiles))
+  genObj <- importRDBESDownloadData(paste0(ddir, zipFiles),
+                                    castToCorrectDataTypes = FALSE)
   expect_equal(genObj, expObj)
 })
 
@@ -31,7 +33,8 @@ test_that("importing subset H1 example data works", {
     "VesselDetails.csv"
   )
 
-  genObj <- importRDBESDownloadData(paste0(ddir, zipFiles))
+  genObj <- importRDBESDownloadData(paste0(ddir, zipFiles),
+                                    castToCorrectDataTypes = FALSE)
   expect_equal(genObj$VD, expObj$VD)
   expect_equal(genObj$SS, NULL)
   expect_equal(genObj$SL, expObj$SL)
@@ -44,7 +47,8 @@ test_that("Overwriting a tabel from a zip file produces a warning", {
   )
 
   expect_warning(
-    importRDBESDownloadData(paste0(ddir, zipFiles)),
+    importRDBESDownloadData(paste0(ddir, zipFiles),
+                            castToCorrectDataTypes = FALSE),
     "Overwriting file: VesselDetails.csv, this might be intended!"
   )
 })

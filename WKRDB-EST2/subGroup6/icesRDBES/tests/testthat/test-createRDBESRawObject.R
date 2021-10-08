@@ -1,8 +1,8 @@
 test_that("createRDBESRawObject can create an empty object without errors
           or warnings",  {
 
-  expect_warning(createRDBESRawObject(),NA)
-  expect_error(createRDBESRawObject(),NA)
+  myObject <- expect_warning(createRDBESRawObject(),NA)
+  myObject <-expect_error(createRDBESRawObject(),NA)
 })
 test_that("createRDBESRawObject can create an object from an H1 data extract
           without errors or warnings",  {
@@ -12,6 +12,18 @@ test_that("createRDBESRawObject can create an object from an H1 data extract
   myObject <- expect_warning(createRDBESRawObject(rdbesExtractPath = myPath),NA)
   myObject <- expect_error(createRDBESRawObject(rdbesExtractPath = myPath),NA)
 })
+test_that("createRDBESRawObject can create an object from an H1 data extract
+          without errors or warnings (when castToCorrectDataTypes = FALSE)",  {
+
+  myPath <- ".\\h1_v_1_19"
+
+  myObject <- expect_warning(
+    createRDBESRawObject(rdbesExtractPath = myPath,
+                          castToCorrectDataTypes = FALSE),NA)
+  myObject <- expect_error(
+    createRDBESRawObject(rdbesExtractPath = myPath,
+                          castToCorrectDataTypes = FALSE),NA)
+})
 test_that("createRDBESRawObject can create an object from an H5 data extract
           without errors or warnings",  {
 
@@ -20,13 +32,25 @@ test_that("createRDBESRawObject can create an object from an H5 data extract
   myObject <- expect_warning(createRDBESRawObject(rdbesExtractPath = myPath),NA)
   myObject <- expect_error(createRDBESRawObject(rdbesExtractPath = myPath),NA)
 })
+test_that("createRDBESRawObject can create an object from an H5 data extract
+          without errors or warnings (when castToCorrectDataTypes = FALSE)",  {
+
+    myPath <- ".\\h5_v_1_19"
+
+    myObject <- expect_warning(
+              createRDBESRawObject(rdbesExtractPath = myPath,
+                                   castToCorrectDataTypes = FALSE),NA)
+    myObject <- expect_error(
+              createRDBESRawObject(rdbesExtractPath = myPath,
+                                   castToCorrectDataTypes = FALSE),NA)
+})
 test_that("createRDBESRawObject can create an object from an H1 data extract by specifying file names without errors or warnings",  {
 
   myPath <- ".\\h1_v_1_19"
   myFileNames <- list("DE"="DE.csv","SD"="SD.csv")
 
   myObject <- expect_warning(createRDBESRawObject(rdbesExtractPath = myPath, listOfFileNames = myFileNames),NA)
-  myObject <- expect_error(createRDBESRawObject(rdbesExtractPath = myPath, listOfFileNames = myFileNames),NA)
+  expect_error(createRDBESRawObject(rdbesExtractPath = myPath, listOfFileNames = myFileNames),NA)
 })
 test_that("createRDBESRawObject will give a warning if given a dir with no relevent files in it",  {
 

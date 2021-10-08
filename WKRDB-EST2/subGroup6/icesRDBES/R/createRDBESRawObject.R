@@ -8,20 +8,27 @@
 #' list("DE" = "DE.csv",... ).  If the parameter is not supplied then the
 #' default file names used by the RDBES data download will be used e.g.
 #' "Design.csv" etc.
+#' @param castToCorrectDataTypes (Optional) If TRUE then the function
+#' will attempt to cast the required columns to the correct data type.  If
+#' FALSE then the column data types will be determined by how the csv files
+#' are read in.  The default is TRUE
 #'
 #' @return A rdbesRawObject.  If a path to RDBES extract files is provided then
 #' it will contain the data from those files.  If no path is supplied then
-#' ' an empty rdbesRawObject will be returned.
+#' an empty rdbesRawObject will be returned.
 #' @export
 #'
 #' @examples
 #' myEmptyRDBESObject <- createRDBESRawObject()
-createRDBESRawObject <- function(rdbesExtractPath = NA, listOfFileNames = NA) {
+createRDBESRawObject <- function(rdbesExtractPath = NA,
+                                 listOfFileNames = NA,
+                                 castToCorrectDataTypes = TRUE) {
 
 
   # For testing - to be removed!
   # rdbesExtractPath <- "H:\\git\\WK_RDBES\\WKRDB-EST2\\subGroup6\\icesRDBES\\tests\\testthat\\h1_v_1_19"
   # load("H:\\git\\WK_RDBES\\WKRDB-EST2\\subGroup6\\icesRDBES\\data\\mapColNamesFieldR.RData")
+
 
   # If we have not been passed a list of file names use a default
   if (length(listOfFileNames) == 1 && is.na(listOfFileNames)){
@@ -91,7 +98,8 @@ createRDBESRawObject <- function(rdbesExtractPath = NA, listOfFileNames = NA) {
           data.table::setDT(myRDBESRawObject[[myFile]])
 
         # Change database field names to R names where we can
-        myNames <- mapColNamesFieldR[mapColNamesFieldR$Table.Prefix == myFile, ]
+        myNames <- icesRDBES::mapColNamesFieldR[
+          icesRDBES::mapColNamesFieldR$Table.Prefix == myFile, ]
         myNameMatches <- match(
           trimws(tolower(names(myRDBESRawObject[[myFile]]))),
           trimws(tolower(myNames$Field.Name))
@@ -110,6 +118,12 @@ createRDBESRawObject <- function(rdbesExtractPath = NA, listOfFileNames = NA) {
         , "CLincidentialByCatchMitigationDevice"
         , "CLIBmitiDev")
     }
+
+  }
+
+  if (castToCorrectDataTypes){
+    # Ensure all the columns are the correct data type
+    myRDBESRawObject <- setRDBESRawObjectDataTypes(myRDBESRawObject)
 
   }
 
