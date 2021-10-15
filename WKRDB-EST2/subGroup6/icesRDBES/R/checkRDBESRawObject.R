@@ -44,7 +44,7 @@ checkRDBESRawObject <- function(objectToCheck,
     )
   } else { #1
 
-    # Get any objectToCheck entries which aren't null or data tables
+     # Get any objectToCheck entries which aren't null or data tables
     badEntries <- objectToCheck[!
     sapply(
       objectToCheck,
@@ -57,7 +57,7 @@ checkRDBESRawObject <- function(objectToCheck,
         }
         returnValue
       }
-    )]
+      )]
     # CHECK 5 Are there any entries which aren't NULL or data tables?
     if (length(badEntries) > 0) {
       validRDBESRawObject <- FALSE
@@ -68,6 +68,14 @@ checkRDBESRawObject <- function(objectToCheck,
           sep = ""
         )
     } else { #2
+
+      # Print out null entries for information
+      nullEntries <- objectToCheck[sapply(objectToCheck, is.null)]
+      if (length(nullEntries)>0){
+      print(paste("Note that ",names(nullEntries)
+                     ," is NULL but this is allowed in an rdbesRawObject"
+                  , sep = ""))
+      }
 
       # Just check non-NULL entries
       nonNullEntries <- objectToCheck[sapply(objectToCheck, Negate(is.null))]
