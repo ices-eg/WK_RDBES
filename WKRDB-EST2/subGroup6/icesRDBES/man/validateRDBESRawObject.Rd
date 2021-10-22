@@ -24,3 +24,15 @@ TRUE if object is valid, FALSE is object is not valid
 \description{
 Check whether an rdbesRawObject is in a valid format
 }
+\examples{
+\dontrun {
+
+myH1RawObject <-
+      createRDBESRawObject(rdbesExtractPath = "tests\\\\testthat\\\\h1_v_1_19")
+validateRDBESRawObject(myH1RawObject)
+
+
+
+}
+
+}

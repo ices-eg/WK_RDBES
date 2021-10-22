@@ -7,7 +7,6 @@
 #' @return An rdbesRawObject with the correct date types for the required
 #' fields
 #'
-#' @examples
 #' @import data.table
 setRDBESRawObjectDataTypes <- function(rdbesRawObjectToConvert){
 

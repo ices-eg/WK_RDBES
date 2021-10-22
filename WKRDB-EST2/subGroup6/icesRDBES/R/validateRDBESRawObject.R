@@ -11,6 +11,16 @@
 #' @return TRUE if object is valid, FALSE is object is not valid
 #' @export validateRDBESRawObject
 #' @aliases checkRDBESRawObject
+#' @examples
+#' \dontrun {
+#'
+#' myH1RawObject <-
+#'       createRDBESRawObject(rdbesExtractPath = "tests\\testthat\\h1_v_1_19")
+#' validateRDBESRawObject(myH1RawObject)
+#'
+#'
+#'
+#' }
 #'
 validateRDBESRawObject <- function(objectToCheck,
                                 checkDataTypes = FALSE,

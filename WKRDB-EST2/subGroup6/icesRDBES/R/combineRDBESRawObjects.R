@@ -8,6 +8,16 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#'
+#' myH1RawObject <-
+#'     createRDBESRawObject(rdbesExtractPath = "tests\\testthat\\h1_v_1_19")
+#' myH5RawObject <-
+#'     createRDBESRawObject(rdbesExtractPath = "tests\\testthat\\h5_v_1_19")
+#'
+#' myCombinedRawObject <- combineRDBESRawObjects(rdbesRawObject1=myH1RawObject,
+#'                                              rdbesRawObject2=myH5RawObject)
+#' }
 combineRDBESRawObjects <- function(rdbesRawObject1, rdbesRawObject2) {
   if (!validateRDBESRawObject(rdbesRawObject1, verbose = FALSE) |
       !validateRDBESRawObject(rdbesRawObject2, verbose = FALSE)) {
