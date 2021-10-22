@@ -14,7 +14,7 @@ setRDBESRawObjectDataTypes <- function(rdbesRawObjectToConvert){
   # For each entry in our list convert the columns to the correct format
   # This could cause an error if we have data in the columns that can't be
   # cast to the desired data type
-  objectToReturn <- lapply(rdbesRawObjectToConvert,function(x){
+  alteredObject <- lapply(rdbesRawObjectToConvert,function(x){
       # Only process the non-null entries
       if (!is.null(x)){
         # Assume the first field name accurately gives us the table name
@@ -51,6 +51,15 @@ setRDBESRawObjectDataTypes <- function(rdbesRawObjectToConvert){
     }
   )
 
-  objectToReturn
+  # Update the original object so we don't lose its class type
+  for (myTable in names(rdbesRawObjectToConvert)){
+    if (!is.null(alteredObject[[myTable]])){
+      rdbesRawObjectToConvert[[myTable]] <- alteredObject[[myTable]]
+    }
+
+  }
+
+  rdbesRawObjectToConvert
+
 
 }

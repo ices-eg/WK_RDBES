@@ -16,7 +16,7 @@ test_that("checkRDBESRawObjectDataTypes returns an empty list for an object with
     myObject <- list()
     myObject[["DE"]] <- myDE
 
-    myDiffs <- checkRDBESRawObjectDataTypes(myObject)
+    myDiffs <- validateRDBESRawObjectDataTypes(myObject)
     numberOfDifferences <- nrow(myDiffs)
     expect_equal(numberOfDifferences,0)
 })
@@ -39,7 +39,7 @@ test_that("checkRDBESRawObjectDataTypes returns 2 differences for an object with
   myObject <- list()
   myObject[["DE"]] <- myDE
 
-  myDiffs <- checkRDBESRawObjectDataTypes(myObject)
+  myDiffs <- validateRDBESRawObjectDataTypes(myObject)
   numberOfDifferences <- nrow(myDiffs)
   expect_equal(numberOfDifferences,2)
 })

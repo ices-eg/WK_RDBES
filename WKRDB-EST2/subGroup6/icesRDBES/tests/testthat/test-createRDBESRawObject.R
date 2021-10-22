@@ -64,7 +64,8 @@ test_that("createRDBESRawObject creates an object with the correct data types", 
   myRDBESRawObject <- createRDBESRawObject(rdbesExtractPath = myPath,
                          castToCorrectDataTypes = TRUE)
 
-  myDiffs <- checkRDBESRawObjectDataTypes(myRDBESRawObject)
+  myDiffs <- validateRDBESRawObjectDataTypes(myRDBESRawObject)
+
   numberOfDifferences <- nrow(myDiffs)
   expect_equal(numberOfDifferences,0)
 

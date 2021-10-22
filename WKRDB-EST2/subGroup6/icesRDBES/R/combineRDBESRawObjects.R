@@ -9,8 +9,8 @@
 #'
 #' @examples
 combineRDBESRawObjects <- function(rdbesRawObject1, rdbesRawObject2) {
-  if (!checkRDBESRawObject(rdbesRawObject1) |
-      !checkRDBESRawObject(rdbesRawObject2)) {
+  if (!validateRDBESRawObject(rdbesRawObject1, verbose = FALSE) |
+      !validateRDBESRawObject(rdbesRawObject2, verbose = FALSE)) {
     stop(paste0(
       "At least one of the rdbesRawObjects is not valid ",
       "- mergeRDBESRawObjects will not proceed"

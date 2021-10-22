@@ -7,7 +7,7 @@
 createRDBESRawObject(
   rdbesExtractPath = NA,
   listOfFileNames = NA,
-  castColsToCorrectDataTypes = TRUE
+  castToCorrectDataTypes = TRUE
 )
 }
 \arguments{
@@ -21,10 +21,10 @@ list("DE" = "DE.csv",... ).  If the parameter is not supplied then the
 default file names used by the RDBES data download will be used e.g.
 "Design.csv" etc.}
 
-\item{castColsToCorrectDataTypes}{(Optional) If TRUE then the function
+\item{castToCorrectDataTypes}{(Optional) If TRUE then the function
 will attempt to cast the required columns to the correct data type.  If
 FALSE then the column data types will be determined by how the csv files
-are read in.  The default is FALSE}
+are read in.  The default is TRUE}
 }
 \value{
 A rdbesRawObject.  If a path to RDBES extract files is provided then

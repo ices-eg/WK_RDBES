@@ -10,13 +10,13 @@ test_that("combineRDBESRawObjects returns invalid rdbesRawObject when supplied w
   myObject2 <- createRDBESRawObject(rdbesExtractPath = myPath)
 
   # Check these are valid objects before we try and combine them
-  expect_true(checkRDBESRawObject(myObject1))
-  expect_true(checkRDBESRawObject(myObject2))
+  expect_true(validateRDBESRawObject(myObject1))
+  expect_true(validateRDBESRawObject(myObject2))
 
   myCombinedObject <- combineRDBESRawObjects(rdbesRawObject1=myObject1,
                                              rdbesRawObject2=myObject2)
 
-  expect_false(checkRDBESRawObject(myCombinedObject))
+  expect_false(validateRDBESRawObject(myCombinedObject))
 })
 test_that("combineRDBESRawObjects returns valid rdbesRawObject when supplied with valid, different rdbesRawObjects",  {
 
@@ -24,13 +24,13 @@ test_that("combineRDBESRawObjects returns valid rdbesRawObject when supplied wit
   myObject2 <- createRDBESRawObject(rdbesExtractPath = ".\\h5_v_1_19")
 
   # Check these are valid objects before we try and combine them
-  expect_true(checkRDBESRawObject(myObject1))
-  expect_true(checkRDBESRawObject(myObject2))
+  expect_true(validateRDBESRawObject(myObject1))
+  expect_true(validateRDBESRawObject(myObject2))
 
   myCombinedObject <- combineRDBESRawObjects(rdbesRawObject1=myObject1,
                                              rdbesRawObject2=myObject2)
 
-  expect_true(checkRDBESRawObject(myCombinedObject))
+  expect_true(validateRDBESRawObject(myCombinedObject))
 })
 
 

@@ -62,10 +62,11 @@ createRDBESRawObject <- function(rdbesExtractPath = NA,
   }
 
   # Create a named list using the short names - set all values to NULL
-  myRDBESRawObject <- stats::setNames(
+  myList <- stats::setNames(
     as.list(replicate(length(fileNames), NULL)),
     names(fileNames)
   )
+
 
   # If we have been supplied with a path to files we will try and read them
   # otherwise we'll just return an empty rdbesRawBoject
@@ -87,39 +88,59 @@ createRDBESRawObject <- function(rdbesExtractPath = NA,
       # Read the files which exist
       for (myFile in filesWhichExist) {
         # Read the file
-        myRDBESRawObject[[myFile]] <-
+        myList[[myFile]] <-
           utils::read.csv(
             paste(rdbesExtractPath, "\\", fileNames[myFile],  sep = ""),
             header = TRUE, sep = ",", stringsAsFactors = FALSE
           )
 
         # Change each entry to a data table
-        myRDBESRawObject[[myFile]] <-
-          data.table::setDT(myRDBESRawObject[[myFile]])
+        myList[[myFile]] <-
+          data.table::setDT(myList[[myFile]])
 
         # Change database field names to R names where we can
         myNames <- icesRDBES::mapColNamesFieldR[
           icesRDBES::mapColNamesFieldR$Table.Prefix == myFile, ]
         myNameMatches <- match(
-          trimws(tolower(names(myRDBESRawObject[[myFile]]))),
+          trimws(tolower(names(myList[[myFile]]))),
           trimws(tolower(myNames$Field.Name))
         )
         myNameMatchesNotNA <- myNameMatches[!is.na(myNameMatches)]
-        names(myRDBESRawObject[[myFile]])[!is.na(myNameMatches)] <-
+        names(myList[[myFile]])[!is.na(myNameMatches)] <-
           myNames[myNameMatchesNotNA, "R.Name"]
       }
     }
 
     ## DATA FIX - spelling mistake in 1 download file format ...
     if ("CLincidentialByCatchMitigationDevice" %in%
-        names(myRDBESRawObject[["CL"]])) {
+        names(myList[["CL"]])) {
       data.table::setnames(
-        myRDBESRawObject[["CL"]]
+        myList[["CL"]]
         , "CLincidentialByCatchMitigationDevice"
         , "CLIBmitiDev")
     }
 
   }
+
+  # Create an rdbesRawObject using the constructor
+  myRDBESRawObject <- newRDBESRawObject(DE = myList[["DE"]],
+                                        SD = myList[["SD"]],
+                                        VS = myList[["VS"]],
+                                        FT = myList[["FT"]],
+                                        FO = myList[["FO"]],
+                                        TE = myList[["TE"]],
+                                        LO = myList[["LO"]],
+                                        OS = myList[["OS"]],
+                                        LE = myList[["LE"]],
+                                        SS = myList[["SS"]],
+                                        SA = myList[["SA"]],
+                                        FM = myList[["FM"]],
+                                        BV = myList[["BV"]],
+                                        VD = myList[["VD"]],
+                                        SL = myList[["SL"]],
+                                        CL = myList[["CL"]],
+                                        CE = myList[["CE"]])
+
 
   if (castToCorrectDataTypes){
     # Ensure all the columns are the correct data type
