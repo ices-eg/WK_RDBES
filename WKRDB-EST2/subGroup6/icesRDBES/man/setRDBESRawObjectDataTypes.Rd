@@ -12,7 +12,8 @@ setRDBESRawObjectDataTypes(rdbesRawObjectToConvert)
 \item{rdbesRawObject}{}
 }
 \value{
-
+An rdbesRawObject with the correct date types for the required
+fields
 }
 \description{
 setRDBESRawObjectDataTypes For a given rdbesRawObject convert the required

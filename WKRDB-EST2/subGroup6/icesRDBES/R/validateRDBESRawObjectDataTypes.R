@@ -7,8 +7,7 @@
 #' @return A data frame containing any data type differences (an empty data
 #' frame if there are no differences)
 #'
-#' @examples
-checkRDBESRawObjectDataTypes <- function(objectToCheck){
+validateRDBESRawObjectDataTypes <- function(objectToCheck){
 
   # Get the data types of all our columns
   myDataTypes <- lapply(objectToCheck, function(x){

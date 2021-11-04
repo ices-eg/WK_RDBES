@@ -4,10 +4,15 @@
 \alias{importRDBESDownloadData}
 \title{Import RDBES Downloaded Data}
 \usage{
-importRDBESDownloadData(filenames)
+importRDBESDownloadData(filenames, castToCorrectDataTypes = TRUE)
 }
 \arguments{
 \item{filenames}{- vector of paths pointing to files that should be imported}
+
+\item{castToCorrectDataTypes}{(Optional) If TRUE then the function
+will attempt to cast the required columns to the correct data type.  If
+FALSE then the column data types will be determined by how the csv files
+are read in.  The default is TRUE.}
 }
 \value{
 a list of all the RDBES data tables

@@ -7,7 +7,7 @@
 #'
 #' @return
 #'
-checkRDBESRawObjectContent <- function(objectToCheck) {
+validateRDBESRawObjectContent <- function(objectToCheck) {
   validRDBESRawObject <- TRUE
   warningText <- NA
 
