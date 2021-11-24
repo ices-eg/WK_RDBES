@@ -12,7 +12,8 @@
 # clean the prefixes [makes it easier to handle in other functions]
 	myH7RawObject <- removePrefixFromVarNames(myH7RawObject)
 
-# checks data for some issues related to selection and probabilities, including some features not yet developed [stops are corrected in "changes to data below"]
+# checks data for some issues related to selection and probabilities
+	# note: this function is only exemplified here - in general only applyGenerateProbs will be used as the wrapper also includes this function
 	runChecksOnSelectionAndProbs(myH7RawObject)
 
 # CHANGES TO DATA
