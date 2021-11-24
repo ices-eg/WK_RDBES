@@ -35,8 +35,8 @@ runChecksOnSelectionAndProbs <- function(x, printStopIssue = TRUE)  {
                                                            yet developed")
     }
     if (x[["DE"]]$hierarchy[1] == 7) {
-      targetTables <- c("OS", "LE", "SS", "SA", "BV")
-      parentId <- c("SDid", "OSid", "LEid", "SSid", "SAid")
+      targetTables <- c("OS", "SS", "SA", "BV")
+      parentId <- c("SDid", "OSid", "SSid", "SAid")
       # aspects needing development
       if (any(!is.na(x[["SA"]]$parentID))) stop("multiple sub-sampling present
                                                 in SA: not yet developed")
