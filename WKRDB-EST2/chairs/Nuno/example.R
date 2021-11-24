@@ -45,13 +45,21 @@
 	myH7PrepObject<-applyGenerateProbs (x = myH7RawObject, probType = "both", overwrite=T, runInitialProbChecks = TRUE)
 	myH7PrepObject
 	
+# generation of zeros using SL
+	source("R/generateZerosUsingSL.r") # wrapper to "runChecksOnSelectionAndProbs" and "generateProbs"
 	
-# generation of zeros
-	source("R/generateZeros.r") # wrapper to "runChecksOnSelectionAndProbs" and "generateProbs"
+	myH7PrepObject<-generateZerosUsingSL(myH7PrepObject)
 	
-	myH7PrepObject<-generateZeros(myH7PrepObject)
+	# note the solution [dec SAid added to avoid integer that could duplciate other already existing]
+	myH7PrepObject$SA
+
+
+# other
+	# check why [is it table var prefixes? do we need them back? create a addPrefixToVarNames if so]
+		icesRDBES::validateRDBESRawObject(myH7RawObject, verbose = FALSE)
+		icesRDBES::validateRDBESRawObject(myH7PrepObject, verbose = FALSE)
+
 	
-	out<-
 
 	
 	
