@@ -20,8 +20,7 @@
 #' @seealso \code{\link{runChecksOnSelectionAndProbs}}
 #' \code{\link{generateProbs}}
 #'
-#' @examples
-#' for now see
+#' examples for now see
 #' https://github.com/ices-eg/WK_RDBES/tree/master/WKRDB-EST2/chairs/Nuno
 #'
 
