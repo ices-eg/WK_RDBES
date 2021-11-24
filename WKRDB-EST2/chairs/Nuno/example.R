@@ -21,9 +21,6 @@
 	myH7RawObject$OS$selectMeth<-"SRSWOR"
 	runChecksOnSelectionAndProbs(myH7RawObject)
 
-	myH7RawObject$LE$selectMeth<-"SRSWOR"
-	runChecksOnSelectionAndProbs(myH7RawObject)
-
 	myH7RawObject$SA$stratification<-"N"
 	runChecksOnSelectionAndProbs(myH7RawObject)
 
@@ -40,10 +37,21 @@
 
 	# changes to numTotal
 	myH7RawObject$OS$numTotal<-c(3,3,3)
-	myH7RawObject$LE$numTotal<-c(10,15,20)
+	myH7RawObject$SS$numTotal<-c(1,1,1)
 	myH7RawObject$SA$numTotal<-c(20, 10, 5)
 	myH7RawObject$BV$numTotal<-c(rep(50, 29*5), rep(200, 95*5), rep(200, 39*5))
 
 # Probability generation
 	myH7PrepObject<-applyGenerateProbs (x = myH7RawObject, probType = "both", overwrite=T, runInitialProbChecks = TRUE)
 	myH7PrepObject
+	
+	
+# generation of zeros
+	source("R/generateZeros.r") # wrapper to "runChecksOnSelectionAndProbs" and "generateProbs"
+	
+	myH7PrepObject<-generateZeros(myH7PrepObject)
+	
+	out<-
+
+	
+	
