@@ -1,7 +1,9 @@
 ---
 title: "icesrdbes::estimationScript"
-date: \today
+date: "\today"
 output:
+  pdf_document: default
+  word_document: default
   html_document: default
 ---
 
